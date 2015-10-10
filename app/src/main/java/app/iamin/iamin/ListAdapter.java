@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -27,6 +31,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         public TextView titleView;
         public TextView dateView;
         public TextView locationView;
+        public TextView durationView;
+        public TextView distanceView;
+        public TextView peopleNeededView;
         public ViewHolder(CardView v) {
             super(v);
             cardView = v;
@@ -34,6 +41,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             titleView = (TextView) v.findViewById(R.id.item_title);
             dateView = (TextView) v.findViewById(R.id.item_date);
             locationView = (TextView) v.findViewById(R.id.item_location);
+            durationView = (TextView) v.findViewById(R.id.item_duration);
+            distanceView = (TextView) v.findViewById(R.id.item_distance);
+            peopleNeededView = (TextView) v.findViewById(R.id.item_people_needed);
         }
     }
 
@@ -54,10 +64,18 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
+        HelpRequest req = mHelpRequests.get(position);
+
         holder.iconView.setImageResource(R.mipmap.medical);
-        holder.titleView.setText(mHelpRequests.get(position).getName());
-        holder.dateView.setText(mHelpRequests.get(position).getStart().toString());
-        holder.locationView.setText(mHelpRequests.get(position).getLocation().toString());
+        holder.locationView.setText(req.getAddress().getFeatureName());
+        holder.titleView.setText(req.getName());
+        DateFormat dtfStart = new SimpleDateFormat("d. M H:m");
+        DateFormat dtfEnd = new SimpleDateFormat("H:m");
+        String dString = dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
+        holder.dateView.setText(dString);
+        int numHours = (int) Math.floor((req.getEnd().getTime() - req.getStart().getTime()) / (1000 * 60 * 60));
+        holder.durationView.setText("mind. " + numHours + "h");
+        holder.peopleNeededView.setText("Es werden noch\n" + req.getStillOpen() + "\ngebraucht");
     }
 
     @Override

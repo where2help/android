@@ -1,6 +1,6 @@
 package app.iamin.iamin;
 
-import android.location.Location;
+import android.location.Address;
 
 import java.util.Date;
 
@@ -19,7 +19,7 @@ public class HelpRequest {
     private TYPE mType;
     private Date mStart;
     private Date mEnd;
-    private Location mLocation;
+    private Address mAddress;
     private int mStillOpen;
 
     public HelpRequest(TYPE type) {
@@ -38,11 +38,11 @@ public class HelpRequest {
 
     public Date getStart() { return mStart; }
     public Date getEnd() { return mEnd; }
-    public Location getLocation() { return mLocation; }
+    public Address getAddress() { return mAddress; }
     public int getStillOpen() { return mStillOpen; }
 
     public void setStart(Date start) { mStart = start;}
     public void setEnd(Date end) { mEnd = end; }
-    public void setLocation(Location loc) { mLocation = loc; }
+    public void setAddress(Address addr) { mAddress = addr; }
     public void setStillOpen(int stillOpen) { mStillOpen = stillOpen; }
 }

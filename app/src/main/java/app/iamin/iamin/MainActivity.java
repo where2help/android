@@ -2,6 +2,7 @@ package app.iamin.iamin;
 
 import android.content.Intent;
 import android.graphics.Rect;
+import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
         helpRequests = new ArrayList<HelpRequest>();
         HelpRequest req1 = new HelpRequest(HelpRequest.TYPE.DOCTOR);
         req1.setStillOpen(3);
-        req1.setLocation(new Location("Vienna"));
+        Address addr = new Address(Locale.GERMAN);
+        addr.setFeatureName("Wien, Westbahnhof");
+        req1.setAddress(addr);
         req1.setStart(new Date());
         req1.setEnd(new Date());
         helpRequests.add(req1);
