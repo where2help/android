@@ -11,6 +11,8 @@ import android.view.View;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,12 +24,19 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private List<HelpRequest> helpRequests;
+    private HelpRequest[] needs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        try {
+            new PullNeedsActiveTask(new URL("http://192.168.0.4:3000/data"), this).execute();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            // TODO
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Freiwillige vor!");
@@ -38,14 +47,16 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // TODO: remove
-        initializeData();
+        //initializeData();
 
         // specify an adapter (see also next example)
-        mAdapter = new ListAdapter(this, helpRequests);
+        mAdapter = new ListAdapter(this, needs);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new MainActivity.SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_spacing)));
 
     }
+
+
 
     private class SpacesItemDecoration extends RecyclerView.ItemDecoration {
         private int space;
@@ -64,8 +75,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // TODO: very ugly, please make sure to implement proper data handling
+    public void updateNeeds(HelpRequest[] needs) {
+        this.needs = needs;
+        //
+    }
+
     // TODO: remove me
-    private void initializeData(){
+    /*private void initializeData(){
         helpRequests = new ArrayList<HelpRequest>();
         for (int i = 0; i < 12; i++) {
             HelpRequest req1 = new HelpRequest(HelpRequest.TYPE.DOCTOR);
@@ -77,6 +94,6 @@ public class MainActivity extends AppCompatActivity {
             req1.setEnd(new Date());
             helpRequests.add(req1);
         }
-    }
+    }*/
 
 }

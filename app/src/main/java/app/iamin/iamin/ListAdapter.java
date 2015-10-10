@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 /**
  * Created by Paul on 10-10-2015.
@@ -20,7 +19,7 @@ import java.util.List;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<HelpRequest> mHelpRequests;
+    private HelpRequest[] mHelpRequests;
 
     public interface ItemClickListener {
         void onItemClick(View view, int position);
@@ -29,7 +28,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private final ItemClickListener clickListener = new ItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            HelpRequest req = mHelpRequests.get(position);
+            HelpRequest req = mHelpRequests[position];
 
             Intent intent = new Intent();
             intent.setClass(mContext, DetailActivity.class);
@@ -75,7 +74,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
     }
 
-    public ListAdapter(Context context, List<HelpRequest> helpRequests) {
+    public ListAdapter(Context context, HelpRequest[] helpRequests) {
         mContext = context;
         mHelpRequests = helpRequests;
         setHasStableIds(true);
@@ -90,7 +89,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
-        HelpRequest req = mHelpRequests.get(position);
+        HelpRequest req = mHelpRequests[position];
 
         holder.iconView.setImageResource(R.mipmap.ic_medical);
         holder.locationView.setText(req.getAddress().getFeatureName());
@@ -105,6 +104,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mHelpRequests.size();
+        return mHelpRequests == null ? 0 : mHelpRequests.length;
     }
 }
