@@ -70,13 +70,10 @@
                         android:drawableLeft="@drawable/ic_action_event"/>
                 </LinearLayout>
 
-                <TextView
+                <app.iamin.iamin.CountView
                     android:id="@+id/count"
                     android:layout_width="72dp"
-                    android:layout_height="wrap_content"
-                    android:text="Es werden noch 2 gebraucht"
-                    android:textAlignment="center"
-                    android:background="#fafafa"/>
+                    android:layout_height="72dp" />
             </LinearLayout>
 
             <LinearLayout

@@ -28,6 +28,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private Button mAddButton;
     private TextView mSubmitInfo;
 
+    private CountView mCountView;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -68,6 +70,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 }
             }
         });
+
+        mCountView = (CountView) findViewById(R.id.count);
+        mCountView.setCount(2);
     }
 
     private void showDialog() {
