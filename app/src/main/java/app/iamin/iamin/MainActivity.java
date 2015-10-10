@@ -1,15 +1,15 @@
 package app.iamin.iamin;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.location.Address;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
+
+import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Freiwillige vor!");
+
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         initializeData();
 
         // specify an adapter (see also next example)
-        mAdapter = new ListAdapter(helpRequests);
+        mAdapter = new ListAdapter(this, helpRequests);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new MainActivity.SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_spacing)));
 
@@ -64,14 +67,16 @@ public class MainActivity extends AppCompatActivity {
     // TODO: remove me
     private void initializeData(){
         helpRequests = new ArrayList<HelpRequest>();
-        HelpRequest req1 = new HelpRequest(HelpRequest.TYPE.DOCTOR);
-        req1.setStillOpen(3);
-        Address addr = new Address(Locale.GERMAN);
-        addr.setFeatureName("Wien, Westbahnhof");
-        req1.setAddress(addr);
-        req1.setStart(new Date());
-        req1.setEnd(new Date());
-        helpRequests.add(req1);
+        for (int i = 0; i < 12; i++) {
+            HelpRequest req1 = new HelpRequest(HelpRequest.TYPE.DOCTOR);
+            req1.setStillOpen(3);
+            Address addr = new Address(Locale.GERMAN);
+            addr.setFeatureName("Wien, Westbahnhof");
+            req1.setAddress(addr);
+            req1.setStart(new Date());
+            req1.setEnd(new Date());
+            helpRequests.add(req1);
+        }
     }
 
 }

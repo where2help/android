@@ -16,7 +16,6 @@ public class CountView extends View{
     private int w = 0;
     private int h = 0;
 
-    private static final String noch = "noch";
     private static final String gebraucht = "gebraucht";
     private int count = 0;
 
@@ -57,15 +56,14 @@ public class CountView extends View{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.WHITE);
         paint.setTextSize(textSize);
         paint.setTextAlign(Paint.Align.CENTER);
 
-        canvas.drawText(noch, w / 2, textSize, paint);
-        canvas.drawText(gebraucht, w / 2, h - textSize, paint);
+        canvas.drawText(gebraucht, w / 2, h - textSize * 1.2f, paint);
 
         paint.setTextSize(numberSize);
-        canvas.drawText(count + "", w / 2, (h - numberSize) / 2 + textSize, paint);
+        canvas.drawText(count + "", w / 2, (h - numberSize * 1.2f) / 2 + textSize, paint);
     }
 
     public void setCount(int count) {

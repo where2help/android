@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"/>
+        android:layout_height="?actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -21,27 +24,30 @@
             android:orientation="vertical"
             android:paddingBottom="16dp">
 
-            <View
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="#ddd"/>
+                android:id="@+id/map"
+                tools:context=".MapsActivity"
+                android:name="com.google.android.gms.maps.SupportMapFragment" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="8dp">
 
                 <ImageView
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_marginRight="8dp"
-                    android:src="@drawable/ic_action_back"/>
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_medical" />
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
                     android:padding="8dp">
 
@@ -49,87 +55,90 @@
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="Title"/>
+                        android:paddingLeft="8dp"
+                        android:text="Title"
+                        android:textAppearance="?android:textAppearanceLarge" />
 
                     <TextView
-                        android:id="@+id/location"
+                        android:id="@+id/address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Bahnhof Wien"
+                        android:drawableLeft="@drawable/ic_action_place"
                         android:gravity="center_vertical"
-                        android:drawableLeft="@drawable/ic_action_place"/>
+                        android:text="Bahnhof Wien" />
 
 
                     <TextView
                         android:id="@+id/date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="14:000 - 18:00"
+                        android:drawableLeft="@drawable/ic_action_event"
                         android:gravity="center_vertical"
-                        android:drawableLeft="@drawable/ic_action_event"/>
+                        android:text="14:000 - 18:00" />
 
                     <TextView
                         android:id="@+id/distance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="1,2km"
+                        android:drawableLeft="@drawable/ic_action_map"
                         android:gravity="center_vertical"
-                        android:drawableLeft="@drawable/ic_action_map"/>
+                        android:text="1,2km" />
 
                     <TextView
                         android:id="@+id/duration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="mind. 2h"
+                        android:drawableLeft="@drawable/ic_action_time"
                         android:gravity="center_vertical"
-                        android:drawableLeft="@drawable/ic_action_time"/>
+                        android:text="mind. 2h" />
                 </LinearLayout>
 
                 <app.iamin.iamin.CountView
                     android:id="@+id/count"
                     android:layout_width="72dp"
-                    android:layout_height="72dp" />
+                    android:layout_height="72dp"
+                    android:background="@drawable/bg_count" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
                     android:id="@+id/info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Danke! Komm bitte um 14:00!"
                     android:gravity="center_vertical"
-                    android:visibility="gone"/>
+                    android:text="Danke! Komm bitte um 14:00!"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/submit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="I'm in!"/>
+                    android:text="I'm in!" />
 
                 <LinearLayout
                     android:id="@+id/buttonBar"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
                     <Button
                         android:id="@+id/cancel"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="Absagen"/>
+                        android:layout_weight="1"
+                        android:text="Absagen" />
 
                     <Button
                         android:id="@+id/add"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="Kalendereintrag"/>
+                        android:layout_weight="1"
+                        android:text="Kalendereintrag" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -138,27 +147,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum."/>
+                android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum." />
 
             <TextView
                 android:id="@+id/web"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:padding="16dp"
-                android:clickable="true"
                 android:background="?selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_action_link"
-                android:text="Mehr Infos: www...."/>
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Mehr Infos: www...." />
 
             <TextView
                 android:id="@+id/organisation"
                 android:layout_width="match_parent"
-                android:drawableLeft="@drawable/ic_action_people"
                 android:layout_height="48dp"
-                android:padding="16dp"
-                android:clickable="true"
-                android:background="?selectableItemBackground"
-                android:text="By: Train of Hope"/>
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:drawableLeft="@drawable/ic_action_people"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:text="By: Train of Hope" />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>
