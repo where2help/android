@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mTabLayout.addTab(mTabLayout.newTab().setText("List"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Liste"));
         mTabLayout.addTab(mTabLayout.newTab().setText("Map"));
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
