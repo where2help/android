@@ -54,6 +54,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
+        holder.iconView.setImageResource(R.mipmap.medical);
         holder.titleView.setText(mHelpRequests.get(position).getName());
         holder.dateView.setText(mHelpRequests.get(position).getStart().toString());
         holder.locationView.setText(mHelpRequests.get(position).getLocation().toString());
