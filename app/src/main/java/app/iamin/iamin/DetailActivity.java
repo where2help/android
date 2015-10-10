@@ -1,6 +1,8 @@
 package app.iamin.iamin;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -41,6 +43,15 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         });
 
         mSubmitInfo = (TextView) findViewById(R.id.info);
+        mButtonBar = (LinearLayout) findViewById(R.id.buttonBar);
+
+        mCancelButton = (Button) findViewById(R.id.cancel);
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
+            }
+        });
 
         mSubmitButton = (Button) findViewById(R.id.submit);
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +68,23 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 }
             }
         });
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Wir brauchen dich! Willst du wirklich absagen?");
+        builder.setPositiveButton("Natürlich nicht!", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // FIRE ZE MISSILES!
+            }
+        });
+        builder.setNegativeButton("Ja...", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
