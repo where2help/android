@@ -68,6 +68,22 @@
                         android:text="14:000 - 18:00"
                         android:gravity="center_vertical"
                         android:drawableLeft="@drawable/ic_action_event"/>
+
+                    <TextView
+                        android:id="@+id/distance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="1,2km"
+                        android:gravity="center_vertical"
+                        android:drawableLeft="@drawable/ic_action_map"/>
+
+                    <TextView
+                        android:id="@+id/duration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="mind. 2h"
+                        android:gravity="center_vertical"
+                        android:drawableLeft="@drawable/ic_action_time"/>
                 </LinearLayout>
 
                 <app.iamin.iamin.CountView
@@ -131,13 +147,13 @@
                 android:padding="16dp"
                 android:clickable="true"
                 android:background="?selectableItemBackground"
-                android:drawableLeft="@drawable/ic_action_back"
+                android:drawableLeft="@drawable/ic_action_link"
                 android:text="Mehr Infos: www...."/>
 
             <TextView
                 android:id="@+id/organisation"
                 android:layout_width="match_parent"
-                android:drawableLeft="@drawable/ic_action_back"
+                android:drawableLeft="@drawable/ic_action_people"
                 android:layout_height="48dp"
                 android:padding="16dp"
                 android:clickable="true"
@@ -145,6 +161,4 @@
                 android:text="By: Train of Hope"/>
         </LinearLayout>
     </ScrollView>
-
-
 </FrameLayout>

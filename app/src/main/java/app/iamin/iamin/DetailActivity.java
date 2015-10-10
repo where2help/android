@@ -104,4 +104,32 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 .snippet("The most populous city in Australia.")
                 .position(sydney));
     }
+
+    private String getTitle() {
+        return getIntent().getExtras().getString("title");
+    }
+
+    private String getLocation() {
+        return getIntent().getExtras().getString("location");
+    }
+
+    private String getCount() {
+        return getIntent().getExtras().getString("count");
+    }
+
+    private String getTime() {
+        return getIntent().getExtras().getString("time");
+    }
+
+    private String getDescrition() {
+        return getIntent().getExtras().getString("description");
+    }
+
+    private String getLink() {
+        return getIntent().getExtras().getString("description");
+    }
+
+    private String getOrganistion() {
+        return getIntent().getExtras().getString("description");
+    }
 }
