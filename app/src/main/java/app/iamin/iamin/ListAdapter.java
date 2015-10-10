@@ -2,6 +2,8 @@ package app.iamin.iamin;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +33,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         public TextView titleView;
         public TextView dateView;
         public TextView locationView;
-        public TextView durationView;
-        public TextView distanceView;
         public TextView peopleNeededView;
         public ViewHolder(CardView v) {
             super(v);
@@ -41,8 +41,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             titleView = (TextView) v.findViewById(R.id.item_title);
             dateView = (TextView) v.findViewById(R.id.item_date);
             locationView = (TextView) v.findViewById(R.id.item_location);
-            durationView = (TextView) v.findViewById(R.id.item_duration);
-            distanceView = (TextView) v.findViewById(R.id.item_distance);
             peopleNeededView = (TextView) v.findViewById(R.id.item_people_needed);
         }
     }
@@ -74,8 +72,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         String dString = dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
         holder.dateView.setText(dString);
         int numHours = (int) Math.floor((req.getEnd().getTime() - req.getStart().getTime()) / (1000 * 60 * 60));
-        holder.durationView.setText("mind. " + numHours + "h");
-        holder.peopleNeededView.setText("Es werden noch\n" + req.getStillOpen() + "\ngebraucht");
+        holder.peopleNeededView.setText("Noch\n" + req.getStillOpen() + "\ngebraucht");
     }
 
     @Override
