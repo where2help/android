@@ -1,11 +1,17 @@
 package app.iamin.iamin;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -35,7 +41,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Created by Markus on 10.10.15.
  */
-public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener{
+public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
     private LinearLayout mButtonBar;
     private Button mSubmitButton;
@@ -45,6 +51,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private TextView mTitle;
     private TextView mAddress;
+    private TextView mDistance;
     private TextView mDate;
     private TextView mWeb;
 
@@ -78,6 +85,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
         mAddress = (TextView) findViewById(R.id.address);
         mAddress.setText(getAddress());
+
+        mDistance = (TextView) findViewById(R.id.distance);
+        mDistance.setText(getDistance());
 
         mDate = (TextView) findViewById(R.id.date);
         mDate.setText(getDate());
@@ -119,7 +129,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         dialog.show();
     }
 
-    private void addToCalendar(){
+    private void addToCalendar() {
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setType("vnd.android.cursor.item/event")
                 .putExtra("beginTime", getDateStart())
@@ -169,6 +179,55 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private String getAddress() {
         return getIntent().getExtras().getString("address");
+    }
+
+    private String getDistance() {
+        LatLng event = getLocation();
+        Location loc = getLastBestLocation();
+        if (loc == null) {
+            return "in deiner Nähe";
+        }
+        LatLng me = new LatLng(loc.getLatitude(), loc.getLongitude());
+        double kilometers = distance(event, me) / 1000.0;
+        return String.format("%.1f km", kilometers);
+    }
+
+    public static double distance(LatLng StartP, LatLng EndP) {
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon/2) * Math.sin(dLon/2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        return 6366000 * c;
+    }
+
+    private Location getLastBestLocation() {
+
+        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location locationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location locationNet = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        long GPSLocationTime = 0;
+        if (null != locationGPS) { GPSLocationTime = locationGPS.getTime(); }
+
+        long NetLocationTime = 0;
+
+        if (null != locationNet) {
+            NetLocationTime = locationNet.getTime();
+        }
+
+        if ( 0 < GPSLocationTime - NetLocationTime ) {
+            return locationGPS;
+        }
+        else {
+            return locationNet;
+        }
+
     }
 
     private int getStillOpen() {
