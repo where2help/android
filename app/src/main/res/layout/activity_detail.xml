@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="56dp"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?actionBarSize">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,13 +25,12 @@
             android:paddingBottom="16dp">
 
             <!--Ignore map:liteMode warning-->
-            <fragment
-                xmlns:map="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
+            <FrameLayout
                 android:id="@+id/map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                map:liteMode="true"/>
+                android:layout_width="match_parent"
+                android:background="#ddd"
+                android:layout_height="200dp">
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -176,4 +174,4 @@
                 android:text="By: Train of Hope" />
         </LinearLayout>
     </ScrollView>
-</FrameLayout>
+</LinearLayout>
