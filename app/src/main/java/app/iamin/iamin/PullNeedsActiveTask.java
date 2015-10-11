@@ -141,6 +141,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
+                .addHeader("Content-Type", "application/vnd.api+json")
                 .url(new URL("http://where2help.informatom.com/api/v1/sessions/create"))
                 .post(body)
                 .build();
