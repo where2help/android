@@ -38,6 +38,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private TextView mTitle;
     private TextView mAddress;
     private TextView mDistance;
+    private TextView mDuration;
     private TextView mDate;
     private TextView mWeb;
 
@@ -74,6 +75,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
         mDistance = (TextView) findViewById(R.id.distance);
         mDistance.setText(getDistance());
+
+        mDuration = (TextView) findViewById(R.id.duration);
+        mDuration.setText(getDuration());
 
         mDate = (TextView) findViewById(R.id.date);
         mDate.setText(getDate());
@@ -177,6 +181,11 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         LatLng me = new LatLng(loc.getLatitude(), loc.getLongitude());
         double kilometers = distance(event, me) / 1000.0;
         return String.format("%.1f km", kilometers);
+    }
+
+    private String getDuration() {
+        long diffHours = (getDateEnd() - getDateStart()) / (1000l * 60l * 60l);
+        return "mind " + diffHours + " h";
     }
 
     public static double distance(LatLng StartP, LatLng EndP) {
