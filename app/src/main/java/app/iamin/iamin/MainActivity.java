@@ -45,10 +45,9 @@ public class MainActivity extends AppCompatActivity {
         // specify an adapter (see also next example)
         mAdapter = new ListAdapter(this, needs);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new MainActivity.SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_spacing)));
+        //mRecyclerView.addItemDecoration(new MainActivity.SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_spacing)));
 
     }
-
 
 
     private class SpacesItemDecoration extends RecyclerView.ItemDecoration {
