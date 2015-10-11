@@ -31,13 +31,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            new PullNeedsActiveTask(new URL("http://192.168.0.4:3000/data"), this).execute();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            // TODO
-        }
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Freiwillige vor!");
 

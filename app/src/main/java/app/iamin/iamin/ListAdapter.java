@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -78,6 +80,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         mContext = context;
         mHelpRequests = helpRequests;
         setHasStableIds(true);
+
+        try {
+            new PullNeedsActiveTask(new URL("http://www.mocky.io/v2/561a142d100000881568d551"), this).execute();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            // TODO
+        }
     }
 
     @Override
@@ -105,5 +114,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return mHelpRequests == null ? 0 : mHelpRequests.length;
+    }
+
+    public void setData(HelpRequest[] needs) {
+        mHelpRequests = needs;
+        this.notifyDataSetChanged();
     }
 }
