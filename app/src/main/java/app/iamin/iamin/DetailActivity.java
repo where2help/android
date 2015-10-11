@@ -1,24 +1,16 @@
 package app.iamin.iamin;
 
-import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telephony.TelephonyManager;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -31,12 +23,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.net.URL;
-import java.util.Calendar;
-import java.util.regex.Pattern;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by Markus on 10.10.15.
@@ -97,6 +83,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         mWeb.setOnClickListener(this);
 
         mSubmitInfo = (TextView) findViewById(R.id.info);
+        mSubmitInfo.setText("Bitte komm um " + getDateStartForm() + "!");
         mButtonBar = (LinearLayout) findViewById(R.id.buttonBar);
 
         mAddButton = (Button) findViewById(R.id.add);
@@ -144,9 +131,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     public void onActionShare() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + getStillOpen() + " " +
-                getType() + " am " + getDate() + " für " + "mind. 2h" + " am " + getAddress() + ".");
         sendIntent.setType("text/plain");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + getStillOpen() + " " +
+                getType() + " am " + getDate() + " für " + "mind. 2h" + " am " + getAddress() + ". (" + getSelfLink() + ")");
         startActivity(sendIntent);
     }
 
@@ -197,7 +184,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         double lat2 = EndP.latitude;
         double lon1 = StartP.longitude;
         double lon2 = EndP.longitude;
-        double dLat = Math.toRadians(lat2-lat1);
+        double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
         double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                 Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
@@ -238,12 +225,20 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         return getIntent().getExtras().getString("date");
     }
 
+    private String getDateStartForm() {
+        return getIntent().getExtras().getString("dateStartForm");
+    }
+
     private long getDateStart() {
         return getIntent().getExtras().getLong("dateStart");
     }
 
     private long getDateEnd() {
         return getIntent().getExtras().getLong("dateEnd");
+    }
+
+    private String getSelfLink() {
+        return getIntent().getExtras().getString("selfLink");
     }
 
     @Override
