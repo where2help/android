@@ -5,8 +5,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 
-import com.google.gson.Gson;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

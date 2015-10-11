@@ -45,7 +45,7 @@ public class HelpRequest {
 
     }
 
-    public String getName() {
+    public String getType() {
         switch(this.mType) {
             case DOCTOR: return "Ärzte";
             case LAWYER: return "Rechtsberater";

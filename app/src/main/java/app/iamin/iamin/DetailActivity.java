@@ -2,8 +2,8 @@ package app.iamin.iamin;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +18,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.Calendar;
 
 /**
  * Created by Markus on 10.10.15.
@@ -36,7 +33,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private TextView mSubmitInfo;
 
     private TextView mTitle;
-    private TextView mAdress;
+    private TextView mAddress;
+    private TextView mDate;
+    private TextView mWeb;
 
     private CountView mCountView;
 
@@ -45,7 +44,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         setContentView(R.layout.activity_detail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getName() + " - " + getAddress());
+        toolbar.setTitle(getType() + " - " + getAddress());
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,10 +52,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 finish();
             }
         });
-
-/*        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);*/
 
         GoogleMapOptions options = new GoogleMapOptions().liteMode(true);
 
@@ -68,10 +63,17 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         ft.commit();
 
         mTitle = (TextView) findViewById(R.id.title);
-        mTitle.setText(getName());
+        mTitle.setText(getType());
 
-        mAdress = (TextView) findViewById(R.id.address);
-        mAdress.setText(getAddress());
+        mAddress = (TextView) findViewById(R.id.address);
+        mAddress.setText(getAddress());
+
+        mDate = (TextView) findViewById(R.id.date);
+        mDate.setText(getDate());
+
+        mWeb = (TextView) findViewById(R.id.web);
+        mWeb.setText("www.google.at");
+        mWeb.setOnClickListener(this);
 
         mSubmitInfo = (TextView) findViewById(R.id.info);
         mButtonBar = (LinearLayout) findViewById(R.id.buttonBar);
@@ -86,7 +88,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         mSubmitButton.setOnClickListener(this);
 
         mCountView = (CountView) findViewById(R.id.count);
-        mCountView.setCount(2);
+        mCountView.setCount(getStillOpen());
     }
 
     private void showDialog() {
@@ -107,18 +109,30 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void addToCalendar(){
-        Calendar beginTime = Calendar.getInstance();
-        beginTime.set(2012, 0, 19, 7, 30);
-        Calendar endTime = Calendar.getInstance();
-        endTime.set(2012, 0, 19, 8, 30);
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setType("vnd.android.cursor.item/event")
-                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis())
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTimeInMillis())
-                .putExtra(CalendarContract.Events.TITLE, "Where2Help - " + getName())
-                .putExtra(CalendarContract.Events.DESCRIPTION, "Group class")
-                .putExtra(CalendarContract.Events.EVENT_LOCATION, "The gym");
+                .putExtra("beginTime", getDateStart())
+                .putExtra("endTime", getDateEnd())
+                .putExtra("allDay", false)
+                .putExtra("title", "Where2Help - " + getType())
+                .putExtra("description", "Where2Help - " + getType() + " für " + "mind. 2h.")
+                .putExtra("eventLocation", getAddress());
         startActivity(intent);
+    }
+
+    public void onActionShare() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + getStillOpen() + " " +
+                getType() + " am " + getDate() + " für " + "mind. 2h" + " am " + getAddress() + ".");
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
+
+    private void openInBrowser(String url) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     @Override
@@ -135,20 +149,28 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 .position(sydney));
     }
 
-    private String getName() {
-        return getIntent().getExtras().getString("name");
+    private String getType() {
+        return getIntent().getExtras().getString("type");
     }
 
     private String getAddress() {
         return getIntent().getExtras().getString("address");
     }
 
-    private String getCount() {
-        return getIntent().getExtras().getString("count");
+    private int getStillOpen() {
+        return getIntent().getExtras().getInt("stillOpen");
     }
 
-    private String getTime() {
-        return getIntent().getExtras().getString("time");
+    private String getDate() {
+        return getIntent().getExtras().getString("date");
+    }
+
+    private long getDateStart() {
+        return getIntent().getExtras().getLong("dateStart");
+    }
+
+    private long getDateEnd() {
+        return getIntent().getExtras().getLong("dateEnd");
     }
 
     @Override
@@ -161,9 +183,10 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                     mButtonBar.setVisibility(View.VISIBLE);
                     mSubmitButton.setText("Weitersagen!");
                 } else {
-                    mSubmitButton.setText("I'm in!");
+                    onActionShare();
+/*                    mSubmitButton.setText("I'm in!");
                     mSubmitInfo.setVisibility(View.GONE);
-                    mButtonBar.setVisibility(View.GONE);
+                    mButtonBar.setVisibility(View.GONE);*/
                 }
                 break;
             case R.id.cancel:
@@ -171,6 +194,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 break;
             case R.id.add:
                 addToCalendar();
+                break;
+            case R.id.web:
+                openInBrowser("http://" + mWeb.getText().toString());
                 break;
         }
     }

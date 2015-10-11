@@ -35,7 +35,15 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             Intent intent = new Intent();
             intent.setClass(mContext, DetailActivity.class);
             intent.putExtra("address", req.getAddress().getFeatureName());
-            intent.putExtra("name", req.getName());
+            intent.putExtra("type", req.getType());
+            intent.putExtra("stillOpen", req.getStillOpen());
+
+            DateFormat dtfStart = new SimpleDateFormat("d. M H:m");
+            DateFormat dtfEnd = new SimpleDateFormat("H:m");
+            String date = dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
+            intent.putExtra("date", date);
+            intent.putExtra("dateStart", req.getStart().getTime());
+            intent.putExtra("dateEnd", req.getEnd().getTime());
 
             mContext.startActivity(intent);
         }
@@ -102,7 +110,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         holder.iconView.setImageResource(R.mipmap.ic_medical);
         holder.locationView.setText(req.getAddress().getFeatureName());
-        holder.titleView.setText(req.getName());
+        holder.titleView.setText(req.getType());
         DateFormat dtfStart = new SimpleDateFormat("d. M H:m");
         DateFormat dtfEnd = new SimpleDateFormat("H:m");
         String dString = dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
