@@ -1,5 +1,8 @@
 package app.iamin.iamin;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,6 +11,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -20,6 +25,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.Calendar;
+import java.util.regex.Pattern;
 
 /**
  * Created by Markus on 10.10.15.
@@ -179,6 +187,11 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             default: break;
             case R.id.submit:
                 if (mSubmitInfo.getVisibility() != View.VISIBLE) {
+                    mSubmitButton.setText("Registriere...");
+                    mSubmitButton.setEnabled(false);
+                    // call rest
+                    registerForEvent();
+                    mSubmitButton.setEnabled(true);
                     mSubmitInfo.setVisibility(View.VISIBLE);
                     mButtonBar.setVisibility(View.VISIBLE);
                     mSubmitButton.setText("Weitersagen!");
@@ -199,5 +212,22 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 openInBrowser("http://" + mWeb.getText().toString());
                 break;
         }
+    }
+
+    private void registerForEvent() {
+        // get phone number
+        TelephonyManager tMgr = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+        String phoneNumber = tMgr.getLine1Number();
+        // get email
+        String email = null;
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+        Account[] accounts = AccountManager.get(this).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                email = account.name;
+                break;
+            }
+        }
+        System.out.println("Email: " + email + ", phone: "+ phoneNumber);
     }
 }

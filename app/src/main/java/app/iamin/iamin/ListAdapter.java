@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Paul on 10-10-2015.
@@ -91,7 +92,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         setHasStableIds(true);
 
         try {
-            new PullNeedsActiveTask(context, new URL("http://www.mocky.io/v2/561a142d100000881568d551"), this).execute();
+            new PullNeedsActiveTask(context, new URL("http://where2help.informatom.com/api/v1/needs.json"), this).execute();
         } catch (MalformedURLException e) {
             e.printStackTrace();
             // TODO
@@ -110,11 +111,18 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         HelpRequest req = mHelpRequests[position];
 
         holder.iconView.setImageResource(R.mipmap.ic_medical);
-        holder.locationView.setText(req.getAddress().getFeatureName());
+        holder.locationView.setText(req.getAddress().getAddressLine(0));
         holder.titleView.setText(req.getType());
-        DateFormat dtfStart = new SimpleDateFormat("d. M H:m");
+        DateFormat dtfStart = new SimpleDateFormat("H:m");
         DateFormat dtfEnd = new SimpleDateFormat("H:m");
-        String dString = dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
+        Date today = new Date();
+        today.setHours(23);
+        today.setMinutes(59);
+        String dayStr = "Morgen";
+        if (req.getStart().compareTo(today) < 0) {
+            dayStr = "Heute";
+        }
+        String dString = dayStr + " " + dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
         holder.dateView.setText(dString);
         int numHours = (int) Math.floor((req.getEnd().getTime() - req.getStart().getTime()) / (1000 * 60 * 60));
         holder.peopleNeededView.setText(req.getStillOpen() + "");

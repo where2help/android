@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 
@@ -56,6 +57,8 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         } catch (IOException e) {
             e.printStackTrace(); // TODO
         } catch (JSONException e) {
+            e.printStackTrace(); // TODO
+        } catch (ParseException e) {
             e.printStackTrace(); // TODO
         }
 

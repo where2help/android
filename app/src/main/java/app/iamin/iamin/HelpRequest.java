@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -75,12 +77,15 @@ public class HelpRequest {
         }
     }
 
-    public void fromJSON(JSONObject obj, Geocoder coder) throws JSONException, IOException {
+    public void fromJSON(JSONObject obj, Geocoder coder) throws JSONException, IOException, ParseException {
         JSONObject attrs = obj.getJSONObject("attributes");
         setType(attrs.getString("category"));
         setId(obj.getInt("id"));
-        setStart(new Date(obj.getString("start-time")));
-        setEnd(new Date(obj.getString("end-time")));
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        setStart(simpleDateFormat.parse(attrs.getString("start-time")));
+        setEnd(simpleDateFormat.parse(attrs.getString("end-time")));
         List<Address> addresses = coder.getFromLocationName(attrs.getString("city") + " " + attrs.getString("location"), 1);
         if (addresses.size() > 0) {
             setAddress(addresses.get(0));
