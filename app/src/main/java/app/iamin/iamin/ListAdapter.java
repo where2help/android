@@ -40,9 +40,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
             Intent intent = new Intent();
             intent.setClass(mContext, DetailActivity.class);
-            intent.putExtra("address", req.getAddress().getFeatureName());
+            intent.putExtra("address", req.getAddress().getAddressLine(0));
             intent.putExtra("type", req.getType());
             intent.putExtra("stillOpen", req.getStillOpen());
+            intent.putExtra("longitude", req.getAddress().getLongitude());
+            intent.putExtra("latitude", req.getAddress().getLatitude());
 
             DateFormat dtfStart = new SimpleDateFormat("d. M H:m");
             DateFormat dtfEnd = new SimpleDateFormat("H:m");

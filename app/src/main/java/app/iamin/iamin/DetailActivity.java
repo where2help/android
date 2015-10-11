@@ -149,15 +149,18 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap map) {
         map.getUiSettings().setMapToolbarEnabled(false);
-        LatLng sydney = new LatLng(-33.867, 151.206);
+        LatLng sydney = getLocation();
 
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
 
         map.addMarker(new MarkerOptions()
-                .title("Sydney")
-                .snippet("The most populous city in Australia.")
+                .title(getAddress())
                 .position(sydney));
+    }
+
+    private LatLng getLocation() {
+        return new LatLng(getIntent().getExtras().getDouble("latitude"), getIntent().getExtras().getDouble("longitude"));
     }
 
     private String getType() {
