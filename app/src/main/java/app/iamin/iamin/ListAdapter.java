@@ -2,6 +2,7 @@ package app.iamin.iamin;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,6 +25,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     private Context mContext;
     private HelpRequest[] mHelpRequests;
+
+    private int firstColor;
+    private int secondColor;
 
     public interface ItemClickListener {
         void onItemClick(View view, int position);
@@ -88,6 +92,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     public ListAdapter(Context context, HelpRequest[] helpRequests) {
         mContext = context;
+        firstColor = context.getResources().getColor(R.color.windowBackground);
+        secondColor = context.getResources().getColor(R.color.windowBackgroundLight);
         mHelpRequests = helpRequests;
         setHasStableIds(true);
 
@@ -108,6 +114,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
+
+        if (position % 2 == 0) {
+            holder.cardView.setBackgroundColor(firstColor);
+        } else {
+            holder.cardView.setBackgroundColor(secondColor);
+        }
         HelpRequest req = mHelpRequests[position];
 
         holder.iconView.setImageResource(R.mipmap.ic_medical);

@@ -62,7 +62,6 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         try {
             registerUser();
 
-
             InputStream is = this.url.openStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             JSONObject root = loadJSON();
