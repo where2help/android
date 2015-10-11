@@ -102,7 +102,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         setHasStableIds(true);
 
         try {
-            new PullNeedsActiveTask(context, new URL("http://where2help.informatom.com/api/v1/needs.json"), this).execute();
+            new PullNeedsActiveTask(context, new URL("http://where2help.herokuapp.com/api/v1/needs.json"), this).execute();
         } catch (MalformedURLException e) {
             e.printStackTrace();
             // TODO

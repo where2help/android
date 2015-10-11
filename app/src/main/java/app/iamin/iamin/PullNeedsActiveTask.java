@@ -142,7 +142,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .addHeader("Content-Type", "application/json")
-                .url(new URL("http://where2help.informatom.com/api/v1/sessions/create"))
+                .url(new URL("http://where2help.herokuapp.com/api/v1/sessions/create"))
                 .post(body)
                 .build();
         Response response = client.newCall(request).execute();
