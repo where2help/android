@@ -26,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.net.URL;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
@@ -217,30 +218,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void registerForEvent() {
-        // get phone number
-        TelephonyManager tMgr = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
-        String phoneNumber = tMgr.getLine1Number();
-        // get email
-        String email = null;
-        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
-        Account[] accounts = AccountManager.get(this).getAccounts();
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                email = account.name;
-                break;
-            }
-        }
-
-        URL url = new URL("http://where2help.informatom.com/api/v1/needs.json")
-        HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
-        https.setHostnameVerifier(DO_NOT_VERIFY);
-        http = https;
-        http.setRequestMethod("POST");
-        http.setDoInput(true);
-        http.setDoOutput(true);
-        HttpClient xx;
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("http://www.yoursite.com/script.php");
-        System.out.println("Email: " + email + ", phone: "+ phoneNumber);
+        // TODO
     }
 }

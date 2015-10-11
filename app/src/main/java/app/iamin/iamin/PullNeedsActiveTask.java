@@ -1,9 +1,20 @@
 package app.iamin.iamin;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.telephony.TelephonyManager;
+import android.util.Patterns;
+
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,11 +25,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Pattern;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by paul on 10/10/2015.
@@ -28,11 +45,13 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
     private URL url;
     private ListAdapter adapter;
     private Geocoder coder;
+    private Context context;
 
     public PullNeedsActiveTask(Context context, URL url, ListAdapter adapter) {
         this.url = url;
         this.adapter = adapter;
         this.coder = new Geocoder(context);
+        this.context = context;
     }
 
     @Override
@@ -41,6 +60,9 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         HelpRequest[] needs = null;
 
         try {
+            registerUser();
+
+
             InputStream is = this.url.openStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             JSONObject root = loadJSON();
@@ -89,5 +111,44 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
             sb.append((char) cp);
         }
         return sb.toString();
+    }
+
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
+
+    private void registerUser() throws IOException {
+        SharedPreferences settings;
+        settings = context.getSharedPreferences("IAMIN", 0);
+        if (settings.contains("token")) {
+            return;
+        }
+
+        // get phone number
+        TelephonyManager tMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+        String phoneNumber = tMgr.getLine1Number();
+        // get email
+        String email = null;
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+        Account[] accounts = AccountManager.get(context).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                email = account.name;
+                break;
+            }
+        }
+
+        String json = "{ \"email\": \"" + email + "\", \"phone\":\"" + phoneNumber + "\"}";
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(new URL("http://where2help.informatom.com/api/v1/sessions/create"))
+                .post(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        String respJSON = response.body().string();
+
+        System.out.println("response to session: " + respJSON);
+
     }
 }
