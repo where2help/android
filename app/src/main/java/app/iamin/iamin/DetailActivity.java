@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * Created by Markus on 10.10.15.
  */
@@ -228,6 +230,17 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 break;
             }
         }
+
+        URL url = new URL("http://where2help.informatom.com/api/v1/needs.json")
+        HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+        https.setHostnameVerifier(DO_NOT_VERIFY);
+        http = https;
+        http.setRequestMethod("POST");
+        http.setDoInput(true);
+        http.setDoOutput(true);
+        HttpClient xx;
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("http://www.yoursite.com/script.php");
         System.out.println("Email: " + email + ", phone: "+ phoneNumber);
     }
 }
