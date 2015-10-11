@@ -58,6 +58,10 @@ public class HelpRequest {
         return null;
     }
 
+    public TYPE getTypeEnum() {
+        return this.mType;
+    }
+
     public int getId() { return id; }
     public Date getStart() { return mStart; }
     public Date getEnd() { return mEnd; }

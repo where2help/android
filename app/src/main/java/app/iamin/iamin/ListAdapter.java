@@ -125,7 +125,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
         HelpRequest req = mHelpRequests[position];
 
-        holder.iconView.setImageResource(R.mipmap.ic_medical); // TODO: Choose on type
+        switch (req.getTypeEnum()) {
+            case DOCTOR:  holder.iconView.setImageResource(R.mipmap.ic_medical); break;
+            case LAWYER: holder.iconView.setImageResource(R.mipmap.ic_legal); break;
+            case INTERPRETER: holder.iconView.setImageResource(R.mipmap.ic_interpretor); break;
+            default: holder.iconView.setImageResource(R.mipmap.ic_volunteer); break;
+        }
         holder.locationView.setText(req.getAddress().getAddressLine(0));
         holder.titleView.setText(req.getType());
         DateFormat dtfStart = new SimpleDateFormat("H:m");
