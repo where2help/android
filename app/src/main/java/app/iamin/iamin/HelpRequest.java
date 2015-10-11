@@ -33,6 +33,7 @@ public class HelpRequest {
     private Date mEnd = new Date();
     private Address mAddress = new Address(Locale.GERMAN);
     private int mStillOpen = 0;
+    private String selfLink;
 
     private static Map<String, TYPE> TYPE_NAMES;
     static {
@@ -62,6 +63,7 @@ public class HelpRequest {
     public Date getEnd() { return mEnd; }
     public Address getAddress() { return mAddress; }
     public int getStillOpen() { return mStillOpen; }
+    public String getSelfLink() { return selfLink; }
 
     public void setId(int id) { this.id = id; }
     public void setStart(Date start) { mStart = start;}
@@ -76,6 +78,7 @@ public class HelpRequest {
             this.mType = TYPE.VOLUNTEER;
         }
     }
+    public void setSelfLink(String selfLink) { this.selfLink = selfLink; }
 
     public void fromJSON(JSONObject obj, Geocoder coder) throws JSONException, IOException, ParseException {
         JSONObject attrs = obj.getJSONObject("attributes");
@@ -95,5 +98,6 @@ public class HelpRequest {
             setAddress(address);
         }
         setStillOpen(attrs.getInt("volunteers-needed"));
+        setSelfLink(obj.getJSONObject("links").getString("self"));
     }
 }
