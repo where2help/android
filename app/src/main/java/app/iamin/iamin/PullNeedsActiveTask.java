@@ -60,7 +60,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         HelpRequest[] needs = null;
 
         try {
-            registerUser();
+            //registerUser();
 
             InputStream is = this.url.openStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -116,7 +116,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
             = MediaType.parse("application/json; charset=utf-8");
 
     private void registerUser() throws IOException {
-        SharedPreferences settings;
+        /*SharedPreferences settings;
         settings = context.getSharedPreferences("IAMIN", 0);
         if (settings.contains("token")) {
             return;
@@ -148,7 +148,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         Response response = client.newCall(request).execute();
         String respJSON = response.body().string();
 
-        System.out.println("response to session: " + respJSON);
+        System.out.println("response to session: " + respJSON);*/
 
     }
 }

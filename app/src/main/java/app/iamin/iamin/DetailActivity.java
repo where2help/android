@@ -1,5 +1,7 @@
 package app.iamin.iamin;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,10 +13,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +27,19 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 /**
  * Created by Markus on 10.10.15.
@@ -258,12 +275,18 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 if (mSubmitInfo.getVisibility() != View.VISIBLE) {
                     mSubmitButton.setText("Registriere...");
                     mSubmitButton.setEnabled(false);
-                    // call rest
-                    registerForEvent();
-                    mSubmitButton.setEnabled(true);
-                    mSubmitInfo.setVisibility(View.VISIBLE);
-                    mButtonBar.setVisibility(View.VISIBLE);
-                    mSubmitButton.setText("Weitersagen!");
+
+                    String email = null;
+                    Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+                    Account[] accounts = AccountManager.get(this).getAccounts();
+                    for (Account account : accounts) {
+                        if (emailPattern.matcher(account.name).matches()) {
+                            email = account.name;
+                            break;
+                        }
+                    }
+
+                    new RegisterTask(this, getIntent().getExtras().getInt("id"), email).execute();
                 } else {
                     onActionShare();
 /*                    mSubmitButton.setText("I'm in!");
@@ -283,7 +306,15 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    private void registerForEvent() {
-        // TODO
+    public void registerSuccess() {
+        mCountView.setCount(getStillOpen() - 1); // TODO: cheat ! ;-)
+
+        mSubmitInfo.setVisibility(View.VISIBLE);
+        mButtonBar.setVisibility(View.VISIBLE);
+        mSubmitButton.setEnabled(true);
+        mSubmitInfo.setVisibility(View.VISIBLE);
+        mButtonBar.setVisibility(View.VISIBLE);
+        mSubmitButton.setText("Weitersagen!");
     }
+
 }
