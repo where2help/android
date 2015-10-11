@@ -1,9 +1,15 @@
 package app.iamin.iamin;
 
 import android.location.Address;
+import android.location.Geocoder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -30,18 +36,13 @@ public class HelpRequest {
     static {
         TYPE_NAMES = new HashMap<String, TYPE>();
         TYPE_NAMES.put("general", TYPE.VOLUNTEER);
+        TYPE_NAMES.put("legal", TYPE.LAWYER);
+        TYPE_NAMES.put("medical", TYPE.DOCTOR);
+        TYPE_NAMES.put("translation", TYPE.INTERPRETER);
     }
 
-    public HelpRequest(String type) {
-        if (HelpRequest.TYPE_NAMES.containsKey(type)) {
-            this.mType = HelpRequest.TYPE_NAMES.get(type);
-        } else {
-            this.mType = TYPE.VOLUNTEER;
-        }
-    }
+    public HelpRequest() {
 
-    public HelpRequest(TYPE type) {
-        this.mType = type;
     }
 
     public String getName() {
@@ -65,4 +66,29 @@ public class HelpRequest {
     public void setEnd(Date end) { mEnd = end; }
     public void setAddress(Address addr) { mAddress = addr; }
     public void setStillOpen(int stillOpen) { mStillOpen = stillOpen; }
+    public void setType(TYPE type) { this.mType = type; }
+    public void setType(String type) {
+        if (HelpRequest.TYPE_NAMES.containsKey(type)) {
+            this.mType = HelpRequest.TYPE_NAMES.get(type);
+        } else {
+            this.mType = TYPE.VOLUNTEER;
+        }
+    }
+
+    public void fromJSON(JSONObject obj, Geocoder coder) throws JSONException, IOException {
+        JSONObject attrs = obj.getJSONObject("attributes");
+        setType(attrs.getString("category"));
+        setId(obj.getInt("id"));
+        setStart(new Date(obj.getString("start-time")));
+        setEnd(new Date(obj.getString("end-time")));
+        List<Address> addresses = coder.getFromLocationName(attrs.getString("city") + " " + attrs.getString("location"), 1);
+        if (addresses.size() > 0) {
+            setAddress(addresses.get(0));
+        } else {
+            Address address = new Address(Locale.GERMAN);
+            address.setAddressLine(0, attrs.getString("city") + " " + attrs.getString("location"));
+            setAddress(address);
+        }
+        setStillOpen(attrs.getInt("volunteers-needed"));
+    }
 }

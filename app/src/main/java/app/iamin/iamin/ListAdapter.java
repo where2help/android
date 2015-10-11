@@ -82,7 +82,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         setHasStableIds(true);
 
         try {
-            new PullNeedsActiveTask(new URL("http://www.mocky.io/v2/561a142d100000881568d551"), this).execute();
+            new PullNeedsActiveTask(context, new URL("http://www.mocky.io/v2/561a142d100000881568d551"), this).execute();
         } catch (MalformedURLException e) {
             e.printStackTrace();
             // TODO
