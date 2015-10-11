@@ -2,8 +2,6 @@ package app.iamin.iamin;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -126,7 +124,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
         HelpRequest req = mHelpRequests[position];
 
-        holder.iconView.setImageResource(R.mipmap.ic_medical);
+        holder.iconView.setImageResource(R.mipmap.ic_medical); // TODO: Choose on type
         holder.locationView.setText(req.getAddress().getAddressLine(0));
         holder.titleView.setText(req.getType());
         DateFormat dtfStart = new SimpleDateFormat("H:m");

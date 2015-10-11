@@ -136,8 +136,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.setType("text/plain");
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + getStillOpen() + " " +
-                getType() + " am " + getDate() + " für " + "mind. 2h" + " am " + getAddress() + ". (" + getSelfLink() + ")");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " +
+                getType() + " (" + getStillOpen() + ") am " + getDate() + " für " + "mind. 2h" + " am " + getAddress() + ". (" + getSelfLink() + ")");
         startActivity(sendIntent);
     }
 

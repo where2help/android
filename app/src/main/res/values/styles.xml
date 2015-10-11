@@ -11,4 +11,8 @@
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
+
+    <style name="AppThemeLight" parent="AppTheme">
+        <item name="android:windowBackground">@color/windowBackgroundLight</item>
+    </style>
 </resources>
