@@ -3,7 +3,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -24,13 +25,14 @@
             android:orientation="vertical"
             android:paddingBottom="16dp">
 
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+            <!--Ignore map:liteMode warning-->
+            <fragment
+                xmlns:map="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:id="@+id/map"
-                tools:context=".MapsActivity"
-                android:name="com.google.android.gms.maps.SupportMapFragment" />
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                map:liteMode="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -112,6 +112,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public void onMapReady(GoogleMap map) {
+        map.getUiSettings().setMapToolbarEnabled(false);
         LatLng sydney = new LatLng(-33.867, 151.206);
 
         map.setMyLocationEnabled(true);
