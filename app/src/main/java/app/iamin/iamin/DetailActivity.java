@@ -97,9 +97,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
         submitInfoTextView = (TextView) findViewById(R.id.info);
         submitInfoTextView.setText("Bitte komm um " + getDateStartForm() + "!");
-        btnBarLayout = (LinearLayout) findViewById(R.id.buttonBar);
+        btnBarLayout = (LinearLayout) findViewById(R.id.btnBar);
 
-        calendarButton = (Button) findViewById(R.id.add);
+        calendarButton = (Button) findViewById(R.id.calendar);
         calendarButton.setOnClickListener(this);
 
         cancelButton = (Button) findViewById(R.id.cancel);
@@ -321,7 +321,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             case R.id.cancel:
                 showDialog();
                 break;
-            case R.id.add:
+            case R.id.calendar:
                 addToCalendar();
                 break;
             case R.id.web:
