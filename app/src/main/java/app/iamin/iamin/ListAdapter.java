@@ -3,6 +3,7 @@ package app.iamin.iamin;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,10 +119,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
-
         HelpRequest req = mHelpRequests[position];
 
-        holder.cardView.setBackgroundColor(position % 2 == 0 ? firstColor : secondColor);
+        holder.cardView.setBackgroundColor((position % 2) == 0 ? firstColor : secondColor);
         holder.iconView.setImageResource(req.getTypeIcon());
         holder.locationView.setText(req.getAddress().getAddressLine(0));
         holder.titleView.setText(req.getType());
@@ -144,6 +144,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return mHelpRequests == null ? 0 : mHelpRequests.length;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     public void setData(HelpRequest[] needs) {
