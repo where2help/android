@@ -29,82 +29,85 @@
                 android:id="@+id/map"
                 android:layout_width="match_parent"
                 android:background="#ddd"
-                android:layout_height="200dp">
+                android:layout_height="168dp">
             </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="8dp">
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingRight="16dp">
 
                 <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:id="@+id/icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:scaleType="fitCenter"
                     android:src="@mipmap/ic_medical" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:id="@+id/title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="8dp"
-                        android:text="Title"
-                        android:textAppearance="?android:textAppearanceLarge" />
-
-                    <TextView
-                        android:id="@+id/address"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_action_place"
-                        android:gravity="center_vertical"
-                        android:text="Bahnhof Wien" />
-
-
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_action_event"
-                        android:gravity="center_vertical"
-                        android:text="14:000 - 18:00" />
-
-                    <TextView
-                        android:id="@+id/distance"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_action_map"
-                        android:gravity="center_vertical"
-                        android:text="1,2km" />
-
-                    <TextView
-                        android:id="@+id/duration"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_action_time"
-                        android:gravity="center_vertical"
-                        android:text="mind. 2h" />
-                </LinearLayout>
-
-                <app.iamin.iamin.CountView
+                <TextView
                     android:id="@+id/count"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:background="@drawable/bg_count" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:lines="1"
+                    android:paddingLeft="16dp"
+                    android:text="1"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/text_count"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:lines="1"
+                    android:text="Dummy Text"
+                    android:paddingLeft="8dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textSize="@dimen/text_title" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="34dp"
+                android:layout_marginTop="8dp"
+                android:drawableLeft="@drawable/ic_action_place"
+                android:drawablePadding="16dp"
+                android:padding="4dp"
+                android:gravity="center_vertical"
+                android:text="Dummy Text"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/text_subhead" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="34dp"
+                android:padding="4dp"
+                android:drawableLeft="@drawable/ic_action_event"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:text="Dummy Text"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/text_subhead" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingTop="4dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp">
 
                 <TextView
                     android:id="@+id/info"
@@ -112,10 +115,15 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:text="Danke! Komm bitte um 14:00!"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="56dp"
+                    android:textSize="@dimen/text_subhead"
+                    android:textColor="@color/colorPrimary"
                     android:visibility="gone" />
 
                 <Button
                     android:id="@+id/submit"
+                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="I'm in!" />
@@ -146,7 +154,9 @@
                 android:id="@+id/desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp"
                 android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum." />
 
             <TextView
@@ -155,11 +165,12 @@
                 android:layout_height="48dp"
                 android:background="?selectableItemBackground"
                 android:clickable="true"
-                android:drawableLeft="@drawable/ic_action_link"
-                android:drawablePadding="16dp"
-                android:gravity="center_vertical"
                 android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:drawableLeft="@drawable/ic_action_link"
+                android:drawablePadding="24dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/text_subhead"
                 android:text="Mehr Infos: www...." />
 
             <TextView
@@ -167,10 +178,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:paddingLeft="16dp"
-                android:paddingRight="16dp"
                 android:drawableLeft="@drawable/ic_action_people"
-                android:drawablePadding="16dp"
+                android:drawablePadding="24dp"
                 android:gravity="center_vertical"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/text_subhead"
                 android:text="By: Train of Hope" />
         </LinearLayout>
     </ScrollView>

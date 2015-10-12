@@ -42,13 +42,11 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private TextView titleTextView;
     private TextView addressTextView;
-    private TextView distanceTextView;
-    private TextView durationTextView;
     private TextView dateTextView;
     private TextView submitInfoTextView;
     private TextView webTextView;
 
-    private CountView countView;
+    private TextView countTextView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,21 +72,15 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         addressTextView = (TextView) findViewById(R.id.address);
         addressTextView.setText(getAddress());
 
-        distanceTextView = (TextView) findViewById(R.id.distance);
-        distanceTextView.setVisibility(View.GONE);
-
-        durationTextView = (TextView) findViewById(R.id.duration);
-        durationTextView.setText(getDuration());
-
         dateTextView = (TextView) findViewById(R.id.date);
-        dateTextView.setText(getDate());
+        dateTextView.setText(getDate() + " (" + getDuration() + ")");
 
         webTextView = (TextView) findViewById(R.id.web);
         webTextView.setText("www.google.at");
         webTextView.setOnClickListener(this);
 
         submitInfoTextView = (TextView) findViewById(R.id.info);
-        submitInfoTextView.setText("Bitte komm um " + getDateStartForm() + "!");
+        submitInfoTextView.setText("Danke! Bitte komm um " + getDateStartForm() + "!");
         btnBarLayout = (LinearLayout) findViewById(R.id.btnBar);
 
         calendarButton = (Button) findViewById(R.id.calendar);
@@ -100,8 +92,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         submitButton = (Button) findViewById(R.id.submit);
         submitButton.setOnClickListener(this);
 
-        countView = (CountView) findViewById(R.id.count);
-        countView.setCount(getStillOpen());
+        countTextView = (TextView) findViewById(R.id.count);
+        countTextView.setText(getStillOpen() + "");
     }
 
     @Override
@@ -127,8 +119,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             if (location != null) {
                 LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 String distance = LocationUtils.formatDistanceBetween(getLocation(), userLocation);
-                distanceTextView.setText(distance);
-                distanceTextView.setVisibility(View.VISIBLE);
+                addressTextView.setText(getAddress() + " (" + distance + ")");
+            } else {
+                addressTextView.setText(getAddress());
             }
         }
     };
@@ -147,7 +140,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     public void onRegisterSuccess() {
-        countView.setCount(getStillOpen() - 1); // TODO: cheat ! ;-)
+        countTextView.setText("" + (getStillOpen() - 1)); // TODO: cheat ! ;-)
         submitButton.setEnabled(true);
         submitInfoTextView.setVisibility(View.VISIBLE);
         btnBarLayout.setVisibility(View.VISIBLE);
