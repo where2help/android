@@ -1,21 +1,23 @@
 package app.iamin.iamin;
 
-import android.graphics.Rect;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.ImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private HelpRequest[] needs;
+
+    private static final int PERMISSION_REQ = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,25 +35,23 @@ public class MainActivity extends AppCompatActivity {
         // specify an adapter (see also next example)
         mAdapter = new ListAdapter(this, needs);
         mRecyclerView.setAdapter(mAdapter);
-        //mRecyclerView.addItemDecoration(new MainActivity.SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_spacing)));
 
-    }
-
-
-    private class SpacesItemDecoration extends RecyclerView.ItemDecoration {
-        private int space;
-
-        public SpacesItemDecoration(int space) {
-            this.space = space;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view,
-                                   RecyclerView parent, RecyclerView.State state) {
-            outRect.left = space;
-            outRect.right = space;
-            outRect.bottom = space/2;
-            outRect.top = space/2;
+        // Check fine location permission has been granted
+        if (!LocationUtils.checkFineLocationPermission(this)) {
+            // See if user has denied permission in the past
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show a simple snackbar explaining the request instead
+                showPermissionSnackbar();
+            } else {
+                // Otherwise request permission from user
+                if (savedInstanceState == null) {
+                    requestFineLocationPermission();
+                }
+            }
+        } else {
+            // Otherwise permission is granted (which is always the case on pre-M devices)
+            fineLocationPermissionGranted();
         }
     }
 
@@ -76,4 +76,55 @@ public class MainActivity extends AppCompatActivity {
         }
     }*/
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocationService.requestLocation(this);
+        // TODO: also update need (data) when user comes back
+    }
+
+    /**
+     * Permissions request result callback
+     */
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQ:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    fineLocationPermissionGranted();
+                }
+        }
+    }
+
+    /**
+     * Request the fine location permission from the user
+     */
+    private void requestFineLocationPermission() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQ);
+    }
+
+    /**
+     * Run when fine location permission has been granted
+     */
+    private void fineLocationPermissionGranted() {
+        LocationService.requestLocation(this);
+    }
+
+    /**
+     * Show a permission explanation snackbar
+     */
+    private void showPermissionSnackbar() {
+        // TODO: yell at user
+/*        Snackbar.make(
+                findViewById(R.id.container), R.string.permission_explanation, Snackbar.LENGTH_LONG)
+                .setAction(R.string.permission_explanation_action, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        requestFineLocationPermission();
+                    }
+                })
+                .show();*/
+    }
 }

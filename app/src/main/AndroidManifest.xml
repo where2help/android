@@ -33,6 +33,8 @@
 
         <activity android:name=".DetailActivity"
             android:theme="@style/AppThemeLight"/>
+
+        <service android:name=".LocationService" />
     </application>
 
 </manifest>

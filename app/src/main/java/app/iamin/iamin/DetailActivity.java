@@ -2,14 +2,15 @@ package app.iamin.iamin;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,8 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -27,24 +28,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.regex.Pattern;
 
 /**
  * Created by Markus on 10.10.15.
  */
-public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
+public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback,
+        View.OnClickListener {
 
     private LinearLayout mButtonBar;
     private Button mSubmitButton;
@@ -60,6 +50,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private TextView mWeb;
 
     private CountView mCountView;
+
+    private LatLng mLatestLocation;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +83,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         mAddress.setText(getAddress());
 
         mDistance = (TextView) findViewById(R.id.distance);
-        mDistance.setText(getDistance());
+        mDistance.setVisibility(View.GONE);
 
         mDuration = (TextView) findViewById(R.id.duration);
         mDuration.setText(getDuration());
@@ -119,6 +111,35 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         mCountView = (CountView) findViewById(R.id.count);
         mCountView.setCount(getStillOpen());
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mBroadcastReceiver, LocationService.getLocationUpdatedIntentFilter());
+        LocationService.requestLocation(this);
+        // TODO: also update need (data) when user comes back
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+    }
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Location location =
+                    intent.getParcelableExtra(FusedLocationProviderApi.KEY_LOCATION_CHANGED);
+            if (location != null) {
+                mLatestLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                String distance = LocationUtils.formatDistanceBetween(getLocation(), mLatestLocation);
+                mDistance.setText(distance);
+                mDistance.setVisibility(View.VISIBLE);
+            }
+        }
+    };
 
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -189,7 +210,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         return getIntent().getExtras().getString("address");
     }
 
-    private String getDistance() {
+    // TODO: remove me
+    /*private String getDistance() {
         LatLng event = getLocation();
         Location loc = getLastBestLocation();
         if (loc == null) {
@@ -198,13 +220,15 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         LatLng me = new LatLng(loc.getLatitude(), loc.getLongitude());
         double kilometers = distance(event, me) / 1000.0;
         return String.format("%.1f km", kilometers);
-    }
+    }*/
 
     private String getDuration() {
         long diffHours = (getDateEnd() - getDateStart()) / (1000l * 60l * 60l);
         return "mind " + diffHours + " h";
     }
 
+    // TODO: remove me
+   /*
     public static double distance(LatLng StartP, LatLng EndP) {
         double lat1 = StartP.latitude;
         double lat2 = EndP.latitude;
@@ -241,7 +265,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             return locationNet;
         }
 
-    }
+    }*/
 
     private int getStillOpen() {
         return getIntent().getExtras().getInt("stillOpen");
@@ -316,5 +340,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         mButtonBar.setVisibility(View.VISIBLE);
         mSubmitButton.setText("Weitersagen!");
     }
+
 
 }
