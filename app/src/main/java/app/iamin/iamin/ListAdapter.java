@@ -3,7 +3,6 @@ package app.iamin.iamin;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,28 +64,28 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     // you provide access to all the views for a data item in a view holder
     public final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
-        public FrameLayout cardView;
-        public ImageView iconView;
-        public TextView titleView;
-        public TextView dateView;
-        public TextView locationView;
-        public TextView peopleNeededView;
+        public FrameLayout parent;
+        public ImageView iconImageView;
+        public TextView typeTextView;
+        public TextView dateTextView;
+        public TextView addressTextView;
+        public TextView countTextView;
 
         ItemClickListener holderClickListener;
 
         public ViewHolder(FrameLayout v) {
             super(v);
-            cardView = v;
-            cardView.setClickable(true);
-            cardView.setOnClickListener(this);
+            parent = v;
+            parent.setClickable(true);
+            parent.setOnClickListener(this);
 
             holderClickListener = clickListener;
 
-            iconView = (ImageView) v.findViewById(R.id.item_icon);
-            titleView = (TextView) v.findViewById(R.id.item_title);
-            dateView = (TextView) v.findViewById(R.id.item_date);
-            locationView = (TextView) v.findViewById(R.id.item_location);
-            peopleNeededView = (TextView) v.findViewById(R.id.item_count);
+            iconImageView = (ImageView) v.findViewById(R.id.item_icon);
+            typeTextView = (TextView) v.findViewById(R.id.item_type);
+            dateTextView = (TextView) v.findViewById(R.id.item_date);
+            addressTextView = (TextView) v.findViewById(R.id.item_address);
+            countTextView = (TextView) v.findViewById(R.id.item_count);
         }
 
         @Override
@@ -121,24 +120,21 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
         HelpRequest req = mHelpRequests[position];
 
-        holder.cardView.setBackgroundColor((position % 2) == 0 ? firstColor : secondColor);
-        holder.iconView.setImageResource(req.getTypeIcon());
-        holder.locationView.setText(req.getAddress().getAddressLine(0));
-        holder.titleView.setText(req.getType());
+        holder.parent.setBackgroundColor((position % 2) == 0 ? firstColor : secondColor);
+        holder.iconImageView.setImageResource(req.getTypeIcon());
+        holder.addressTextView.setText(req.getAddress().getAddressLine(0));
+        holder.typeTextView.setText(req.getType());
 
         DateFormat dtfStart = new SimpleDateFormat("H:m");
         DateFormat dtfEnd = new SimpleDateFormat("H:m");
         Date today = new Date();
         today.setHours(23);
         today.setMinutes(59);
-        String dayStr = "Morgen";
-        if (req.getStart().compareTo(today) < 0) {
-            dayStr = "Heute";
-        }
+        String dayStr = (req.getStart().compareTo(today) < 0) ? "Heute" : "Morgen";
         String dString = dayStr + " " + dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
-        holder.dateView.setText(dString);
-        int numHours = (int) Math.floor((req.getEnd().getTime() - req.getStart().getTime()) / (1000 * 60 * 60));
-        holder.peopleNeededView.setText(req.getStillOpen() + "");
+        holder.dateTextView.setText(dString);
+        // int numHours = (int) Math.floor((req.getEnd().getTime() - req.getStart().getTime()) / (1000 * 60 * 60));
+        holder.countTextView.setText(req.getStillOpen() + "");
     }
 
     @Override

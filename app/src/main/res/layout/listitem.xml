@@ -42,7 +42,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/item_title"
+                android:id="@+id/item_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -55,7 +55,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/item_location"
+            android:id="@+id/item_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
