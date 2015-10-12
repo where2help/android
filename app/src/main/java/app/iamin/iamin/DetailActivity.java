@@ -51,6 +51,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private ImageView typeImageView;
 
+    private SupportMapFragment mMapFragment;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -64,15 +66,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         toolbar.setTitle(getType() + " - " + getAddress());
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(this);
-
-        GoogleMapOptions options = new GoogleMapOptions().liteMode(true);
-
-        SupportMapFragment mMapFragment = SupportMapFragment.newInstance(options);
-        mMapFragment.getMapAsync(DetailActivity.this);
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.map, mMapFragment);
-        ft.commit();
 
         typeTextView = (TextView) findViewById(R.id.type);
 
@@ -105,6 +98,21 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         countTextView = (TextView) findViewById(R.id.count);
 
         setUiMode(isAttending);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && mMapFragment == null) {
+            GoogleMapOptions options = new GoogleMapOptions().liteMode(true);
+
+            mMapFragment = SupportMapFragment.newInstance(options);
+            mMapFragment.getMapAsync(DetailActivity.this);
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.map, mMapFragment);
+            ft.commit();
+        }
     }
 
     private void setUiMode(boolean isAttending) {
