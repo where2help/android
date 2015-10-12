@@ -101,13 +101,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         secondColor = context.getResources().getColor(R.color.windowBackgroundLight);
         mHelpRequests = helpRequests;
         setHasStableIds(true);
-
-        try {
-            new PullNeedsActiveTask(context, new URL("http://where2help.herokuapp.com/api/v1/needs.json"), this).execute();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            // TODO
-        }
+        new PullNeedsActiveTask(context, this).execute();
     }
 
     @Override

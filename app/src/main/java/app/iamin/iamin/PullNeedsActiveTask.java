@@ -20,13 +20,11 @@ import java.text.ParseException;
  */
 public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]> {
 
-    private URL url;
     private ListAdapter adapter;
     private Geocoder coder;
     private Context context;
 
-    public PullNeedsActiveTask(Context context, URL url, ListAdapter adapter) {
-        this.url = url;
+    public PullNeedsActiveTask(Context context, ListAdapter adapter) {
         this.adapter = adapter;
         this.coder = new Geocoder(context);
         this.context = context;
@@ -42,7 +40,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
 
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url(url)
+                    .url(new URL("http://where2help.herokuapp.com/api/v1/needs.json"))
                     .build();
 
             Response response = client.newCall(request).execute();
