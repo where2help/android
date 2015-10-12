@@ -202,12 +202,15 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         builder.setMessage("Wir brauchen dich! Willst du wirklich absagen?");
         builder.setPositiveButton("Natürlich nicht!", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // FIRE ZE MISSILES!
+                // Do nothing
             }
         });
         builder.setNegativeButton("Ja...", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
+                countTextView.setText("" + (getStillOpen())); // TODO: cheat ! ;-)
+                submitInfoTextView.setVisibility(View.GONE);
+                btnBarLayout.setVisibility(View.GONE);
+                submitButton.setText("I'm In!");
             }
         });
         AlertDialog dialog = builder.create();
