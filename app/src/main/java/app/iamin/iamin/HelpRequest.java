@@ -53,9 +53,17 @@ public class HelpRequest {
             case DOCTOR: return "Ärzte";
             case LAWYER: return "Rechtsberater";
             case INTERPRETER: return "Dolmetscher";
-            case VOLUNTEER: return "Freiwillige";
+            case VOLUNTEER: default: return "Freiwillige";
         }
-        return null;
+    }
+
+    public int getTypeIcon() {
+        switch(this.mType) {
+            case DOCTOR: return R.mipmap.ic_medical;
+            case LAWYER: return R.mipmap.ic_legal;
+            case INTERPRETER: return R.mipmap.ic_interpretor;
+            case VOLUNTEER: default: return R.mipmap.ic_volunteer;
+        }
     }
 
     public TYPE getTypeEnum() {

@@ -40,6 +40,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             intent.setClass(mContext, DetailActivity.class);
             intent.putExtra("address", req.getAddress().getAddressLine(0));
             intent.putExtra("type", req.getType());
+            intent.putExtra("typeIcon", req.getTypeIcon());
             intent.putExtra("selfLink", req.getSelfLink());
             intent.putExtra("stillOpen", req.getStillOpen());
             intent.putExtra("longitude", req.getAddress().getLongitude());
@@ -118,21 +119,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
 
-        if (position % 2 == 0) {
-            holder.cardView.setBackgroundColor(firstColor);
-        } else {
-            holder.cardView.setBackgroundColor(secondColor);
-        }
         HelpRequest req = mHelpRequests[position];
 
-        switch (req.getTypeEnum()) {
-            case DOCTOR:  holder.iconView.setImageResource(R.mipmap.ic_medical); break;
-            case LAWYER: holder.iconView.setImageResource(R.mipmap.ic_legal); break;
-            case INTERPRETER: holder.iconView.setImageResource(R.mipmap.ic_interpretor); break;
-            default: holder.iconView.setImageResource(R.mipmap.ic_volunteer); break;
-        }
+        holder.cardView.setBackgroundColor(position % 2 == 0 ? firstColor : secondColor);
+        holder.iconView.setImageResource(req.getTypeIcon());
         holder.locationView.setText(req.getAddress().getAddressLine(0));
         holder.titleView.setText(req.getType());
+
         DateFormat dtfStart = new SimpleDateFormat("H:m");
         DateFormat dtfEnd = new SimpleDateFormat("H:m");
         Date today = new Date();

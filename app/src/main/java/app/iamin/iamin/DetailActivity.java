@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,13 +41,14 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private Button cancelButton;
     private Button calendarButton;
 
-    private TextView titleTextView;
+    private TextView typeTextView;
     private TextView addressTextView;
     private TextView dateTextView;
     private TextView submitInfoTextView;
     private TextView webTextView;
-
     private TextView countTextView;
+
+    private ImageView typeImageView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +68,11 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         ft.add(R.id.map, mMapFragment);
         ft.commit();
 
-        titleTextView = (TextView) findViewById(R.id.title);
-        titleTextView.setText(getType());
+        typeTextView = (TextView) findViewById(R.id.type);
+        typeTextView.setText(getType());
+
+        typeImageView = (ImageView) findViewById(R.id.type_icon);
+        typeImageView.setImageResource(getTypeIcon());
 
         addressTextView = (TextView) findViewById(R.id.address);
         addressTextView.setText(getAddress());
@@ -242,6 +247,10 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private String getType() {
         return getIntent().getExtras().getString("type");
+    }
+
+    private int getTypeIcon() {
+        return getIntent().getExtras().getInt("typeIcon");
     }
 
     private String getAddress() {
