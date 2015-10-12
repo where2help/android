@@ -1,41 +1,19 @@
 package app.iamin.iamin;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
-import android.telephony.TelephonyManager;
-import android.util.Patterns;
-
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.Locale;
-import java.util.regex.Pattern;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by paul on 10/10/2015.
@@ -62,11 +40,21 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         try {
             //registerUser();
 
-            InputStream is = this.url.openStream();
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            String result =  response.body().string();
+            JSONArray data = new JSONObject(result).getJSONArray("data");
+
+            // TODO: remove
+/*            InputStream is = this.url.openStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             JSONObject root = loadJSON();
             // no time to look deeply into gson to parse this automatically
-            JSONArray data = root.getJSONArray("data");
+            JSONArray data = root.getJSONArray("data");*/
 
             needs = new HelpRequest[data.length()];
             for (int i = 0; i<data.length(); i++) {
@@ -91,7 +79,8 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         adapter.setData(result);
     }
 
-    private JSONObject loadJSON() throws IOException, JSONException {
+    // TODO: remove
+/*    private JSONObject loadJSON() throws IOException, JSONException {
         InputStream is = this.url.openStream();
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -113,7 +102,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
     }
 
     public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
+            = MediaType.parse("application/json; charset=utf-8");*/
 
     private void registerUser() throws IOException {
         /*SharedPreferences settings;
