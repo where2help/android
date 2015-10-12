@@ -50,8 +50,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private CountView countView;
 
-    private LatLng mLatestLocation;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -59,12 +57,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getType() + " - " + getAddress());
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(this);
 
         GoogleMapOptions options = new GoogleMapOptions().liteMode(true);
 
@@ -132,8 +125,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             Location location =
                     intent.getParcelableExtra(FusedLocationProviderApi.KEY_LOCATION_CHANGED);
             if (location != null) {
-                mLatestLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                String distance = LocationUtils.formatDistanceBetween(getLocation(), mLatestLocation);
+                LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                String distance = LocationUtils.formatDistanceBetween(getLocation(), userLocation);
                 distanceTextView.setText(distance);
                 distanceTextView.setVisibility(View.VISIBLE);
             }
@@ -164,7 +157,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            default: break;
+            default: // Back button hack
+                finish();
+                break;
             case R.id.submit:
                 if (submitInfoTextView.getVisibility() != View.VISIBLE) {
                     onActionSubmit();
@@ -180,6 +175,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 break;
             case R.id.web:
                 onActionWeb();
+                break;
+            case android.R.id.home:
+                finish();
                 break;
         }
     }
