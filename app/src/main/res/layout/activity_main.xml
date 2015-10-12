@@ -23,8 +23,8 @@
             android:src="@drawable/logo"/>
         </FrameLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_recycler_view"
+    <app.iamin.iamin.CustomRecyclerView
+        android:id="@+id/recycler_view"
         android:layout_marginTop="?actionBarSize"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
@@ -33,5 +33,18 @@
         android:paddingBottom="8dp"
         android:clipToPadding="false"/>
 
+    <LinearLayout
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
