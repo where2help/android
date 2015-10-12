@@ -57,6 +57,15 @@ public class HelpRequest {
         }
     }
 
+    public String getTypeSingular() {
+        switch(this.mType) {
+            case DOCTOR: return "Arzt";
+            case LAWYER: return "Rechtsberater";
+            case INTERPRETER: return "Dolmetscher";
+            case VOLUNTEER: default: return "Freiwilliger";
+        }
+    }
+
     public int getTypeIcon() {
         switch(this.mType) {
             case DOCTOR: return R.mipmap.ic_medical;

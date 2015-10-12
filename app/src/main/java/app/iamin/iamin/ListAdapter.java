@@ -40,6 +40,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             intent.setClass(mContext, DetailActivity.class);
             intent.putExtra("address", req.getAddress().getAddressLine(0));
             intent.putExtra("type", req.getType());
+            intent.putExtra("typeSingular", req.getTypeSingular());
             intent.putExtra("typeIcon", req.getTypeIcon());
             intent.putExtra("selfLink", req.getSelfLink());
             intent.putExtra("stillOpen", req.getStillOpen());
@@ -123,7 +124,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.parent.setBackgroundColor((position % 2) == 0 ? firstColor : secondColor);
         holder.iconImageView.setImageResource(req.getTypeIcon());
         holder.addressTextView.setText(req.getAddress().getAddressLine(0));
-        holder.typeTextView.setText(req.getType());
+        holder.typeTextView.setText(req.getStillOpen() == 1 ? req.getTypeSingular() : req.getType());
 
         DateFormat dtfStart = new SimpleDateFormat("H:m");
         DateFormat dtfEnd = new SimpleDateFormat("H:m");

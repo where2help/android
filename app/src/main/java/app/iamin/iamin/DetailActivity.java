@@ -75,7 +75,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         ft.commit();
 
         typeTextView = (TextView) findViewById(R.id.type);
-        typeTextView.setText(getType());
 
         typeImageView = (ImageView) findViewById(R.id.type_icon);
         typeImageView.setImageResource(getTypeIcon());
@@ -115,11 +114,13 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             submitInfoTextView.setVisibility(View.VISIBLE);
             btnBarLayout.setVisibility(View.VISIBLE);
             submitButton.setText("Weitersagen!");
+            typeTextView.setText((getStillOpen() - 1) == 1 ? getTypeSingular() : getType());
         } else {
             countTextView.setText("" + (getStillOpen())); // TODO: cheat ! ;-)
             submitInfoTextView.setVisibility(View.GONE);
             btnBarLayout.setVisibility(View.GONE);
             submitButton.setText("I'm In!");
+            typeTextView.setText((getStillOpen()) == 1 ? getTypeSingular() : getType());
         }
     }
 
@@ -273,6 +274,10 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private String getType() {
         return getIntent().getExtras().getString("type");
+    }
+
+    private String getTypeSingular() {
+        return getIntent().getExtras().getString("typeSingular");
     }
 
     private int getTypeIcon() {
