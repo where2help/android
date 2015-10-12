@@ -64,6 +64,6 @@ public class RegisterTask extends AsyncTask<Void, Integer, Integer> {
     }
 
     protected void onPostExecute(Integer result) {
-        activity.registerSuccess();
+        activity.onRegisterSuccess();
     }
 }

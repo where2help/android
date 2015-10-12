@@ -33,8 +33,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Markus on 10.10.15.
  */
-public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback,
-        View.OnClickListener {
+public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
     private LinearLayout btnBarLayout;
     private Button submitButton;
@@ -154,7 +153,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 .position(sydney));
     }
 
-    public void registerSuccess() {
+    public void onRegisterSuccess() {
         countView.setCount(getStillOpen() - 1); // TODO: cheat ! ;-)
         submitButton.setEnabled(true);
         submitInfoTextView.setVisibility(View.VISIBLE);
