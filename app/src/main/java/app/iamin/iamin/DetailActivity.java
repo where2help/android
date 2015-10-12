@@ -141,7 +141,25 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     };
 
-    private void showDialog() {
+
+    private void onActionSubmit() {
+        submitButton.setText("Registriere...");
+        submitButton.setEnabled(false);
+
+        String email = null;
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+        Account[] accounts = AccountManager.get(this).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                email = account.name;
+                break;
+            }
+        }
+
+        new RegisterTask(this, getIntent().getExtras().getInt("id"), email).execute();
+    }
+
+    private void onActionCancel() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Wir brauchen dich! Willst du wirklich absagen?");
         builder.setPositiveButton("Natürlich nicht!", new DialogInterface.OnClickListener() {
@@ -158,7 +176,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         dialog.show();
     }
 
-    private void addToCalendar() {
+    private void onActionCalendar() {
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setType("vnd.android.cursor.item/event")
                 .putExtra("beginTime", getDateStart())
@@ -179,9 +197,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         startActivity(sendIntent);
     }
 
-    private void openInBrowser(String url) {
+    private void onActionWeb() {
         Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
+        i.setData(Uri.parse("http://" + webTextView.getText().toString()));
         startActivity(i);
     }
 
@@ -297,35 +315,19 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             default: break;
             case R.id.submit:
                 if (submitInfoTextView.getVisibility() != View.VISIBLE) {
-                    submitButton.setText("Registriere...");
-                    submitButton.setEnabled(false);
-
-                    String email = null;
-                    Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
-                    Account[] accounts = AccountManager.get(this).getAccounts();
-                    for (Account account : accounts) {
-                        if (emailPattern.matcher(account.name).matches()) {
-                            email = account.name;
-                            break;
-                        }
-                    }
-
-                    new RegisterTask(this, getIntent().getExtras().getInt("id"), email).execute();
+                    onActionSubmit();
                 } else {
                     onActionShare();
-/*                    mSubmitButton.setText("I'm in!");
-                    mSubmitInfo.setVisibility(View.GONE);
-                    mButtonBar.setVisibility(View.GONE);*/
                 }
                 break;
             case R.id.cancel:
-                showDialog();
+                onActionCancel();
                 break;
             case R.id.calendar:
-                addToCalendar();
+                onActionCalendar();
                 break;
             case R.id.web:
-                openInBrowser("http://" + webTextView.getText().toString());
+                onActionWeb();
                 break;
         }
     }
