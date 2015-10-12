@@ -36,20 +36,20 @@ import java.util.regex.Pattern;
 public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback,
         View.OnClickListener {
 
-    private LinearLayout mButtonBar;
-    private Button mSubmitButton;
-    private Button mCancelButton;
-    private Button mAddButton;
-    private TextView mSubmitInfo;
+    private LinearLayout btnBarLayout;
+    private Button submitButton;
+    private Button cancelButton;
+    private Button calendarButton;
 
-    private TextView mTitle;
-    private TextView mAddress;
-    private TextView mDistance;
-    private TextView mDuration;
-    private TextView mDate;
-    private TextView mWeb;
+    private TextView titleTextView;
+    private TextView addressTextView;
+    private TextView distanceTextView;
+    private TextView durationTextView;
+    private TextView dateTextView;
+    private TextView submitInfoTextView;
+    private TextView webTextView;
 
-    private CountView mCountView;
+    private CountView countView;
 
     private LatLng mLatestLocation;
 
@@ -76,40 +76,40 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         ft.add(R.id.map, mMapFragment);
         ft.commit();
 
-        mTitle = (TextView) findViewById(R.id.title);
-        mTitle.setText(getType());
+        titleTextView = (TextView) findViewById(R.id.title);
+        titleTextView.setText(getType());
 
-        mAddress = (TextView) findViewById(R.id.address);
-        mAddress.setText(getAddress());
+        addressTextView = (TextView) findViewById(R.id.address);
+        addressTextView.setText(getAddress());
 
-        mDistance = (TextView) findViewById(R.id.distance);
-        mDistance.setVisibility(View.GONE);
+        distanceTextView = (TextView) findViewById(R.id.distance);
+        distanceTextView.setVisibility(View.GONE);
 
-        mDuration = (TextView) findViewById(R.id.duration);
-        mDuration.setText(getDuration());
+        durationTextView = (TextView) findViewById(R.id.duration);
+        durationTextView.setText(getDuration());
 
-        mDate = (TextView) findViewById(R.id.date);
-        mDate.setText(getDate());
+        dateTextView = (TextView) findViewById(R.id.date);
+        dateTextView.setText(getDate());
 
-        mWeb = (TextView) findViewById(R.id.web);
-        mWeb.setText("www.google.at");
-        mWeb.setOnClickListener(this);
+        webTextView = (TextView) findViewById(R.id.web);
+        webTextView.setText("www.google.at");
+        webTextView.setOnClickListener(this);
 
-        mSubmitInfo = (TextView) findViewById(R.id.info);
-        mSubmitInfo.setText("Bitte komm um " + getDateStartForm() + "!");
-        mButtonBar = (LinearLayout) findViewById(R.id.buttonBar);
+        submitInfoTextView = (TextView) findViewById(R.id.info);
+        submitInfoTextView.setText("Bitte komm um " + getDateStartForm() + "!");
+        btnBarLayout = (LinearLayout) findViewById(R.id.buttonBar);
 
-        mAddButton = (Button) findViewById(R.id.add);
-        mAddButton.setOnClickListener(this);
+        calendarButton = (Button) findViewById(R.id.add);
+        calendarButton.setOnClickListener(this);
 
-        mCancelButton = (Button) findViewById(R.id.cancel);
-        mCancelButton.setOnClickListener(this);
+        cancelButton = (Button) findViewById(R.id.cancel);
+        cancelButton.setOnClickListener(this);
 
-        mSubmitButton = (Button) findViewById(R.id.submit);
-        mSubmitButton.setOnClickListener(this);
+        submitButton = (Button) findViewById(R.id.submit);
+        submitButton.setOnClickListener(this);
 
-        mCountView = (CountView) findViewById(R.id.count);
-        mCountView.setCount(getStillOpen());
+        countView = (CountView) findViewById(R.id.count);
+        countView.setCount(getStillOpen());
     }
 
     @Override
@@ -135,8 +135,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             if (location != null) {
                 mLatestLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 String distance = LocationUtils.formatDistanceBetween(getLocation(), mLatestLocation);
-                mDistance.setText(distance);
-                mDistance.setVisibility(View.VISIBLE);
+                distanceTextView.setText(distance);
+                distanceTextView.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -296,9 +296,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         switch (v.getId()) {
             default: break;
             case R.id.submit:
-                if (mSubmitInfo.getVisibility() != View.VISIBLE) {
-                    mSubmitButton.setText("Registriere...");
-                    mSubmitButton.setEnabled(false);
+                if (submitInfoTextView.getVisibility() != View.VISIBLE) {
+                    submitButton.setText("Registriere...");
+                    submitButton.setEnabled(false);
 
                     String email = null;
                     Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
@@ -325,21 +325,16 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 addToCalendar();
                 break;
             case R.id.web:
-                openInBrowser("http://" + mWeb.getText().toString());
+                openInBrowser("http://" + webTextView.getText().toString());
                 break;
         }
     }
 
     public void registerSuccess() {
-        mCountView.setCount(getStillOpen() - 1); // TODO: cheat ! ;-)
-
-        mSubmitInfo.setVisibility(View.VISIBLE);
-        mButtonBar.setVisibility(View.VISIBLE);
-        mSubmitButton.setEnabled(true);
-        mSubmitInfo.setVisibility(View.VISIBLE);
-        mButtonBar.setVisibility(View.VISIBLE);
-        mSubmitButton.setText("Weitersagen!");
+        countView.setCount(getStillOpen() - 1); // TODO: cheat ! ;-)
+        submitButton.setEnabled(true);
+        submitInfoTextView.setVisibility(View.VISIBLE);
+        btnBarLayout.setVisibility(View.VISIBLE);
+        submitButton.setText("Weitersagen!");
     }
-
-
 }
