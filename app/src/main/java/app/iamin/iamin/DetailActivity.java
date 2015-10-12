@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
  */
 public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
+    private boolean isAttending = false; // TODO: set value based on registration !
     private LinearLayout btnBarLayout;
     private Button submitButton;
     private Button cancelButton;
@@ -53,6 +54,11 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        if (savedInstanceState != null) {
+            // Restore value from saved state
+            isAttending = savedInstanceState.getBoolean("isAttending");
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getType() + " - " + getAddress());
@@ -98,7 +104,23 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         submitButton.setOnClickListener(this);
 
         countTextView = (TextView) findViewById(R.id.count);
-        countTextView.setText(getStillOpen() + "");
+
+        setUiMode(isAttending);
+    }
+
+    private void setUiMode(boolean isAttending) {
+        if (isAttending) {
+            countTextView.setText("" + (getStillOpen() - 1)); // TODO: cheat ! ;-)
+            submitButton.setEnabled(true);
+            submitInfoTextView.setVisibility(View.VISIBLE);
+            btnBarLayout.setVisibility(View.VISIBLE);
+            submitButton.setText("Weitersagen!");
+        } else {
+            countTextView.setText("" + (getStillOpen())); // TODO: cheat ! ;-)
+            submitInfoTextView.setVisibility(View.GONE);
+            btnBarLayout.setVisibility(View.GONE);
+            submitButton.setText("I'm In!");
+        }
     }
 
     @Override
@@ -138,18 +160,14 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-
         map.addMarker(new MarkerOptions()
                 .title(getAddress())
                 .position(sydney));
     }
 
     public void onRegisterSuccess() {
-        countTextView.setText("" + (getStillOpen() - 1)); // TODO: cheat ! ;-)
-        submitButton.setEnabled(true);
-        submitInfoTextView.setVisibility(View.VISIBLE);
-        btnBarLayout.setVisibility(View.VISIBLE);
-        submitButton.setText("Weitersagen!");
+        isAttending = true;
+        setUiMode(isAttending);
     }
 
     @Override
@@ -207,10 +225,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         });
         builder.setNegativeButton("Ja...", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                countTextView.setText("" + (getStillOpen())); // TODO: cheat ! ;-)
-                submitInfoTextView.setVisibility(View.GONE);
-                btnBarLayout.setVisibility(View.GONE);
-                submitButton.setText("I'm In!");
+                isAttending = false;
+                setUiMode(isAttending);
             }
         });
         AlertDialog dialog = builder.create();
@@ -242,6 +258,13 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse("http://" + webTextView.getText().toString()));
         startActivity(i);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current state
+        savedInstanceState.putBoolean("isAttending", isAttending);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     private LatLng getLocation() {
