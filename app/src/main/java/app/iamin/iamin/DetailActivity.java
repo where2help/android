@@ -141,6 +141,49 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     };
 
+    @Override
+    public void onMapReady(GoogleMap map) {
+        map.getUiSettings().setMapToolbarEnabled(false);
+        LatLng sydney = getLocation();
+
+        map.setMyLocationEnabled(true);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+
+        map.addMarker(new MarkerOptions()
+                .title(getAddress())
+                .position(sydney));
+    }
+
+    public void registerSuccess() {
+        countView.setCount(getStillOpen() - 1); // TODO: cheat ! ;-)
+        submitButton.setEnabled(true);
+        submitInfoTextView.setVisibility(View.VISIBLE);
+        btnBarLayout.setVisibility(View.VISIBLE);
+        submitButton.setText("Weitersagen!");
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            default: break;
+            case R.id.submit:
+                if (submitInfoTextView.getVisibility() != View.VISIBLE) {
+                    onActionSubmit();
+                } else {
+                    onActionShare();
+                }
+                break;
+            case R.id.cancel:
+                onActionCancel();
+                break;
+            case R.id.calendar:
+                onActionCalendar();
+                break;
+            case R.id.web:
+                onActionWeb();
+                break;
+        }
+    }
 
     private void onActionSubmit() {
         submitButton.setText("Registriere...");
@@ -203,19 +246,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         startActivity(i);
     }
 
-    @Override
-    public void onMapReady(GoogleMap map) {
-        map.getUiSettings().setMapToolbarEnabled(false);
-        LatLng sydney = getLocation();
-
-        map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-
-        map.addMarker(new MarkerOptions()
-                .title(getAddress())
-                .position(sydney));
-    }
-
     private LatLng getLocation() {
         return new LatLng(getIntent().getExtras().getDouble("latitude"), getIntent().getExtras().getDouble("longitude"));
     }
@@ -228,62 +258,10 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         return getIntent().getExtras().getString("address");
     }
 
-    // TODO: remove me
-    /*private String getDistance() {
-        LatLng event = getLocation();
-        Location loc = getLastBestLocation();
-        if (loc == null) {
-            return "in deiner Nähe";
-        }
-        LatLng me = new LatLng(loc.getLatitude(), loc.getLongitude());
-        double kilometers = distance(event, me) / 1000.0;
-        return String.format("%.1f km", kilometers);
-    }*/
-
     private String getDuration() {
         long diffHours = (getDateEnd() - getDateStart()) / (1000l * 60l * 60l);
         return "mind " + diffHours + " h";
     }
-
-    // TODO: remove me
-   /*
-    public static double distance(LatLng StartP, LatLng EndP) {
-        double lat1 = StartP.latitude;
-        double lat2 = EndP.latitude;
-        double lon1 = StartP.longitude;
-        double lon2 = EndP.longitude;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon/2) * Math.sin(dLon/2);
-        double c = 2 * Math.asin(Math.sqrt(a));
-        return 6366000 * c;
-    }
-
-    private Location getLastBestLocation() {
-
-        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location locationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Location locationNet = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-        long GPSLocationTime = 0;
-        if (null != locationGPS) { GPSLocationTime = locationGPS.getTime(); }
-
-        long NetLocationTime = 0;
-
-        if (null != locationNet) {
-            NetLocationTime = locationNet.getTime();
-        }
-
-        if ( 0 < GPSLocationTime - NetLocationTime ) {
-            return locationGPS;
-        }
-        else {
-            return locationNet;
-        }
-
-    }*/
 
     private int getStillOpen() {
         return getIntent().getExtras().getInt("stillOpen");
@@ -307,36 +285,5 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private String getSelfLink() {
         return getIntent().getExtras().getString("selfLink");
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            default: break;
-            case R.id.submit:
-                if (submitInfoTextView.getVisibility() != View.VISIBLE) {
-                    onActionSubmit();
-                } else {
-                    onActionShare();
-                }
-                break;
-            case R.id.cancel:
-                onActionCancel();
-                break;
-            case R.id.calendar:
-                onActionCalendar();
-                break;
-            case R.id.web:
-                onActionWeb();
-                break;
-        }
-    }
-
-    public void registerSuccess() {
-        countView.setCount(getStillOpen() - 1); // TODO: cheat ! ;-)
-        submitButton.setEnabled(true);
-        submitInfoTextView.setVisibility(View.VISIBLE);
-        btnBarLayout.setVisibility(View.VISIBLE);
-        submitButton.setText("Weitersagen!");
     }
 }
