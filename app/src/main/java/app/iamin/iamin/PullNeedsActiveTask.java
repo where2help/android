@@ -47,13 +47,6 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
             String result =  response.body().string();
             JSONArray data = new JSONObject(result).getJSONArray("data");
 
-            // TODO: remove
-/*            InputStream is = this.url.openStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            JSONObject root = loadJSON();
-            // no time to look deeply into gson to parse this automatically
-            JSONArray data = root.getJSONArray("data");*/
-
             needs = new HelpRequest[data.length()];
             for (int i = 0; i<data.length(); i++) {
                 JSONObject obj = data.getJSONObject(i);
@@ -77,28 +70,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
         adapter.setData(result);
     }
 
-    // TODO: remove
-/*    private JSONObject loadJSON() throws IOException, JSONException {
-        InputStream is = this.url.openStream();
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            String jsonText = readAll(rd);
-            JSONObject json = new JSONObject(jsonText);
-            return json;
-        } finally {
-            is.close();
-        }
-    }
-
-    private String readAll(Reader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
-    }
-
+/*
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");*/
 
