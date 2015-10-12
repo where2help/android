@@ -224,7 +224,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 .putExtra("endTime", getDateEnd())
                 .putExtra("allDay", false)
                 .putExtra("title", "Where2Help - " + getType())
-                .putExtra("description", "Where2Help - " + getType() + " für " + "mind. 2h.")
+                .putExtra("description", "Where2Help - " + getType() + " für " + getDuration() + ".")
                 .putExtra("eventLocation", getAddress());
         startActivity(intent);
     }
@@ -233,8 +233,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.setType("text/plain");
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " +
-                getType() + " (" + getStillOpen() + ") am " + getDate() + " für " + "mind. 2h" + " am " + getAddress() + ". (" + getSelfLink() + ")");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + getType() + " am " +
+                getDate() + " für " + getDuration() + " am " + getAddress() + ". (" + getSelfLink() + ")");
         startActivity(sendIntent);
     }
 
