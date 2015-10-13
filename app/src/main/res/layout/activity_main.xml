@@ -22,7 +22,17 @@
             android:layout_gravity="center_vertical"
             android:scaleType="fitStart"
             android:layout_marginLeft="16dp"
-            android:src="@drawable/logo"
+            android:src="@drawable/ic_toolbar_logo"
+            android:clickable="true"/>
+
+        <ImageView
+            android:id="@+id/logo_text"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:scaleType="fitStart"
+            android:layout_marginLeft="60dp"
+            android:src="@drawable/toolbar_logo_text"
             android:clickable="true"/>
         </FrameLayout>
 

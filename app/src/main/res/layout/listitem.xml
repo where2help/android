@@ -26,7 +26,7 @@
                 android:layout_height="32dp"
                 android:scaleType="fitXY"
                 android:layout_gravity="center_vertical"
-                android:src="@mipmap/ic_medical" />
+                android:src="@drawable/ic_medical" />
 
             <TextView
                 android:id="@+id/item_count"

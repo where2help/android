@@ -68,10 +68,10 @@ public class HelpRequest {
 
     public int getTypeIcon() {
         switch(this.mType) {
-            case DOCTOR: return R.mipmap.ic_medical;
-            case LAWYER: return R.mipmap.ic_legal;
-            case INTERPRETER: return R.mipmap.ic_interpretor;
-            case VOLUNTEER: default: return R.mipmap.ic_volunteer;
+            case DOCTOR: return R.drawable.ic_medical;
+            case LAWYER: return R.drawable.ic_legal;
+            case INTERPRETER: return R.drawable.ic_interpretor;
+            case VOLUNTEER: default: return R.drawable.ic_volunteer;
         }
     }
 

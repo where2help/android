@@ -42,6 +42,13 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        findViewById(R.id.logo_text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEndpointPicker();
+            }
+        });
+
         mRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
