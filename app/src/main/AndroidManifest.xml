@@ -35,6 +35,7 @@
             android:theme="@style/AppThemeLight"/>
 
         <service android:name=".LocationService" />
+        <service android:name=".UtilityService" />
     </application>
 
 </manifest>

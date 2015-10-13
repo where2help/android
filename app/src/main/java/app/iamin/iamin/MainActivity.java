@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements
         findViewById(R.id.logo_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEndpointPicker();
+                //showEndpointPicker();
+                UtilityService.triggerNotification(MainActivity.this);
             }
         });
 
