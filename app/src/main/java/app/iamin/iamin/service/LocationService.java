@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.service;
 
 import android.app.IntentService;
 import android.app.PendingIntent;
@@ -17,6 +17,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.concurrent.TimeUnit;
+
+import app.iamin.iamin.LocationUtils;
 
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 

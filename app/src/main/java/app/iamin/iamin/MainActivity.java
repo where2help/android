@@ -15,6 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 
+import app.iamin.iamin.service.LocationService;
+import app.iamin.iamin.service.UtilityService;
+
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback {
 

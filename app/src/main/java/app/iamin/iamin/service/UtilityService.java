@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.service;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
+
+import app.iamin.iamin.DetailActivity;
+import app.iamin.iamin.R;
 
 /**
  * Created by Markus on 13.10.15.

@@ -34,8 +34,8 @@
         <activity android:name=".DetailActivity"
             android:theme="@style/AppThemeLight"/>
 
-        <service android:name=".LocationService" />
-        <service android:name=".UtilityService" />
+        <service android:name=".service.LocationService" />
+        <service android:name=".service.UtilityService" />
     </application>
 
 </manifest>

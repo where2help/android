@@ -31,6 +31,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.regex.Pattern;
 
+import app.iamin.iamin.service.LocationService;
+
 /**
  * Created by Markus on 10.10.15.
  */
