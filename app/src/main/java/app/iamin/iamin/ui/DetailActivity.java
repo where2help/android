@@ -2,15 +2,11 @@ package app.iamin.iamin.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -29,11 +24,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.otto.Subscribe;
+
 import java.util.regex.Pattern;
 
+import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.LocationUtils;
 import app.iamin.iamin.R;
 import app.iamin.iamin.RegisterTask;
+import app.iamin.iamin.event.LocationEvent;
 import app.iamin.iamin.service.LocationService;
 
 /**
@@ -140,8 +139,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                mBroadcastReceiver, LocationService.getLocationUpdatedIntentFilter());
+        BusProvider.getInstance().register(this);
         LocationService.requestLocation(this);
         // TODO: also update need (data) when user comes back
     }
@@ -149,23 +147,19 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+        BusProvider.getInstance().unregister(this);
     }
 
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Location location =
-                    intent.getParcelableExtra(FusedLocationProviderApi.KEY_LOCATION_CHANGED);
-            if (location != null) {
-                LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                String distance = LocationUtils.formatDistanceBetween(getLocation(), userLocation);
-                addressTextView.setText(getAddress() + " (" + distance + ")");
-            } else {
-                addressTextView.setText(getAddress());
-            }
+    @Subscribe
+    public void onLocationUpdate(LocationEvent event) {
+        LatLng userLocation = event.getLocation();
+        if (userLocation != null) {
+            String distance = LocationUtils.formatDistanceBetween(getLocation(), userLocation);
+            addressTextView.setText(getAddress() + " (" + distance + ")");
+        } else {
+            addressTextView.setText(getAddress());
         }
-    };
+    }
 
     @Override
     public void onMapReady(GoogleMap map) {

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -18,7 +17,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.concurrent.TimeUnit;
 
+import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.LocationUtils;
+import app.iamin.iamin.event.LocationEvent;
 
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
@@ -123,9 +124,8 @@ public class LocationService extends IntentService {
             // Store in a local preference as well
             LocationUtils.storeLocation(this, latLngLocation);
 
-            // Send a local broadcast so if an Activity is open it can respond
-            // to the updated location
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            // Post updated location so if an Activity is open it can respond
+            BusProvider.getInstance().post(new LocationEvent(latLngLocation));
         }
     }
 }
