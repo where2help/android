@@ -15,9 +15,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.squareup.otto.Subscribe;
+
+import app.iamin.iamin.BusProvider;
+import app.iamin.iamin.HelpRequest;
 import app.iamin.iamin.LocationUtils;
 import app.iamin.iamin.PullNeedsActiveTask;
 import app.iamin.iamin.R;
+import app.iamin.iamin.event.LocationEvent;
+import app.iamin.iamin.event.NeedsEvent;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.service.UtilityService;
 
@@ -62,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
         mRecyclerView.setAdapter(mAdapter);
 
-        new PullNeedsActiveTask(this, mAdapter, getEndpoint(this, 0)).execute();
+        new PullNeedsActiveTask(this, getEndpoint(this, 0)).execute();
 
         // Check fine location permission has been granted
         if (!LocationUtils.checkFineLocationPermission(this)) {
@@ -81,6 +88,13 @@ public class MainActivity extends AppCompatActivity implements
             // Otherwise permission is granted (which is always the case on pre-M devices)
             fineLocationPermissionGranted();
         }
+    }
+
+    @Subscribe
+    public void onNeedsUpdate(NeedsEvent event) {
+        // TODO: Handle null
+        HelpRequest[] needs = event.getNeeds();
+        mAdapter.setData(needs);
     }
 
     // Choose endpoint
@@ -138,9 +152,16 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        BusProvider.getInstance().register(this);
         LocationService.requestLocation(this);
         // TODO: update needs
         // new PullNeedsActiveTask(this, mAdapter, getEndpoint(this, 0)).execute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
     }
 
     /**

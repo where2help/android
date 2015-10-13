@@ -17,20 +17,18 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 
-import app.iamin.iamin.ui.ListAdapter;
+import app.iamin.iamin.event.NeedsEvent;
 
 /**
  * Created by paul on 10/10/2015.
  */
 public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]> {
 
-    private ListAdapter adapter;
     private Geocoder coder;
     private Context context;
     private String url;
 
-    public PullNeedsActiveTask(Context context, ListAdapter adapter, String url) {
-        this.adapter = adapter;
+    public PullNeedsActiveTask(Context context, String url) {
         this.coder = new Geocoder(context);
         this.context = context;
         this.url = url;
@@ -75,7 +73,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
 
     @Override
     protected void onPostExecute(HelpRequest[] result) {
-        adapter.setData(result);
+        BusProvider.getInstance().post(new NeedsEvent(result));
     }
 
 /*
