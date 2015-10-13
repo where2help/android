@@ -3,6 +3,8 @@ package app.iamin.iamin;
 import android.content.Context;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -23,11 +25,15 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
     private ListAdapter adapter;
     private Geocoder coder;
     private Context context;
+    private String url;
 
-    public PullNeedsActiveTask(Context context, ListAdapter adapter) {
+    public PullNeedsActiveTask(Context context, ListAdapter adapter, String url) {
         this.adapter = adapter;
         this.coder = new Geocoder(context);
         this.context = context;
+        this.url = url;
+
+        Log.e("PullNeedsActiveTask", url);
     }
 
     @Override
@@ -40,7 +46,7 @@ public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]>
 
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url(new URL("http://where2help.herokuapp.com/api/v1/needs.json"))
+                    .url(new URL(url))
                     .build();
 
             Response response = client.newCall(request).execute();

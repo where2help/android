@@ -16,11 +16,13 @@
         android:elevation="4dp">
 
         <ImageView
+            android:id="@+id/logo"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="16dp"
-            android:src="@drawable/logo"/>
+            android:src="@drawable/logo"
+            android:clickable="true"/>
         </FrameLayout>
 
     <app.iamin.iamin.CustomRecyclerView

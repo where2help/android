@@ -1,6 +1,7 @@
 package app.iamin.iamin;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -35,6 +36,9 @@ public class RegisterTask extends AsyncTask<Void, Integer, Integer> {
 
     @Override
     protected Integer doInBackground(Void... params) {
+        String url = MainActivity.getEndpoint(activity, 1);
+        Log.e("RegisterTask", url);
+
         String json = "{ \"email\": \"" + email + "\", \"need-id\":\"" + needId + "\"}";
 
         try {
@@ -42,7 +46,7 @@ public class RegisterTask extends AsyncTask<Void, Integer, Integer> {
             RequestBody body = RequestBody.create(JSON, json);
             Request request = new Request.Builder()
                     .addHeader("Content-Type", "application/json")
-                    .url(new URL("http://where2help.herokuapp.com/api/v1/volunteerings/create"))
+                    .url(new URL(url))
                     .post(body)
                     .build();
             Response response = client.newCall(request).execute();

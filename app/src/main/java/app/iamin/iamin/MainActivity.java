@@ -1,28 +1,46 @@
 package app.iamin.iamin;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback {
 
     private CustomRecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private ListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private HelpRequest[] needs;
 
     private static final int PERMISSION_REQ = 0;
 
+    private static final String URL_NEEDS = "http://where2help.herokuapp.com/api/v1/needs.json";
+    private static final String URL_REGISTRATION = "http://where2help.herokuapp.com/api/v1/volunteerings/create";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Click on logo to show endpoint picker
+        findViewById(R.id.logo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEndpointPicker();
+            }
+        });
 
         mRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -32,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements
         // TODO: remove
         //initializeData();
 
-        // specify an adapter (see also next example)
         mAdapter = new ListAdapter(this, needs);
+        new PullNeedsActiveTask(this, mAdapter, getEndpoint(this, 0)).execute();
         mRecyclerView.setAdapter(mAdapter);
 
         // Check fine location permission has been granted
@@ -75,6 +93,61 @@ public class MainActivity extends AppCompatActivity implements
             helpRequests.add(req1);
         }
     }*/
+
+    // Choose endpoint
+    private void showEndpointPicker() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Set Endpoint for")
+                .setItems(R.array.endpoint, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        showEndpointInputPicker(which);
+                    }
+                });
+        builder.show();
+    }
+
+    // Set new endpoint
+    private void showEndpointInputPicker(final int which) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Change Endpoint");
+
+        final EditText input = new EditText(MainActivity.this);
+        input.setText(getEndpoint(MainActivity.this, which));
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int p) {
+                storeEndpoint(MainActivity.this, input.getText().toString(), which);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int p) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    // Store endpoint
+    public static void storeEndpoint(Context context, String url, int pos) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(pos == 0 ? "URL_NEEDS" : "URL_REGISTRATION", url);
+        editor.apply();
+    }
+
+    // Get endpoint
+    public static String getEndpoint(Context context, int pos) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(
+                pos == 0 ? "URL_NEEDS" : "URL_REGISTRATION",
+                pos == 0 ? URL_NEEDS : URL_REGISTRATION);
+    }
+
 
     @Override
     protected void onResume() {

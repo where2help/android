@@ -101,7 +101,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         secondColor = context.getResources().getColor(R.color.windowBackgroundLight);
         mHelpRequests = helpRequests;
         setHasStableIds(true);
-        new PullNeedsActiveTask(context, this).execute();
     }
 
     @Override
