@@ -17,9 +17,10 @@
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
             android:layout_gravity="center_vertical"
+            android:scaleType="fitStart"
             android:layout_marginLeft="16dp"
             android:src="@drawable/logo"
             android:clickable="true"/>
@@ -30,10 +31,7 @@
         android:layout_marginTop="?actionBarSize"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:clipToPadding="false"/>
+        android:layout_height="match_parent"/>
 
     <LinearLayout
         android:id="@+id/empty_view"

@@ -24,7 +24,6 @@
             android:orientation="vertical"
             android:paddingBottom="16dp">
 
-            <!--Ignore map:liteMode warning-->
             <FrameLayout
                 android:id="@+id/map"
                 android:layout_width="match_parent"
@@ -34,26 +33,28 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:paddingRight="16dp">
+                android:layout_marginTop="14dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp">
 
                 <ImageView
                     android:id="@+id/type_icon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:scaleType="fitCenter"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center_vertical"
                     android:src="@mipmap/ic_medical" />
 
                 <TextView
                     android:id="@+id/count"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
+                    android:layout_height="36dp"
+                    android:gravity="center_vertical"
                     android:lines="1"
-                    android:paddingLeft="16dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="8dp"
                     android:text="1"
                     android:textAppearance="?android:textAppearanceLarge"
                     android:textColor="@color/colorAccent"
@@ -63,11 +64,10 @@
                 <TextView
                     android:id="@+id/type"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
+                    android:layout_height="36dp"
                     android:lines="1"
+                    android:paddingRight="16dp"
                     android:text="Dummy Text"
-                    android:paddingLeft="8dp"
                     android:textColor="@color/colorPrimary"
                     android:textAppearance="?android:textAppearanceLarge"
                     android:textSize="@dimen/text_title" />
@@ -77,11 +77,12 @@
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="34dp"
-                android:layout_marginTop="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="4dp"
                 android:drawableLeft="@drawable/ic_action_place"
-                android:drawablePadding="16dp"
-                android:padding="4dp"
+                android:drawablePadding="12dp"
                 android:gravity="center_vertical"
                 android:text="Dummy Text"
                 android:textColor="@color/grey"
@@ -91,10 +92,12 @@
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="34dp"
-                android:padding="4dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="4dp"
                 android:drawableLeft="@drawable/ic_action_event"
-                android:drawablePadding="16dp"
+                android:drawablePadding="12dp"
                 android:gravity="center_vertical"
                 android:text="Dummy Text"
                 android:textColor="@color/grey"
@@ -115,8 +118,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:text="Danke! Komm bitte um 14:00!"
+                    android:textStyle="bold"
+                    android:paddingTop="4dp"
                     android:paddingBottom="8dp"
-                    android:paddingLeft="56dp"
+                    android:paddingLeft="44dp"
                     android:textSize="@dimen/text_subhead"
                     android:textColor="@color/colorPrimary"
                     android:visibility="gone" />
@@ -162,12 +167,12 @@
             <TextView
                 android:id="@+id/web"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:paddingLeft="16dp"
                 android:drawableLeft="@drawable/ic_action_link"
-                android:drawablePadding="24dp"
+                android:drawablePadding="12dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/grey"
                 android:textSize="@dimen/text_subhead"
@@ -176,10 +181,10 @@
             <TextView
                 android:id="@+id/organisation"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
                 android:drawableLeft="@drawable/ic_action_people"
-                android:drawablePadding="24dp"
+                android:drawablePadding="12dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/grey"
                 android:textSize="@dimen/text_subhead"
