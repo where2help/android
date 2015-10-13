@@ -89,11 +89,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
     }
 
-    public ListAdapter(Context context, HelpRequest[] helpRequests) {
+    public ListAdapter(Context context) {
         mContext = context;
         firstColor = context.getResources().getColor(R.color.windowBackground);
         secondColor = context.getResources().getColor(R.color.windowBackgroundLight);
-        mHelpRequests = helpRequests;
         setHasStableIds(true);
     }
 

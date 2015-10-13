@@ -22,8 +22,6 @@ public class MainActivity extends AppCompatActivity implements
     private ListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private HelpRequest[] needs;
-
     private static final int PERMISSION_REQ = 0;
 
     private static final String URL_NEEDS = "http://where2help.herokuapp.com/api/v1/needs.json";
@@ -49,17 +47,15 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        mRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new ListAdapter(this);
         mLayoutManager = new LinearLayoutManager(this);
+
+        mRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
-        // TODO: remove
-        //initializeData();
-
-        mAdapter = new ListAdapter(this, needs);
-        new PullNeedsActiveTask(this, mAdapter, getEndpoint(this, 0)).execute();
         mRecyclerView.setAdapter(mAdapter);
+
+        new PullNeedsActiveTask(this, mAdapter, getEndpoint(this, 0)).execute();
 
         // Check fine location permission has been granted
         if (!LocationUtils.checkFineLocationPermission(this)) {
@@ -79,27 +75,6 @@ public class MainActivity extends AppCompatActivity implements
             fineLocationPermissionGranted();
         }
     }
-
-    // TODO: very ugly, please make sure to implement proper data handling
-    public void updateNeeds(HelpRequest[] needs) {
-        this.needs = needs;
-        //
-    }
-
-    // TODO: remove me
-    /*private void initializeData(){
-        helpRequests = new ArrayList<HelpRequest>();
-        for (int i = 0; i < 12; i++) {
-            HelpRequest req1 = new HelpRequest(HelpRequest.TYPE.DOCTOR);
-            req1.setStillOpen(3);
-            Address addr = new Address(Locale.GERMAN);
-            addr.setFeatureName("Wien, Westbahnhof");
-            req1.setAddress(addr);
-            req1.setStart(new Date());
-            req1.setEnd(new Date());
-            helpRequests.add(req1);
-        }
-    }*/
 
     // Choose endpoint
     private void showEndpointPicker() {
@@ -121,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements
         final EditText input = new EditText(MainActivity.this);
         input.setText(getEndpoint(MainActivity.this, which));
         builder.setView(input);
-
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int p) {
@@ -135,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements
                 dialog.cancel();
             }
         });
-
         builder.show();
     }
 
@@ -155,12 +128,12 @@ public class MainActivity extends AppCompatActivity implements
                 pos == 0 ? URL_NEEDS : URL_REGISTRATION);
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         LocationService.requestLocation(this);
-        // TODO: also update need (data) when user comes back
+        // TODO: update needs
+        // new PullNeedsActiveTask(this, mAdapter, getEndpoint(this, 0)).execute();
     }
 
     /**

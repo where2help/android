@@ -59,4 +59,9 @@ public class CustomRecyclerView extends RecyclerView {
             setVisibility(showEmptyView ? GONE : VISIBLE);
         }
     }
+
+    @Override
+    public boolean hasFixedSize() {
+        return true;
+    }
 }
