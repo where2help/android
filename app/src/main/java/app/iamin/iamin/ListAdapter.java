@@ -10,8 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,7 +33,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         @Override
         public void onItemClick(View view, int position) {
             HelpRequest req = mHelpRequests[position];
-
             Intent intent = new Intent();
             intent.setClass(mContext, DetailActivity.class);
             intent.putExtra("address", req.getAddress().getAddressLine(0));
@@ -60,11 +57,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
     };
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        // each data item is just a string in this case
+
         public FrameLayout parent;
         public ImageView iconImageView;
         public TextView typeTextView;
