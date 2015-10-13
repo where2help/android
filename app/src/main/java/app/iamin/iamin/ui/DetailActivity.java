@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -31,6 +31,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.regex.Pattern;
 
+import app.iamin.iamin.LocationUtils;
+import app.iamin.iamin.R;
+import app.iamin.iamin.RegisterTask;
 import app.iamin.iamin.service.LocationService;
 
 /**

@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.ui;
 
 import android.Manifest;
 import android.content.Context;
@@ -15,6 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 
+import app.iamin.iamin.LocationUtils;
+import app.iamin.iamin.PullNeedsActiveTask;
+import app.iamin.iamin.R;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.service.UtilityService;
 

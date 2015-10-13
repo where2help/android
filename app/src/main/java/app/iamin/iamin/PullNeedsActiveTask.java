@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 
+import app.iamin.iamin.ui.ListAdapter;
+
 /**
  * Created by paul on 10/10/2015.
  */

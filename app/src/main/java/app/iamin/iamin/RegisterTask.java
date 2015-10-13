@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import app.iamin.iamin.ui.DetailActivity;
+import app.iamin.iamin.ui.MainActivity;
+
 /**
  * Created by paul on 10/11/2015.
  */

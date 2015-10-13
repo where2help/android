@@ -36,7 +36,7 @@
             android:clickable="true"/>
         </FrameLayout>
 
-    <app.iamin.iamin.CustomRecyclerView
+    <app.iamin.iamin.ui.CustomRecyclerView
         android:id="@+id/recycler_view"
         android:layout_marginTop="?actionBarSize"
         android:scrollbars="vertical"

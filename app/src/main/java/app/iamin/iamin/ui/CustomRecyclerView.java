@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.ui;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

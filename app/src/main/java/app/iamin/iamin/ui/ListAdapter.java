@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,9 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import app.iamin.iamin.HelpRequest;
+import app.iamin.iamin.R;
 
 /**
  * Created by Paul on 10-10-2015.
