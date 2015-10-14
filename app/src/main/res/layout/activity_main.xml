@@ -1,47 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <FrameLayout
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="@color/colorPrimary"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:elevation="4dp">
-
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitStart"
-            android:layout_marginLeft="16dp"
-            android:src="@drawable/ic_toolbar_logo"
-            android:clickable="true"/>
-
-        <ImageView
-            android:id="@+id/logo_text"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitStart"
-            android:layout_marginLeft="60dp"
-            android:src="@drawable/toolbar_logo_text"
-            android:clickable="true"/>
-        </FrameLayout>
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <app.iamin.iamin.ui.CustomRecyclerView
         android:id="@+id/recycler_view"
-        android:layout_marginTop="?actionBarSize"
-        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        android:scrollbars="vertical" />
 
     <LinearLayout
         android:id="@+id/empty_view"
@@ -60,12 +40,12 @@
             android:id="@+id/retry_button"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:src="@drawable/ic_refresh_black_48dp"
-            android:scaleType="centerInside"
             android:background="?selectableItemBackgroundBorderless"
-            android:visibility="gone"
             android:onClick="onRetry"
-            android:tint="@color/colorPrimary"/>
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_refresh_black_48dp"
+            android:tint="@color/colorPrimary"
+            android:visibility="gone" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

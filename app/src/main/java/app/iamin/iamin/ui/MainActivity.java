@@ -12,6 +12,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,21 +53,9 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Click on logo to show endpoint picker
-        findViewById(R.id.logo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showEndpointPicker();
-            }
-        });
-
-        findViewById(R.id.logo_text).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //showEndpointPicker();
-                UtilityService.triggerNotification(MainActivity.this);
-            }
-        });
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.addView(LayoutInflater.from(this).inflate(R.layout.toolbar_logo, toolbar, false));
+        setSupportActionBar(toolbar);
 
         mAdapter = new ListAdapter(this);
         mLayoutManager = new LinearLayoutManager(this);
@@ -96,6 +89,26 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_endpoint:
+                showEndpointPicker();
+                return true;
+            case R.id.action_missile:
+                UtilityService.triggerNotification(MainActivity.this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @Subscribe
     public void onNeedsUpdate(NeedsEvent event) {
         HelpRequest[] needs = event.getNeeds();
@@ -118,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements
     // Choose endpoint
     private void showEndpointPicker() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Set Endpoint for")
+        builder.setTitle("Pick Endpoint")
                 .setItems(R.array.endpoint, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         showEndpointInputPicker(which);
