@@ -17,11 +17,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.otto.Subscribe;
@@ -108,7 +108,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && mMapFragment == null) {
-            GoogleMapOptions options = new GoogleMapOptions().liteMode(true);
+            GoogleMapOptions options = new GoogleMapOptions().liteMode(true)
+                    .camera(CameraPosition.fromLatLngZoom(getLocation(), 13));
 
             mMapFragment = SupportMapFragment.newInstance(options);
             mMapFragment.getMapAsync(DetailActivity.this);
@@ -164,13 +165,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap map) {
         map.getUiSettings().setMapToolbarEnabled(false);
-        LatLng sydney = getLocation();
-
-        map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
         map.addMarker(new MarkerOptions()
                 .title(getAddress())
-                .position(sydney));
+                .position(getLocation()));
     }
 
     public void onRegisterSuccess() {
