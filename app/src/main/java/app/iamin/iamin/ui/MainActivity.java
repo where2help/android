@@ -1,14 +1,9 @@
 package app.iamin.iamin.ui;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
@@ -25,6 +19,7 @@ import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.HelpRequest;
+import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.PullNeedsTask;
 import app.iamin.iamin.R;
@@ -43,9 +38,6 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar progressBar;
 
     private static final int PERMISSION_REQ = 0;
-
-    private static final String URL_NEEDS = "http://where2help.herokuapp.com/api/v1/needs.json";
-    private static final String URL_REGISTRATION = "http://where2help.herokuapp.com/api/v1/volunteerings/create";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements
         retryButton = (ImageButton) findViewById(R.id.retry_button);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        new PullNeedsTask(this, getEndpoint(this, 0)).execute();
+        new PullNeedsTask(this, EndpointUtils.getEndpoint(this, 0)).execute();
 
         // Check fine location permission has been granted
         if (!LocationUtils.checkFineLocationPermission(this)) {
@@ -95,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_endpoint:
-                showEndpointPicker();
+                EndpointUtils.showEndpointPicker(MainActivity.this);
                 return true;
             case R.id.action_missile:
                 UtilityService.triggerNotification(MainActivity.this);
@@ -121,59 +113,7 @@ public class MainActivity extends AppCompatActivity implements
         retryButton.setEnabled(false);
         retryButton.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        new PullNeedsTask(this, getEndpoint(this, 0)).execute();
-    }
-
-    // Choose endpoint
-    private void showEndpointPicker() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pick Endpoint")
-                .setItems(R.array.endpoint, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        showEndpointInputPicker(which);
-                    }
-                });
-        builder.show();
-    }
-
-    // Set new endpoint
-    private void showEndpointInputPicker(final int which) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Change Endpoint");
-
-        final EditText input = new EditText(MainActivity.this);
-        input.setText(getEndpoint(MainActivity.this, which));
-        builder.setView(input);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int p) {
-                storeEndpoint(MainActivity.this, input.getText().toString(), which);
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int p) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
-    }
-
-    // Store endpoint
-    public static void storeEndpoint(Context context, String url, int pos) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(pos == 0 ? "URL_NEEDS" : "URL_REGISTRATION", url);
-        editor.apply();
-    }
-
-    // Get endpoint
-    public static String getEndpoint(Context context, int pos) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(
-                pos == 0 ? "URL_NEEDS" : "URL_REGISTRATION",
-                pos == 0 ? URL_NEEDS : URL_REGISTRATION);
+        new PullNeedsTask(this, EndpointUtils.getEndpoint(this, 0)).execute();
     }
 
     @Override
