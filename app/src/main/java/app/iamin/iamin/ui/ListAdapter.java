@@ -48,8 +48,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             intent.putExtra("latitude", req.getAddress().getLatitude());
             intent.putExtra("id", req.getId());
 
-            DateFormat dtfStart = new SimpleDateFormat("d. M H:m");
-            DateFormat dtfEnd = new SimpleDateFormat("H:m");
+            DateFormat dtfStart = new SimpleDateFormat("dd. MMM HH:mm");
+            DateFormat dtfEnd = new SimpleDateFormat("HH:mm");
             String date = dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
             intent.putExtra("date", date);
             intent.putExtra("dateStart", req.getStart().getTime());
@@ -115,8 +115,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.addressTextView.setText(req.getAddress().getAddressLine(0));
         holder.typeTextView.setText(req.getStillOpen() == 1 ? req.getTypeSingular() : req.getType());
 
-        DateFormat dtfStart = new SimpleDateFormat("H:m");
-        DateFormat dtfEnd = new SimpleDateFormat("H:m");
+        DateFormat dtfStart = new SimpleDateFormat("HH:mm");
+        DateFormat dtfEnd = new SimpleDateFormat("HH:mm");
         Date today = new Date();
         today.setHours(23);
         today.setMinutes(59);
