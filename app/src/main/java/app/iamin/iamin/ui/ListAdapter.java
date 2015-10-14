@@ -10,12 +10,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import app.iamin.iamin.HelpRequest;
 import app.iamin.iamin.R;
+import app.iamin.iamin.util.TimeUtils;
 
 /**
  * Created by Paul on 10-10-2015.
@@ -48,12 +45,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             intent.putExtra("latitude", req.getAddress().getLatitude());
             intent.putExtra("id", req.getId());
 
-            DateFormat dtfStart = new SimpleDateFormat("dd. MMM HH:mm");
-            DateFormat dtfEnd = new SimpleDateFormat("HH:mm");
-            String date = dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
+            String startTime = TimeUtils.formatTimeOfDay(req.getStart());
+            String date = TimeUtils.formatHumanFriendlyShortDate(mContext, req.getStart()) + " " +
+                    startTime + " - " + TimeUtils.formatTimeOfDay(req.getEnd()) + " Uhr";
+
             intent.putExtra("date", date);
             intent.putExtra("dateStart", req.getStart().getTime());
-            intent.putExtra("dateStartForm", dtfEnd.format(req.getStart()));
+            intent.putExtra("dateStartForm", startTime);
             intent.putExtra("dateEnd", req.getEnd().getTime());
 
             mContext.startActivity(intent);
@@ -115,15 +113,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.addressTextView.setText(req.getAddress().getAddressLine(0));
         holder.typeTextView.setText(req.getStillOpen() == 1 ? req.getTypeSingular() : req.getType());
 
-        DateFormat dtfStart = new SimpleDateFormat("HH:mm");
-        DateFormat dtfEnd = new SimpleDateFormat("HH:mm");
-        Date today = new Date();
-        today.setHours(23);
-        today.setMinutes(59);
-        String dayStr = (req.getStart().compareTo(today) < 0) ? "Heute" : "Morgen";
-        String dString = dayStr + " " + dtfStart.format(req.getStart()) + " - " + dtfEnd.format(req.getEnd()) + " Uhr";
+        String dayStr = TimeUtils.formatHumanFriendlyShortDate(mContext, req.getStart());
+        String dString = dayStr + " " + TimeUtils.formatTimeOfDay(req.getStart()) + " - " +
+                TimeUtils.formatTimeOfDay(req.getEnd()) + " Uhr";
+
         holder.dateTextView.setText(dString);
-        // int numHours = (int) Math.floor((req.getEnd().getTime() - req.getStart().getTime()) / (1000 * 60 * 60));
         holder.countTextView.setText(req.getStillOpen() + "");
     }
 

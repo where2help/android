@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Where2Help</string>
     <string name="action_settings">Settings</string>
+
+    <string name="day_title_today">Heute</string>
+    <string name="day_title_yesterday">Gestern</string>
+    <string name="day_title_tomorrow">Morgen</string>
 </resources>
