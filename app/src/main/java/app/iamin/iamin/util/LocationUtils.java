@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.util;
 
 import android.Manifest;
 import android.content.Context;

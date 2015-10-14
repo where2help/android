@@ -21,7 +21,7 @@ import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.HelpRequest;
-import app.iamin.iamin.LocationUtils;
+import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.PullNeedsActiveTask;
 import app.iamin.iamin.R;
 import app.iamin.iamin.event.NeedsEvent;

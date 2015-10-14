@@ -18,7 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.concurrent.TimeUnit;
 
 import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.LocationUtils;
+import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.event.LocationEvent;
 
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
