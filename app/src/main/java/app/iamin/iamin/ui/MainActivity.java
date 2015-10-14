@@ -15,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -27,7 +26,7 @@ import com.squareup.otto.Subscribe;
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.HelpRequest;
 import app.iamin.iamin.util.LocationUtils;
-import app.iamin.iamin.PullNeedsActiveTask;
+import app.iamin.iamin.PullNeedsTask;
 import app.iamin.iamin.R;
 import app.iamin.iamin.event.NeedsEvent;
 import app.iamin.iamin.service.LocationService;
@@ -36,9 +35,9 @@ import app.iamin.iamin.service.UtilityService;
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private CustomRecyclerView mRecyclerView;
-    private ListAdapter mAdapter;
+    private NeedsView mNeedsView;
     private RecyclerView.LayoutManager mLayoutManager;
+    private ListAdapter mAdapter;
 
     private ImageButton retryButton;
     private ProgressBar progressBar;
@@ -54,21 +53,21 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.addView(LayoutInflater.from(this).inflate(R.layout.toolbar_logo, toolbar, false));
+        toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
         setSupportActionBar(toolbar);
 
         mAdapter = new ListAdapter(this);
         mLayoutManager = new LinearLayoutManager(this);
 
-        mRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
-        mRecyclerView.setAdapter(mAdapter);
+        mNeedsView = (NeedsView) findViewById(R.id.recycler_view);
+        mNeedsView.setLayoutManager(mLayoutManager);
+        mNeedsView.setEmptyView(findViewById(R.id.empty_view));
+        mNeedsView.setAdapter(mAdapter);
 
         retryButton = (ImageButton) findViewById(R.id.retry_button);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        new PullNeedsActiveTask(this, getEndpoint(this, 0)).execute();
+        new PullNeedsTask(this, getEndpoint(this, 0)).execute();
 
         // Check fine location permission has been granted
         if (!LocationUtils.checkFineLocationPermission(this)) {
@@ -83,9 +82,6 @@ public class MainActivity extends AppCompatActivity implements
                     requestFineLocationPermission();
                 }
             }
-        } else {
-            // Otherwise permission is granted (which is always the case on pre-M devices)
-            fineLocationPermissionGranted();
         }
     }
 
@@ -125,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements
         retryButton.setEnabled(false);
         retryButton.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        new PullNeedsActiveTask(this, getEndpoint(this, 0)).execute();
+        new PullNeedsTask(this, getEndpoint(this, 0)).execute();
     }
 
     // Choose endpoint

@@ -22,13 +22,13 @@ import app.iamin.iamin.event.NeedsEvent;
 /**
  * Created by paul on 10/10/2015.
  */
-public class PullNeedsActiveTask extends AsyncTask<Void, Integer, HelpRequest[]> {
+public class PullNeedsTask extends AsyncTask<Void, Integer, HelpRequest[]> {
 
     private Geocoder coder;
     private Context context;
     private String url;
 
-    public PullNeedsActiveTask(Context context, String url) {
+    public PullNeedsTask(Context context, String url) {
         this.coder = new Geocoder(context);
         this.context = context;
         this.url = url;

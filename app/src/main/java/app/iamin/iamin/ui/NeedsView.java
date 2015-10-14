@@ -8,7 +8,7 @@ import android.view.View;
 /**
  * Created by Markus on 12.10.15.
  */
-public class CustomRecyclerView extends RecyclerView {
+public class NeedsView extends RecyclerView {
     private View mEmptyView;
 
     private AdapterDataObserver mDataObserver = new AdapterDataObserver() {
@@ -19,23 +19,18 @@ public class CustomRecyclerView extends RecyclerView {
         }
     };
 
-    public CustomRecyclerView(Context context) {
+    public NeedsView(Context context) {
         super(context);
     }
 
-    public CustomRecyclerView(Context context, AttributeSet attrs) {
+    public NeedsView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+    public NeedsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    /**
-     * Designate a view as the empty view. When the backing adapter has no
-     * data this view will be made visible and the recycler view hidden.
-     *
-     */
     public void setEmptyView(View emptyView) {
         mEmptyView = emptyView;
     }

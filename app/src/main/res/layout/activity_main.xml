@@ -16,14 +16,14 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <app.iamin.iamin.ui.CustomRecyclerView
+    <app.iamin.iamin.ui.NeedsView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?actionBarSize"
         android:scrollbars="vertical" />
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,6 +46,5 @@
             android:src="@drawable/ic_refresh_black_48dp"
             android:tint="@color/colorPrimary"
             android:visibility="gone" />
-    </LinearLayout>
-
+    </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

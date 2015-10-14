@@ -112,13 +112,13 @@ public class LocationService extends IntentService {
      * Called when the location has been updated
      */
     private void locationUpdated(Intent intent) {
-        // Log.v(TAG, ACTION_LOCATION_UPDATED);
-
         // Extra new location
         Location location =
                 intent.getParcelableExtra(FusedLocationProviderApi.KEY_LOCATION_CHANGED);
 
         if (location != null) {
+            Log.v(TAG, ACTION_LOCATION_UPDATED);
+
             LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
             // Store in a local preference as well
