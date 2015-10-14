@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements
         retryButton = (ImageButton) findViewById(R.id.retry_button);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        new PullNeedsTask(this, EndpointUtils.getEndpoint(this, 0)).execute();
+        new PullNeedsTask(this).execute();
 
         // Check fine location permission has been granted
         if (!LocationUtils.checkFineLocationPermission(this)) {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements
         retryButton.setEnabled(false);
         retryButton.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        new PullNeedsTask(this, EndpointUtils.getEndpoint(this, 0)).execute();
+        new PullNeedsTask(this).execute();
     }
 
     @Override

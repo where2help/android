@@ -14,6 +14,9 @@ import app.iamin.iamin.R;
  */
 public class EndpointUtils {
 
+    public static final int TASK_NEEDS = 0;
+    public static final int TASK_REGISTER = 1;
+
     private static final String URL_NEEDS = "http://where2help.herokuapp.com/api/v1/needs.json";
     private static final String URL_REGISTRATION = "http://where2help.herokuapp.com/api/v1/volunteerings/create";
 

@@ -18,6 +18,7 @@ import java.net.URL;
 import java.text.ParseException;
 
 import app.iamin.iamin.event.NeedsEvent;
+import app.iamin.iamin.util.EndpointUtils;
 
 /**
  * Created by paul on 10/10/2015.
@@ -26,20 +27,18 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, HelpRequest[]> {
 
     private Geocoder coder;
     private Context context;
-    private String url;
 
-    public PullNeedsTask(Context context, String url) {
+    public PullNeedsTask(Context context) {
         this.coder = new Geocoder(context);
         this.context = context;
-        this.url = url;
-
-        Log.e("PullNeedsActiveTask", url);
     }
 
     @Override
     protected HelpRequest[] doInBackground(Void... params) {
 
         HelpRequest[] needs = null;
+        String url = EndpointUtils.getEndpoint(context, EndpointUtils.TASK_NEEDS);
+        Log.d("PullNeedsActiveTask", url);
 
         try {
             //registerUser();

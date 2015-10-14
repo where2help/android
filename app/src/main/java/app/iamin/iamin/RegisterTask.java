@@ -17,7 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import app.iamin.iamin.ui.DetailActivity;
-import app.iamin.iamin.ui.MainActivity;
+import app.iamin.iamin.util.EndpointUtils;
 
 /**
  * Created by paul on 10/11/2015.
@@ -39,8 +39,8 @@ public class RegisterTask extends AsyncTask<Void, Integer, Integer> {
 
     @Override
     protected Integer doInBackground(Void... params) {
-        String url = MainActivity.getEndpoint(activity, 1);
-        Log.e("RegisterTask", url);
+        String url = EndpointUtils.getEndpoint(activity, EndpointUtils.TASK_REGISTER);
+        Log.d("RegisterTask", url);
 
         String json = "{ \"email\": \"" + email + "\", \"need-id\":\"" + needId + "\"}";
 
