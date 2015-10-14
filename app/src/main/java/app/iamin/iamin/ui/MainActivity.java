@@ -14,8 +14,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
@@ -23,7 +24,6 @@ import app.iamin.iamin.HelpRequest;
 import app.iamin.iamin.LocationUtils;
 import app.iamin.iamin.PullNeedsActiveTask;
 import app.iamin.iamin.R;
-import app.iamin.iamin.event.LocationEvent;
 import app.iamin.iamin.event.NeedsEvent;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.service.UtilityService;
@@ -34,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements
     private CustomRecyclerView mRecyclerView;
     private ListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private ImageButton retryButton;
+    private ProgressBar progressBar;
 
     private static final int PERMISSION_REQ = 0;
 
@@ -69,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
         mRecyclerView.setAdapter(mAdapter);
 
+        retryButton = (ImageButton) findViewById(R.id.retry_button);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
         new PullNeedsActiveTask(this, getEndpoint(this, 0)).execute();
 
         // Check fine location permission has been granted
@@ -92,9 +98,21 @@ public class MainActivity extends AppCompatActivity implements
 
     @Subscribe
     public void onNeedsUpdate(NeedsEvent event) {
-        // TODO: Handle null
         HelpRequest[] needs = event.getNeeds();
-        mAdapter.setData(needs);
+        if (needs != null) {
+            mAdapter.setData(needs);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            retryButton.setVisibility(View.VISIBLE);
+            retryButton.setEnabled(true);
+        }
+    }
+
+    public void onRetry(View v) {
+        retryButton.setEnabled(false);
+        retryButton.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        new PullNeedsActiveTask(this, getEndpoint(this, 0)).execute();
     }
 
     // Choose endpoint

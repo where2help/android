@@ -60,10 +60,12 @@
             android:id="@+id/retry_button"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:src="@drawable/ic_refresh_black_24dp"
+            android:src="@drawable/ic_refresh_black_48dp"
             android:scaleType="centerInside"
             android:background="?selectableItemBackgroundBorderless"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:onClick="onRetry"
+            android:tint="@color/colorPrimary"/>
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
