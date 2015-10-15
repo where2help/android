@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -223,7 +224,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 break;
             }
         }
-
+        Log.d("onActionSubmit", email);
+        //TODO: If email is null ask user for email or phone number
         new RegisterTask(this, getIntent().getExtras().getInt("id"), email).execute();
     }
 
