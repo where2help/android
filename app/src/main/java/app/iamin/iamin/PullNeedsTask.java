@@ -18,12 +18,13 @@ import java.net.URL;
 import java.text.ParseException;
 
 import app.iamin.iamin.event.NeedsEvent;
+import app.iamin.iamin.model.Need;
 import app.iamin.iamin.util.EndpointUtils;
 
 /**
  * Created by paul on 10/10/2015.
  */
-public class PullNeedsTask extends AsyncTask<Void, Integer, HelpRequest[]> {
+public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
 
     private Geocoder coder;
     private Context context;
@@ -34,9 +35,9 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, HelpRequest[]> {
     }
 
     @Override
-    protected HelpRequest[] doInBackground(Void... params) {
+    protected Need[] doInBackground(Void... params) {
 
-        HelpRequest[] needs = null;
+        Need[] needs = null;
         String url = EndpointUtils.getEndpoint(context, EndpointUtils.TASK_NEEDS);
         Log.d("PullNeedsActiveTask", url);
 
@@ -52,11 +53,10 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, HelpRequest[]> {
             String result =  response.body().string();
             JSONArray data = new JSONObject(result).getJSONArray("data");
 
-            needs = new HelpRequest[data.length()];
+            needs = new Need[data.length()];
             for (int i = 0; i<data.length(); i++) {
                 JSONObject obj = data.getJSONObject(i);
-                needs[i] = new HelpRequest();
-                needs[i].fromJSON(obj, coder);
+                needs[i] = new Need().fromJSON(obj, coder);
             }
 
         } catch (IOException e) {
@@ -71,7 +71,7 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, HelpRequest[]> {
     }
 
     @Override
-    protected void onPostExecute(HelpRequest[] result) {
+    protected void onPostExecute(Need[] result) {
         BusProvider.getInstance().post(new NeedsEvent(result));
     }
 

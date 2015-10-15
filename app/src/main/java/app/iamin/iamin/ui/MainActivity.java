@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.HelpRequest;
+import app.iamin.iamin.model.Need;
 import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.PullNeedsTask;
@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView.LayoutManager mLayoutManager;
     private ListAdapter mAdapter;
 
-    private ImageButton retryButton;
-    private ProgressBar progressBar;
+    private ImageButton mRetryButton;
+    private ProgressBar mProgressBar;
 
     private static final int PERMISSION_REQ = 0;
 
@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity implements
         mNeedsView.setEmptyView(findViewById(R.id.empty_view));
         mNeedsView.setAdapter(mAdapter);
 
-        retryButton = (ImageButton) findViewById(R.id.retry_button);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mRetryButton = (ImageButton) findViewById(R.id.retry_button);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         new PullNeedsTask(this).execute();
 
@@ -99,20 +99,20 @@ public class MainActivity extends AppCompatActivity implements
 
     @Subscribe
     public void onNeedsUpdate(NeedsEvent event) {
-        HelpRequest[] needs = event.getNeeds();
+        Need[] needs = event.getNeeds();
         if (needs != null) {
             mAdapter.setData(needs);
         } else {
-            progressBar.setVisibility(View.GONE);
-            retryButton.setVisibility(View.VISIBLE);
-            retryButton.setEnabled(true);
+            mProgressBar.setVisibility(View.GONE);
+            mRetryButton.setVisibility(View.VISIBLE);
+            mRetryButton.setEnabled(true);
         }
     }
 
     public void onRetry(View v) {
-        retryButton.setEnabled(false);
-        retryButton.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
+        mRetryButton.setEnabled(false);
+        mRetryButton.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
         new PullNeedsTask(this).execute();
     }
 

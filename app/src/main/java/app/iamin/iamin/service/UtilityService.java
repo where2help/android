@@ -11,6 +11,7 @@ import android.util.Log;
 
 import app.iamin.iamin.ui.DetailActivity;
 import app.iamin.iamin.R;
+import app.iamin.iamin.util.UiUtils;
 
 /**
  * Created by Markus on 13.10.15.
@@ -62,22 +63,7 @@ public class UtilityService extends IntentService {
      * Show the notification.
      */
     private void showNotification(Intent intent) {
-        // TODO: dummy dummy
-        intent = new Intent();
-        intent.setClass(this, DetailActivity.class);
-        intent.putExtra("address", "Westbahnhof");
-        intent.putExtra("type", "Freiwillige");
-        intent.putExtra("typeSingular", "Freiwilliger");
-        intent.putExtra("typeIcon", R.drawable.ic_volunteer);
-        intent.putExtra("selfLink", "www.google.at");
-        intent.putExtra("stillOpen", 2);
-        intent.putExtra("longitude", 0);
-        intent.putExtra("latitude", 0);
-        intent.putExtra("date", "12.10 7:30 - 9:45");
-        intent.putExtra("dateStart", System.currentTimeMillis());
-        intent.putExtra("dateStartForm", "7:30");
-        intent.putExtra("dateEnd", System.currentTimeMillis());
-
+        intent = UiUtils.createDummyDetailIntent(this);
         // The intent to trigger when the notification is tapped
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);

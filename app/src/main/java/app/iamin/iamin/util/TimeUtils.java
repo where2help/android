@@ -54,4 +54,10 @@ public class TimeUtils {
     public static String formatTimeOfDay(Date date) {
         return FORMAT_TIME_OF_DAY.format(date);
     }
+
+
+    public static String getDuration(Date start, Date end) {
+        long diffHours = (end.getTime() - start.getTime()) / (1000l * 60l * 60l);
+        return "mind. " + diffHours + " h";
+    }
 }

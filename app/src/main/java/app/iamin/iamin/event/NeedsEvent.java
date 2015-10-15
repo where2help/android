@@ -1,19 +1,19 @@
 package app.iamin.iamin.event;
 
-import app.iamin.iamin.HelpRequest;
+import app.iamin.iamin.model.Need;
 
 /**
  * Created by Markus on 13.10.15.
  */
 public class NeedsEvent {
 
-    private final HelpRequest[] needs;
+    private final Need[] needs;
 
-    public NeedsEvent(HelpRequest[] needs) {
+    public NeedsEvent(Need[] needs) {
         this.needs = needs;
     }
 
-    public HelpRequest[] getNeeds() {
+    public Need[] getNeeds() {
         return this.needs;
     }
 }

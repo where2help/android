@@ -10,9 +10,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import app.iamin.iamin.HelpRequest;
+import app.iamin.iamin.model.Need;
 import app.iamin.iamin.R;
 import app.iamin.iamin.util.TimeUtils;
+import app.iamin.iamin.util.UiUtils;
 
 /**
  * Created by Paul on 10-10-2015.
@@ -20,7 +21,7 @@ import app.iamin.iamin.util.TimeUtils;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     private Context mContext;
-    private HelpRequest[] mHelpRequests;
+    private Need[] mHelpRequests;
 
     private int firstColor;
     private int secondColor;
@@ -32,28 +33,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private final ItemClickListener clickListener = new ItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            HelpRequest req = mHelpRequests[position];
-            Intent intent = new Intent();
-            intent.setClass(mContext, DetailActivity.class);
-            intent.putExtra("address", req.getAddress().getAddressLine(0));
-            intent.putExtra("type", req.getType());
-            intent.putExtra("typeSingular", req.getTypeSingular());
-            intent.putExtra("typeIcon", req.getTypeIcon());
-            intent.putExtra("selfLink", req.getSelfLink());
-            intent.putExtra("stillOpen", req.getStillOpen());
-            intent.putExtra("longitude", req.getAddress().getLongitude());
-            intent.putExtra("latitude", req.getAddress().getLatitude());
-            intent.putExtra("id", req.getId());
-
-            String startTime = TimeUtils.formatTimeOfDay(req.getStart());
-            String date = TimeUtils.formatHumanFriendlyShortDate(mContext, req.getStart()) + " " +
-                    startTime + " - " + TimeUtils.formatTimeOfDay(req.getEnd()) + " Uhr";
-
-            intent.putExtra("date", date);
-            intent.putExtra("dateStart", req.getStart().getTime());
-            intent.putExtra("dateStartForm", startTime);
-            intent.putExtra("dateEnd", req.getEnd().getTime());
-
+            Intent intent = UiUtils.createDetailIntent(mContext, mHelpRequests[position]);
             mContext.startActivity(intent);
         }
     };
@@ -106,19 +86,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
-        HelpRequest req = mHelpRequests[position];
+        Need req = mHelpRequests[position];
 
         holder.parent.setBackgroundColor((position % 2) == 0 ? firstColor : secondColor);
-        holder.iconImageView.setImageResource(req.getTypeIcon());
+        holder.iconImageView.setImageResource(req.getCategoryIcon());
         holder.addressTextView.setText(req.getAddress().getAddressLine(0));
-        holder.typeTextView.setText(req.getStillOpen() == 1 ? req.getTypeSingular() : req.getType());
+        holder.typeTextView.setText(req.getCount() == 1 ? req.getCategorySingular() : req.getCategoryPlural());
 
         String dayStr = TimeUtils.formatHumanFriendlyShortDate(mContext, req.getStart());
         String dString = dayStr + " " + TimeUtils.formatTimeOfDay(req.getStart()) + " - " +
                 TimeUtils.formatTimeOfDay(req.getEnd()) + " Uhr";
 
         holder.dateTextView.setText(dString);
-        holder.countTextView.setText(req.getStillOpen() + "");
+        holder.countTextView.setText(req.getCount() + "");
     }
 
     @Override
@@ -131,7 +111,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         return position;
     }
 
-    public void setData(HelpRequest[] needs) {
+    public void setData(Need[] needs) {
         mHelpRequests = needs;
         this.notifyDataSetChanged();
     }
