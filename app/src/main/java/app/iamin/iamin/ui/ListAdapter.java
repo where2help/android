@@ -21,10 +21,7 @@ import app.iamin.iamin.util.UiUtils;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     private Context mContext;
-    private Need[] mHelpRequests;
-
-    private int firstColor;
-    private int secondColor;
+    private Need[] needs;
 
     public interface ItemClickListener {
         void onItemClick(View view, int position);
@@ -33,7 +30,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private final ItemClickListener clickListener = new ItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            Intent intent = UiUtils.getDetailIntent(mContext, mHelpRequests[position]);
+            Intent intent = UiUtils.getDetailIntent(mContext, needs[position]);
             mContext.startActivity(intent);
         }
     };
@@ -72,8 +69,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     public ListAdapter(Context context) {
         mContext = context;
-        firstColor = context.getResources().getColor(R.color.windowBackground);
-        secondColor = context.getResources().getColor(R.color.windowBackgroundLight);
         setHasStableIds(true);
     }
 
@@ -86,24 +81,26 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
-        Need req = mHelpRequests[position];
+        Need need = needs[position];
 
-        holder.parent.setBackgroundColor((position % 2) == 0 ? firstColor : secondColor);
-        holder.iconImageView.setImageResource(req.getCategoryIcon());
-        holder.addressTextView.setText(req.getAddress().getAddressLine(0));
-        holder.typeTextView.setText(req.getCount() == 1 ? req.getCategorySingular() : req.getCategoryPlural());
+        holder.parent.setBackgroundResource((position % 2) == 0 ?
+                R.color.windowBackground : R.color.windowBackgroundLight);
+        holder.iconImageView.setImageResource(need.getCategoryIcon());
+        holder.addressTextView.setText(need.getAddress().getAddressLine(0));
+        holder.typeTextView.setText(need.getCount() == 1 ?
+                need.getCategorySingular() : need.getCategoryPlural());
 
-        String dayStr = TimeUtils.formatHumanFriendlyShortDate(mContext, req.getStart());
-        String dString = dayStr + " " + TimeUtils.formatTimeOfDay(req.getStart()) + " - " +
-                TimeUtils.formatTimeOfDay(req.getEnd()) + " Uhr";
+        String dayStr = TimeUtils.formatHumanFriendlyShortDate(mContext, need.getStart());
+        String dString = dayStr + " " + TimeUtils.formatTimeOfDay(need.getStart()) + " - " +
+                TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr";
 
         holder.dateTextView.setText(dString);
-        holder.countTextView.setText(req.getCount() + "");
+        holder.countTextView.setText(need.getCount() + "");
     }
 
     @Override
     public int getItemCount() {
-        return mHelpRequests == null ? 0 : mHelpRequests.length;
+        return needs == null ? 0 : needs.length;
     }
 
     @Override
@@ -112,7 +109,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
     public void setData(Need[] needs) {
-        mHelpRequests = needs;
+        this.needs = needs;
         this.notifyDataSetChanged();
     }
 }
