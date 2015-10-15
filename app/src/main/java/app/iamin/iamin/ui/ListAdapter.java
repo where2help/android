@@ -33,7 +33,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     private final ItemClickListener clickListener = new ItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            Intent intent = UiUtils.createDetailIntent(mContext, mHelpRequests[position]);
+            Intent intent = UiUtils.getDetailIntent(mContext, mHelpRequests[position]);
             mContext.startActivity(intent);
         }
     };

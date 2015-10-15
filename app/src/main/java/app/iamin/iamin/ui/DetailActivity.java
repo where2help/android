@@ -3,8 +3,6 @@ package app.iamin.iamin.ui;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +34,7 @@ import app.iamin.iamin.RegisterTask;
 import app.iamin.iamin.event.LocationEvent;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.util.TimeUtils;
+import app.iamin.iamin.util.UiUtils;
 
 /**
  * Created by Markus on 10.10.15.
@@ -196,20 +195,17 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 if (submitInfoTextView.getVisibility() != View.VISIBLE) {
                     onActionSubmit();
                 } else {
-                    onActionShare();
+                    UiUtils.fireShareIntent(DetailActivity.this, need);
                 }
                 break;
             case R.id.cancel:
                 onActionCancel();
                 break;
             case R.id.calendar:
-                onActionCalendar();
+                UiUtils.fireCalendarIntent(DetailActivity.this, need);
                 break;
             case R.id.web:
-                onActionWeb();
-                break;
-            case android.R.id.home:
-                finish();
+                UiUtils.fireWebIntent(DetailActivity.this, need);
                 break;
         }
     }
@@ -247,36 +243,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    private void onActionCalendar() {
-        Intent intent = new Intent(Intent.ACTION_INSERT)
-                .setType("vnd.android.cursor.item/event")
-                .putExtra("beginTime", need.getStart())
-                .putExtra("endTime", need.getEnd())
-                .putExtra("allDay", false)
-                .putExtra("title", "Where2Help - " + need.getCategoryPlural())
-                .putExtra("description", "Where2Help - " + need.getCategoryPlural() + " für " +
-                        TimeUtils.getDuration(need.getStart(), need.getEnd()) + ".")
-                .putExtra("eventLocation", need.getAddress().getAddressLine(0));
-        startActivity(intent);
-    }
-
-    public void onActionShare() {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.setType("text/plain");
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + need.getCategoryPlural() + " am " +
-                TimeUtils.formatHumanFriendlyShortDate(this, need.getStart()) + " " +
-                TimeUtils.formatTimeOfDay(need.getStart()) + " - " + TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr" + " für " + TimeUtils.getDuration(need.getStart(), need.getEnd()) + " am " +
-                need.getAddress().getAddressLine(0) + ". (" + need.getSelfLink() + ")");
-        startActivity(sendIntent);
-    }
-
-    private void onActionWeb() {
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse("http://" + webTextView.getText().toString()));
-        startActivity(i);
     }
 
     @Override

@@ -2,6 +2,7 @@ package app.iamin.iamin.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.ui.DetailActivity;
@@ -11,7 +12,7 @@ import app.iamin.iamin.ui.DetailActivity;
  */
 public class UiUtils {
 
-    public static Intent createDetailIntent(Context context, Need need) {
+    public static Intent getDetailIntent(Context context, Need need) {
         Intent intent = new Intent();
         intent.setClass(context, DetailActivity.class);
         intent.putExtra("id", need.getId());
@@ -26,12 +27,11 @@ public class UiUtils {
 
         intent.putExtra("count", need.getCount());
         intent.putExtra("selfLink", need.getSelfLink());
-
         return intent;
     }
 
     // TODO: remove some day
-    public static Intent createDummyDetailIntent(Context context) {
+    public static Intent getDummyDetailIntent(Context context) {
         Intent intent = new Intent();
         intent.setClass(context, DetailActivity.class);
         intent.putExtra("id", 0);
@@ -46,7 +46,36 @@ public class UiUtils {
 
         intent.putExtra("count", 2);
         intent.putExtra("selfLink", "www.google.at");
-
         return intent;
+    }
+
+    public static void fireCalendarIntent(Context context, Need need) {
+        Intent intent = new Intent(Intent.ACTION_INSERT)
+                .setType("vnd.android.cursor.item/event")
+                .putExtra("beginTime", need.getStart())
+                .putExtra("endTime", need.getEnd())
+                .putExtra("allDay", false)
+                .putExtra("title", "Where2Help - " + need.getCategoryPlural())
+                .putExtra("description", "Where2Help - " + need.getCategoryPlural() + " für " +
+                        TimeUtils.getDuration(need.getStart(), need.getEnd()) + ".")
+                .putExtra("eventLocation", need.getAddress().getAddressLine(0));
+        context.startActivity(intent);
+    }
+
+    public static void fireShareIntent(Context context, Need need) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + need.getCategoryPlural() + " am " +
+                TimeUtils.formatHumanFriendlyShortDate(context, need.getStart()) + " " +
+                TimeUtils.formatTimeOfDay(need.getStart()) + " - " + TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr" + " für " + TimeUtils.getDuration(need.getStart(), need.getEnd()) + " am " +
+                need.getAddress().getAddressLine(0) + ". (" + need.getSelfLink() + ")");
+        context.startActivity(intent);
+    }
+
+    public static void fireWebIntent(Context context, Need need) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(need.getSelfLink()));
+        context.startActivity(intent);
     }
 }
