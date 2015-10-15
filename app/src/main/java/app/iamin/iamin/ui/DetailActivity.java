@@ -116,9 +116,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && mMapFragment == null) {
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mMapFragment == null) {
             GoogleMapOptions options = new GoogleMapOptions().liteMode(true)
                     .camera(CameraPosition.fromLatLngZoom(need.getLocation(), 13));
 
