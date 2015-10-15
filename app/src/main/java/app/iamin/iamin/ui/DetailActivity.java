@@ -49,7 +49,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private Button cancelButton;
     private Button calendarButton;
 
-    private TextView typeTextView;
+    private TextView categoryTextView;
     private TextView addressTextView;
     private TextView dateTextView;
     private TextView submitInfoTextView;
@@ -78,9 +78,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(this);
 
-        typeTextView = (TextView) findViewById(R.id.type);
+        categoryTextView = (TextView) findViewById(R.id.category);
 
-        typeImageView = (ImageView) findViewById(R.id.type_icon);
+        typeImageView = (ImageView) findViewById(R.id.category_icon);
         typeImageView.setImageResource(need.getCategoryIcon());
 
         addressTextView = (TextView) findViewById(R.id.address);
@@ -138,13 +138,13 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             submitInfoTextView.setVisibility(View.VISIBLE);
             btnBarLayout.setVisibility(View.VISIBLE);
             submitButton.setText("Weitersagen!");
-            typeTextView.setText((need.getCount() - 1) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
+            categoryTextView.setText((need.getCount() - 1) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         } else {
             countTextView.setText("" + (need.getCount())); // TODO: cheat ! ;-)
             submitInfoTextView.setVisibility(View.GONE);
             btnBarLayout.setVisibility(View.GONE);
             submitButton.setText("I'm In!");
-            typeTextView.setText((need.getCount()) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
+            categoryTextView.setText((need.getCount()) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         }
     }
 

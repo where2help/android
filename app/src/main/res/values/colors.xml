@@ -3,8 +3,8 @@
     <color name="colorPrimary">#102631</color>
     <color name="colorPrimaryDark">#102631</color>
     <color name="colorAccent">#87CEC9</color>
+    <color name="colorHint">#EEFF41</color>
     <color name="windowBackground">#DDDDD6</color>
     <color name="windowBackgroundLight">#EDEDE5</color>
-    <color name="windowBackgroundHint">#F9FBE7</color>
     <color name="grey">#6B767A</color>
 </resources>

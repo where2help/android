@@ -85,6 +85,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         holder.parent.setBackgroundResource((position % 2) == 0 ?
                 R.color.windowBackground : R.color.windowBackgroundLight);
+
         holder.iconImageView.setImageResource(need.getCategoryIcon());
         holder.addressTextView.setText(need.getAddress().getAddressLine(0));
         holder.typeTextView.setText(need.getCount() == 1 ?

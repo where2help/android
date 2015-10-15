@@ -27,7 +27,6 @@
             <FrameLayout
                 android:id="@+id/map"
                 android:layout_width="match_parent"
-                android:background="#ddd"
                 android:layout_height="168dp">
             </FrameLayout>
 
@@ -40,7 +39,7 @@
                 android:layout_marginRight="16dp">
 
                 <ImageView
-                    android:id="@+id/type_icon"
+                    android:id="@+id/category_icon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:scaleType="fitXY"
@@ -62,8 +61,9 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/type"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/category"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="36dp"
                     android:lines="1"
                     android:paddingRight="16dp"
