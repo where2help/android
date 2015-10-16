@@ -32,6 +32,9 @@
         <activity android:name=".ui.DetailActivity"
             android:theme="@style/AppThemeLight"/>
 
+        <activity android:name=".ui.UserActivity"
+            android:theme="@style/AppThemeLight"/>
+
         <service android:name=".service.LocationService" />
         <service android:name=".service.UtilityService" />
     </application>
