@@ -108,8 +108,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="4dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
                 android:paddingBottom="16dp">
 
                 <TextView
@@ -121,7 +121,7 @@
                     android:textStyle="bold"
                     android:paddingTop="4dp"
                     android:paddingBottom="8dp"
-                    android:paddingLeft="44dp"
+                    android:paddingLeft="46dp"
                     android:textSize="@dimen/text_subhead"
                     android:textColor="@color/colorPrimary"
                     android:visibility="gone" />
@@ -151,7 +151,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Kalendereintrag" />
+                        android:text="Kalender" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -171,11 +171,12 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:paddingLeft="16dp"
-                android:drawableLeft="@drawable/ic_action_link"
-                android:drawablePadding="12dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/text_subhead"
+                android:textColor="@color/colorHint"
+                android:textSize="@dimen/text_body"
                 android:text="Mehr Infos: www...." />
 
             <TextView
@@ -183,12 +184,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
-                android:drawableLeft="@drawable/ic_action_people"
-                android:drawablePadding="12dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/grey"
-                android:textSize="@dimen/text_subhead"
-                android:text="By: Train of Hope" />
+                android:textSize="@dimen/text_body"
+                android:text="Organisation: Train of Hope" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -98,7 +98,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         webTextView.setOnClickListener(this);
 
         submitInfoTextView = (TextView) findViewById(R.id.info);
-        submitInfoTextView.setText("Danke! Bitte komm um " + TimeUtils.formatTimeOfDay(need.getStart()) + "!");
+
         btnBarLayout = (LinearLayout) findViewById(R.id.btnBar);
 
         calendarButton = (Button) findViewById(R.id.calendar);
@@ -135,6 +135,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         if (isAttending) {
             countTextView.setText("" + (need.getCount() - 1)); // TODO: cheat ! ;-)
             submitButton.setEnabled(true);
+            submitInfoTextView.setText("Danke! Bitte komm um " + TimeUtils.formatTimeOfDay(need.getStart()) + "!");
             submitInfoTextView.setVisibility(View.VISIBLE);
             btnBarLayout.setVisibility(View.VISIBLE);
             submitButton.setText("Weitersagen!");
