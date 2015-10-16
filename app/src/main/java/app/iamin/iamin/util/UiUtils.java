@@ -6,6 +6,8 @@ import android.net.Uri;
 
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.ui.DetailActivity;
+import app.iamin.iamin.ui.SettingsActivity;
+import app.iamin.iamin.ui.UserActivity;
 
 /**
  * Created by Markus on 15.10.15.
@@ -47,6 +49,18 @@ public class UiUtils {
         intent.putExtra("count", 2);
         intent.putExtra("selfLink", "www.google.at");
         return intent;
+    }
+
+    public static void fireUserIntent(Context context) {
+        Intent intent = new Intent();
+        intent.setClass(context, UserActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void fireSettingsIntent(Context context) {
+        Intent intent = new Intent();
+        intent.setClass(context, SettingsActivity.class);
+        context.startActivity(intent);
     }
 
     public static void fireCalendarIntent(Context context, Need need) {

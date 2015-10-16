@@ -26,6 +26,7 @@ import app.iamin.iamin.R;
 import app.iamin.iamin.event.NeedsEvent;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.service.UtilityService;
+import app.iamin.iamin.util.UiUtils;
 
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback {
@@ -91,6 +92,12 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
             case R.id.action_missile:
                 UtilityService.triggerNotification(MainActivity.this);
+                return true;
+            case R.id.action_user:
+                UiUtils.fireUserIntent(MainActivity.this);
+                return true;
+            case R.id.action_settings:
+                UiUtils.fireSettingsIntent(MainActivity.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
