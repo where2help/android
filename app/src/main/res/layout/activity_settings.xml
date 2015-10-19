@@ -28,11 +28,102 @@
             android:paddingBottom="8dp"
             android:paddingTop="8dp">
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:src="@drawable/ic_account_circle_white_24dp"
+                    android:tint="@color/grey" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="60dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Username"
+                    android:textColor="?colorPrimary"
+                    android:textSize="@dimen/text_subhead" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="60dp"
+                    android:paddingRight="16dp"
+                    android:text="user@email.com"
+                    android:textSize="@dimen/text_body" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/windowBackground" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
                 android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Log out"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/text_subhead" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/windowBackground" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Terms &amp; Privacy"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/text_subhead" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
                 android:background="@color/windowBackground"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Communications"
+                android:textSize="@dimen/text_body" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switch1"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?selectableItemBackground"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Emails"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/text_subhead" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@color/windowBackground"
+                android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="Developer Options"
@@ -42,32 +133,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="?selectableItemBackground"
+                android:clickable="true"
                 android:gravity="center_vertical"
+                android:onClick="onEditEndpoint"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="Edit Endpoint"
                 android:textColor="?colorPrimary"
-                android:textSize="@dimen/text_subhead"
-                android:clickable="true"
-                android:onClick="onEditEndpoint"/>
+                android:textSize="@dimen/text_subhead" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/windowBackground"/>
+                android:background="@color/windowBackground" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="?selectableItemBackground"
+                android:clickable="true"
                 android:gravity="center_vertical"
+                android:onClick="onFireMissile"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="Fire Missile!"
                 android:textColor="?colorPrimary"
-                android:textSize="@dimen/text_subhead"
-                android:clickable="true"
-                android:onClick="onFireMissile"/>
+                android:textSize="@dimen/text_subhead" />
 
         </LinearLayout>
     </ScrollView>

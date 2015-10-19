@@ -46,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="136dp"
-        android:background="#263238">
+        android:background="#37474F">
 
         <LinearLayout
             android:id="@+id/header"
