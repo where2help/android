@@ -3,14 +3,10 @@ package app.iamin.iamin.ui;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.R;
-import app.iamin.iamin.service.UtilityService;
-import app.iamin.iamin.util.EndpointUtils;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -20,29 +16,20 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
+        toolbar.setTitle("Settings");
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_endpoint:
-                EndpointUtils.showEndpointPicker(SettingsActivity.this);
+            case android.R.id.home:
+                onBackPressed();
                 return true;
-            case R.id.action_missile:
-                UtilityService.triggerNotification(SettingsActivity.this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -55,5 +42,11 @@ public class SettingsActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_right, R.anim.leave_left);
     }
 }

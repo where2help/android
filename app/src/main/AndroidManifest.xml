@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="app.iamin.iamin" >
+    package="app.iamin.iamin">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -12,16 +12,16 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC5TgAvH4GGSOclrC1dYe3UtNsNXbioMNo"/>
+            android:value="AIzaSyC5TgAvH4GGSOclrC1dYe3UtNsNXbioMNo" />
 
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,14 +29,23 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.DetailActivity"
-            android:theme="@style/AppThemeLight"/>
+        <activity
+            android:name=".ui.DetailActivity"
+            android:theme="@style/AppThemeLight" />
 
-        <activity android:name=".ui.UserActivity"
-            android:theme="@style/AppThemeLight"/>
+        <activity
+            android:name=".ui.UserActivity"
+            android:parentActivityName="app.iamin.iamin.ui.MainActivity"
+            android:theme="@style/AppThemeLight">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="app.iamin.iamin.ui.MainActivity" />
+        </activity>
 
-        <activity android:name=".ui.SettingsActivity"
-            android:theme="@style/AppThemeLight"/>
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:theme="@style/AppThemeLight" />
 
         <service android:name=".service.LocationService" />
         <service android:name=".service.UtilityService" />

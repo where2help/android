@@ -3,16 +3,18 @@ package app.iamin.iamin.ui;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.R;
-import app.iamin.iamin.service.UtilityService;
-import app.iamin.iamin.util.EndpointUtils;
+import app.iamin.iamin.util.UiUtils;
 
 public class UserActivity extends AppCompatActivity {
+
+    TextView titleTextView;
+    TextView descTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,29 +22,36 @@ public class UserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        titleTextView = (TextView) findViewById(R.id.header_title);
+        titleTextView.setText("Willkommen bei Where2Help!");
+
+        descTextView = (TextView) findViewById(R.id.header_desc);
+        descTextView.setText("Melde Dich an, damit wir Dich über mögliche Änderungen von Veranstaltungen rechtzeitig informieren können.");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_user, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_endpoint:
-                EndpointUtils.showEndpointPicker(UserActivity.this);
+            case android.R.id.home:
+                onBackPressed();
                 return true;
-            case R.id.action_missile:
-                UtilityService.triggerNotification(UserActivity.this);
+
+            case R.id.action_settings:
+                UiUtils.fireSettingsIntent(UserActivity.this);
+                overridePendingTransition(R.anim.enter_left, R.anim.leave_right);
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -55,5 +64,11 @@ public class UserActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_right, R.anim.leave_left);
     }
 }

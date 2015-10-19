@@ -87,14 +87,15 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_endpoint:
+/*            case R.id.action_endpoint:
                 EndpointUtils.showEndpointPicker(MainActivity.this);
                 return true;
             case R.id.action_missile:
                 UtilityService.triggerNotification(MainActivity.this);
-                return true;
+                return true;*/
             case R.id.action_user:
                 UiUtils.fireUserIntent(MainActivity.this);
+                overridePendingTransition(R.anim.enter_left, R.anim.leave_right);
                 return true;
             case R.id.action_settings:
                 UiUtils.fireSettingsIntent(MainActivity.this);
