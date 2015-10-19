@@ -19,13 +19,11 @@ import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.model.Need;
-import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.PullNeedsTask;
 import app.iamin.iamin.R;
 import app.iamin.iamin.event.NeedsEvent;
 import app.iamin.iamin.service.LocationService;
-import app.iamin.iamin.service.UtilityService;
 import app.iamin.iamin.util.UiUtils;
 
 public class MainActivity extends AppCompatActivity implements
@@ -87,12 +85,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-/*            case R.id.action_endpoint:
-                EndpointUtils.showEndpointPicker(MainActivity.this);
-                return true;
-            case R.id.action_missile:
-                UtilityService.triggerNotification(MainActivity.this);
-                return true;*/
             case R.id.action_user:
                 UiUtils.fireUserIntent(MainActivity.this);
                 overridePendingTransition(R.anim.enter_left, R.anim.leave_right);

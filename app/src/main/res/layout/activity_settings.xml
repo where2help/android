@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".SettingsActivity">
+    tools:context=".ui.SettingsActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -16,9 +16,59 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="USER SETTINGS" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:background="@color/windowBackground"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Developer Options"
+                android:textSize="@dimen/text_body" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?selectableItemBackground"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Edit Endpoint"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/text_subhead"
+                android:clickable="true"
+                android:onClick="onEditEndpoint"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/windowBackground"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?selectableItemBackground"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Fire Missile!"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/text_subhead"
+                android:clickable="true"
+                android:onClick="onFireMissile"/>
+
+        </LinearLayout>
+    </ScrollView>
 </android.support.design.widget.CoordinatorLayout>
