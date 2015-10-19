@@ -1,18 +1,29 @@
 <resources>
     <string name="app_name">Where2Help</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Einstellungen</string>
 
     <string name="day_title_today">Heute</string>
     <string name="day_title_yesterday">Gestern</string>
     <string name="day_title_tomorrow">Morgen</string>
+
+    <string name="detail_address_format">"%1$s (%2$s)</string>
+    <string name="detail_date_format">%1$s %2$s - %3$s Uhr (%4$s)</string>
+    <string name = "count">%1$s</string>
+
     <string name="register">Registrieren</string>
     <string name="login">Anmelden</string>
     <string name="password">Passwort</string>
     <string name="email">Email</string>
     <string name="iamin">I\'m in!</string>
+    <string name="iamin_thank_you">Danke! Bitte komm um %1$s!</string>
     <string name="iamout">Absagen</string>
     <string name="calendar">Kalender</string>
     <string name="welcome">Willkommen bei Where2Help!</string>
     <string name="login_message">Melde Dich an, damit wir Dich über mögliche Änderungen von Veranstaltungen rechtzeitig informieren können.</string>
+    <string name="cancel_message">Wir brauchen dich! Willst du wirklich absagen?</string>
+    <string name="cancel_positive">Natürlich nicht!</string>
+    <string name="cancel_negative">Ja...</string>
+    <string name="action_share">Weitersagen!</string>
+    <string name="register_status">Registriere...</string>
 
 </resources>

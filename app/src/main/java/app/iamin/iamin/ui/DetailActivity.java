@@ -87,11 +87,11 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         addressTextView.setText(need.getAddress().getAddressLine(0));
 
         dateTextView = (TextView) findViewById(R.id.date);
-        dateTextView.setText(
-                TimeUtils.formatHumanFriendlyShortDate(this, need.getStart()) + " " +
-                TimeUtils.formatTimeOfDay(need.getStart()) + " - " +
-                TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr" + " (" +
-                TimeUtils.getDuration(need.getStart(), need.getEnd()) + ")");
+        dateTextView.setText(getString(R.string.detail_date_format,
+                TimeUtils.formatHumanFriendlyShortDate(this, need.getStart()),
+                        TimeUtils.formatTimeOfDay(need.getStart()),
+                        TimeUtils.formatTimeOfDay(need.getEnd()),
+                        TimeUtils.getDuration(need.getStart(), need.getEnd())));
 
         webTextView = (TextView) findViewById(R.id.web);
         webTextView.setText("www.google.at");
@@ -133,18 +133,18 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private void setUiMode(boolean isAttending) {
         if (isAttending) {
-            countTextView.setText("" + (need.getCount() - 1)); // TODO: cheat ! ;-)
+            countTextView.setText(getString(R.string.count, (need.getCount() - 1))); // TODO: cheat ! ;-)
             submitButton.setEnabled(true);
-            submitInfoTextView.setText("Danke! Bitte komm um " + TimeUtils.formatTimeOfDay(need.getStart()) + "!");
+            submitInfoTextView.setText(getString(R.string.iamin_thank_you, TimeUtils.formatTimeOfDay(need.getStart())));
             submitInfoTextView.setVisibility(View.VISIBLE);
             btnBarLayout.setVisibility(View.VISIBLE);
-            submitButton.setText("Weitersagen!");
+            submitButton.setText(R.string.action_share);
             categoryTextView.setText((need.getCount() - 1) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         } else {
-            countTextView.setText("" + (need.getCount())); // TODO: cheat ! ;-)
+            countTextView.setText(getString(R.string.count, (need.getCount()))); // TODO: cheat ! ;-)
             submitInfoTextView.setVisibility(View.GONE);
             btnBarLayout.setVisibility(View.GONE);
-            submitButton.setText("I'm In!");
+            submitButton.setText(R.string.iamin);
             categoryTextView.setText((need.getCount()) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         }
     }
@@ -168,7 +168,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         LatLng userLocation = event.getLocation();
         if (userLocation != null) {
             String distance = LocationUtils.formatDistanceBetween(need.getLocation(), userLocation);
-            addressTextView.setText(need.getAddress().getAddressLine(0) + " (" + distance + ")");
+            addressTextView.setText(getString(R.string.detail_address_format,
+                    need.getAddress().getAddressLine(0),distance ));
         } else {
             addressTextView.setText(need.getAddress().getAddressLine(0));
         }
@@ -213,7 +214,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void onActionSubmit() {
-        submitButton.setText("Registriere...");
+        submitButton.setText(R.string.register_status);
         submitButton.setEnabled(false);
 
         String email = null;
@@ -226,19 +227,19 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             }
         }
         Log.d("onActionSubmit", email);
-        //TODO: If email is null ask user for email or phone number
+        //TODO: If email is null ask user for email
         new RegisterTask(this, getIntent().getExtras().getInt("id"), email).execute();
     }
 
     private void onActionCancel() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Wir brauchen dich! Willst du wirklich absagen?");
-        builder.setPositiveButton("Natürlich nicht!", new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.cancel_message));
+        builder.setPositiveButton(getString(R.string.cancel_positive), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // Do nothing
             }
         });
-        builder.setNegativeButton("Ja...", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel_negative), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 isAttending = false;
                 setUiMode(isAttending);
