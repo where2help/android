@@ -27,10 +27,10 @@ public class UserActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         titleTextView = (TextView) findViewById(R.id.header_title);
-        titleTextView.setText("Willkommen bei Where2Help!");
+        titleTextView.setText(R.string.welcome);
 
         descTextView = (TextView) findViewById(R.id.header_desc);
-        descTextView.setText("Melde Dich an, damit wir Dich über mögliche Änderungen von Veranstaltungen rechtzeitig informieren können.");
+        descTextView.setText(R.string.login_message);
     }
 
     @Override

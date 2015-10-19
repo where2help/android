@@ -5,4 +5,14 @@
     <string name="day_title_today">Heute</string>
     <string name="day_title_yesterday">Gestern</string>
     <string name="day_title_tomorrow">Morgen</string>
+    <string name="register">Registrieren</string>
+    <string name="login">Anmelden</string>
+    <string name="password">Passwort</string>
+    <string name="email">Email</string>
+    <string name="iamin">I\'m in!</string>
+    <string name="iamout">Absagen</string>
+    <string name="calendar">Kalender</string>
+    <string name="welcome">Willkommen bei Where2Help!</string>
+    <string name="login_message">Melde Dich an, damit wir Dich über mögliche Änderungen von Veranstaltungen rechtzeitig informieren können.</string>
+
 </resources>

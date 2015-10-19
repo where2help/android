@@ -69,7 +69,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:ems="10"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -80,7 +80,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
                 android:ems="10"
-                android:hint="Passwort"
+                android:hint="@string/password"
                 android:inputType="textPassword"
                 android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -96,13 +96,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/grey"
-                    android:text="Registrieren" />
+                    android:text="@string/register" />
 
                 <Button
                     android:id="@+id/btn_login"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Anmelden" />
+                    android:text="@string/login" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
