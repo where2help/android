@@ -69,7 +69,7 @@
                 android:textSize="@dimen/text_subhead" />
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -81,7 +81,7 @@
                 android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -104,7 +104,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/grey"
-                    android:text="@string/register" />
+                    android:text="@string/register"
+                    android:onClick="onActionRegister"/>
 
                 <Button
                     android:id="@+id/btn_login"

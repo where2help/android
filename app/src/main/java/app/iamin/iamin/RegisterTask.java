@@ -1,76 +1,80 @@
 package app.iamin.iamin;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import app.iamin.iamin.ui.DetailActivity;
 import app.iamin.iamin.util.EndpointUtils;
 
 /**
- * Created by paul on 10/11/2015.
+ * AsyncTask that wraps an OkHttpRequest. Designed to register a new user.
  */
-public class RegisterTask extends AsyncTask<Void, Integer, Integer> {
+public class RegisterTask extends AsyncTask<Context, Void, Response> {
+    private static final String TAG = "RegisterTask";
 
-    int needId;
-    String email;
-    DetailActivity activity;
+    private String password;
+    private String passwordConf;
+    private String email;
+    private Exception savedException;
 
-    public RegisterTask(DetailActivity activity, int needId, String email) {
-        this.needId = needId;
+    /**
+     * Construct a new task with an email, a password and the users password confirmation.
+     */
+    public RegisterTask(String email, String password, String passwordConf) {
+        this.password = password;
+        this.passwordConf = passwordConf;
         this.email = email;
-        this.activity = activity;
     }
 
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-
     @Override
-    protected Integer doInBackground(Void... params) {
-        String url = EndpointUtils.getEndpoint(activity, EndpointUtils.TASK_REGISTER);
-        Log.d("RegisterTask", url);
+    protected Response doInBackground(Context ... contexts) {
+        String url = EndpointUtils.getEndpoint(contexts[0], EndpointUtils.TASK_REGISTER);
+        Log.d(TAG, url);
 
-        String json = "{ \"email\": \"" + email + "\", \"need-id\":\"" + needId + "\"}";
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("email", email)
+                .add("password", password)
+                .add("password_confirmation", passwordConf)
+                .add("first_name", "null")
+                .add("last_name", "null")
+                .add("phone", "null")
+                .build();
 
         try {
             OkHttpClient client = new OkHttpClient();
-            RequestBody body = RequestBody.create(JSON, json);
             Request request = new Request.Builder()
                     .addHeader("Content-Type", "application/json")
-                    .url(new URL(url))
-                    .post(body)
+                    .url(url)
+                    .post(formBody)
                     .build();
-            Response response = client.newCall(request).execute();
-            String respJSON = response.body().string();
+            return client.newCall(request).execute();
 
-            System.out.println(respJSON);
-
-            JSONObject obj = new JSONObject(respJSON);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+            cancel(true);
         }
 
-        return 0; // should actually return volunteering-id
-
+        return null;
     }
 
-    protected void onPostExecute(Integer result) {
-        activity.onRegisterSuccess();
+    protected void onPostExecute(Response response) {
+        // TODO: Do something with response
+        Log.e(TAG, "Access-Token = " + response.headers().get("Access-Token"));
+        Log.e(TAG, "Client = " + response.headers().get("Client"));
+        Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
+        Log.e(TAG, "Uid = " + response.headers().get("Uid"));
+    }
+
+    @Override
+    protected void onCancelled() {
+        // TODO: Do something with this.savedException
     }
 }

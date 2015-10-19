@@ -18,7 +18,8 @@ public class EndpointUtils {
     public static final int TASK_REGISTER = 1;
 
     private static final String URL_NEEDS = "http://where2help.herokuapp.com/api/v1/needs.json";
-    private static final String URL_REGISTRATION = "http://where2help.herokuapp.com/api/v1/volunteerings/create";
+    //private static final String URL_REGISTRATION = "http://where2help.herokuapp.com/api/v1/volunteerings/create";
+    private static final String URL_REGISTRATION = "http://where2help.informatom.com/api/v1/auth/";
 
     // Choose endpoint
     public static void showEndpointPicker(final Context context) {

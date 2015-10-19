@@ -228,7 +228,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         }
         Log.d("onActionSubmit", email);
         //TODO: If email is null ask user for email
-        new RegisterTask(this, getIntent().getExtras().getInt("id"), email).execute();
+        email = "jane@doe.com";
+        onRegisterSuccess();
     }
 
     private void onActionCancel() {
