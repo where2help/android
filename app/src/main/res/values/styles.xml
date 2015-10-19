@@ -2,6 +2,7 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <!-- customize the color palette -->
@@ -14,5 +15,9 @@
 
     <style name="AppThemeLight" parent="AppTheme">
         <item name="android:windowBackground">@color/windowBackgroundLight</item>
+    </style>
+
+    <style name="Widget.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="windowActionModeOverlay">true</item>
     </style>
 </resources>
