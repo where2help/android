@@ -20,6 +20,7 @@
     <string name="calendar">Kalender</string>
     <string name="welcome">Willkommen bei Where2Help!</string>
     <string name="login_message">Melde Dich an, damit wir Dich über mögliche Änderungen von Veranstaltungen rechtzeitig informieren können.</string>
+    <string name="empty_message">Hier siehst Du bald eine Liste aller Veranstaltungen denen Du zugesagt hast.</string>
     <string name="cancel_message">Wir brauchen dich! Willst du wirklich absagen?</string>
     <string name="cancel_positive">Natürlich nicht!</string>
     <string name="cancel_negative">Ja...</string>

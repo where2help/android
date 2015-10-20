@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.ParseException;
 
+import app.iamin.iamin.event.LoginEvent;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.util.EndpointUtils;
 
@@ -102,11 +103,15 @@ public class LoginTask extends AsyncTask<Context, Void, Response> {
         Log.e(TAG, "Client = " + response.headers().get("Client"));
         Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
         Log.e(TAG, "Uid = " + response.headers().get("Uid"));
+
+        BusProvider.getInstance().post(new LoginEvent(true));
     }
 
     @Override
     protected void onCancelled() {
         // TODO: Do something with this.savedException
         this.savedException.printStackTrace();
+
+        BusProvider.getInstance().post(new LoginEvent(false));
     }
 }

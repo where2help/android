@@ -29,6 +29,7 @@
             android:paddingTop="8dp">
 
             <FrameLayout
+                android:id="@+id/user"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:orientation="horizontal">
@@ -42,6 +43,7 @@
                     android:tint="@color/grey" />
 
                 <TextView
+                    android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?selectableItemBackground"
@@ -54,6 +56,7 @@
                     android:textSize="@dimen/text_subhead" />
 
                 <TextView
+                    android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -65,11 +68,13 @@
             </FrameLayout>
 
             <View
+                android:id="@+id/divider1"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/windowBackground" />
 
             <TextView
+                android:id="@+id/logout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="?selectableItemBackground"
@@ -82,6 +87,7 @@
                 android:textSize="@dimen/text_subhead" />
 
             <View
+                android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/windowBackground" />
@@ -99,6 +105,7 @@
                 android:textSize="@dimen/text_subhead" />
 
             <TextView
+                android:id="@+id/communications"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@color/windowBackground"
@@ -109,7 +116,7 @@
                 android:textSize="@dimen/text_body" />
 
             <android.support.v7.widget.SwitchCompat
-                android:id="@+id/switch1"
+                android:id="@+id/email_switch"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="?selectableItemBackground"

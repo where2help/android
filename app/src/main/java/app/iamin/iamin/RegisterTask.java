@@ -5,15 +5,14 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-import com.squareup.okhttp.internal.framed.Header;
 
 import java.io.IOException;
 
+import app.iamin.iamin.event.RegisterEvent;
 import app.iamin.iamin.util.EndpointUtils;
 
 /**
@@ -75,11 +74,15 @@ public class RegisterTask extends AsyncTask<Context, Void, Response> {
         Log.e(TAG, "Client = " + response.headers().get("Client"));
         Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
         Log.e(TAG, "Uid = " + response.headers().get("Uid"));
+
+        BusProvider.getInstance().post(new RegisterEvent(true));
     }
 
     @Override
     protected void onCancelled() {
         // TODO: Do something with this.savedException
         this.savedException.printStackTrace();
+
+        BusProvider.getInstance().post(new RegisterEvent(false));
     }
 }
