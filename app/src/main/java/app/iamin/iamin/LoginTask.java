@@ -77,6 +77,8 @@ public class LoginTask extends AsyncTask<Context, Void, Response> {
             Log.e(TAG, "User nickname = " + user.getNickname());
             Log.e(TAG, "User image = " + user.getImage());
 
+            EndpointUtils.storeUser(contexts[0], user);
+
             return response;
 
         } catch (IOException e) {

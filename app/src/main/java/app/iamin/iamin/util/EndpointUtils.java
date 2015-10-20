@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.squareup.okhttp.Headers;
 
 import app.iamin.iamin.R;
+import app.iamin.iamin.model.User;
 
 /**
  * Created by Markus on 14.10.15.
@@ -106,5 +107,43 @@ public class EndpointUtils {
                 .add("Expiry", prefs.getString("Expiry", ""))
                 .add("Uid", prefs.getString("Uid", ""))
                 .build();
+    }
+
+    // Store user
+    public static void storeUser(Context context, User user) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("User_id", user.getId());
+        editor.putString("User_email", user.getEmail());
+        editor.putString("User_first_name", user.getFirstName());
+        editor.putString("User_last_name", user.getLastName());
+        editor.putString("User_phone", user.getPhone());
+        editor.putBoolean("User_admin", user.isAdmin());
+        editor.putBoolean("User_ngo_admin", user.isNgoAdmin());
+        editor.putString("User_provider", user.getProvider());
+        editor.putString("User_uid", user.getUid());
+        editor.putString("User_name", user.getName());
+        editor.putString("User_nickname", user.getNickname());
+        editor.putString("User_image", user.getImage());
+        editor.apply();
+    }
+
+    // Store user
+    public static User getUser(Context context) {
+        User user = new User();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        user.setId(prefs.getInt("User_id", 0));
+        user.setEmail(prefs.getString("User_email", null));
+        user.setFirstName(prefs.getString("User_first_name", null));
+        user.setLastName(prefs.getString("User_lasz_name", null));
+        user.setPhone(prefs.getString("User_phone", null));
+        user.setAdmin(prefs.getBoolean("User_admin", false));
+        user.setNgoAdmin(prefs.getBoolean("User_ngo_admin", false));
+        user.setProvider(prefs.getString("User_provider", null));
+        user.setUid(prefs.getString("User_uid", null));
+        user.setName(prefs.getString("User_name", null));
+        user.setNickname(prefs.getString("User_nickname", null));
+        user.setImage(prefs.getString("User_image", null));
+        return user;
     }
 }
