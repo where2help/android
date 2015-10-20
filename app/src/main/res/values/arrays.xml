@@ -3,5 +3,6 @@
     <string-array name="endpoint">
         <item>needs</item>
         <item>registration</item>
+        <item>login</item>
     </string-array>
 </resources>

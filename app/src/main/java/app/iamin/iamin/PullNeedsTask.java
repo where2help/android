@@ -5,6 +5,7 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -41,16 +42,22 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
         String url = EndpointUtils.getEndpoint(context, EndpointUtils.TASK_NEEDS);
         Log.d("PullNeedsActiveTask", url);
 
+        Headers headers = EndpointUtils.getHeaders(context);
+
         try {
             //registerUser();
 
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
+                    .headers(headers)
                     .url(new URL(url))
                     .build();
 
             Response response = client.newCall(request).execute();
             String result =  response.body().string();
+
+            Log.e("PullNeedsActiveTask", result);
+
             JSONArray data = new JSONObject(result).getJSONArray("data");
 
             needs = new Need[data.length()];

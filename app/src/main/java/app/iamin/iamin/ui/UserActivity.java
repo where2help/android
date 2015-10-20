@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import app.iamin.iamin.BusProvider;
+import app.iamin.iamin.LoginTask;
 import app.iamin.iamin.R;
 import app.iamin.iamin.RegisterTask;
 import app.iamin.iamin.util.UiUtils;
@@ -83,12 +84,18 @@ public class UserActivity extends AppCompatActivity {
     }
 
     public void onActionRegister(View view) {
-        if (emailEditText != null && passwordEditText != null) {
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-                new RegisterTask(email, password, password).execute(this);
-            }
+        String email = emailEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+            new RegisterTask(email, password, password).execute(this);
+        }
+    }
+
+    public void onActionLogin(View view) {
+        String email = emailEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+            new LoginTask(email, password).execute(this);
         }
     }
 }
