@@ -62,10 +62,9 @@ public class RegisterTask extends AsyncTask<Context, Void, Response> {
             return response;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            this.savedException = e;
             cancel(true);
         }
-
         return null;
     }
 
@@ -81,5 +80,6 @@ public class RegisterTask extends AsyncTask<Context, Void, Response> {
     @Override
     protected void onCancelled() {
         // TODO: Do something with this.savedException
+        this.savedException.printStackTrace();
     }
 }

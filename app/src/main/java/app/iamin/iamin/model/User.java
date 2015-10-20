@@ -39,7 +39,18 @@ public class User {
 
     public User fromJSON(JSONObject obj) throws JSONException, IOException, ParseException {
         User user = new User();
-        // TODO: Create user from JSONObject
+        user.setId(obj.getInt("id"));
+        user.setEmail(obj.getString("email"));
+        user.setFirstName(obj.getString("first_name"));
+        user.setLastName(obj.getString("last_name"));
+        user.setPhone(obj.getString("phone"));
+        //user.setAdmin(obj.getBoolean("admin"));
+        //user.setNgoAdmin(obj.getBoolean("ngo_admin"));
+        user.setProvider(obj.getString("provider"));
+        user.setUid(obj.getString("uid"));
+        user.setName(obj.getString("name"));
+        user.setNickname(obj.getString("nickname"));
+        user.setImage(obj.getString("image"));
         return user;
     }
 
