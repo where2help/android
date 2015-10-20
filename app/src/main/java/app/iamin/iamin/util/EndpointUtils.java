@@ -128,14 +128,14 @@ public class EndpointUtils {
         editor.apply();
     }
 
-    // Store user
+    // Get user
     public static User getUser(Context context) {
         User user = new User();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         user.setId(prefs.getInt("User_id", 0));
         user.setEmail(prefs.getString("User_email", null));
         user.setFirstName(prefs.getString("User_first_name", null));
-        user.setLastName(prefs.getString("User_lasz_name", null));
+        user.setLastName(prefs.getString("User_last_name", null));
         user.setPhone(prefs.getString("User_phone", null));
         user.setAdmin(prefs.getBoolean("User_admin", false));
         user.setNgoAdmin(prefs.getBoolean("User_ngo_admin", false));
