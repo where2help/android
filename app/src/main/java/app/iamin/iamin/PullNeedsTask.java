@@ -54,6 +54,8 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
                     .build();
 
             Response response = client.newCall(request).execute();
+            EndpointUtils.storeHeader(context, response.headers());
+
             String result =  response.body().string();
 
             Log.e("PullNeedsActiveTask", result);
