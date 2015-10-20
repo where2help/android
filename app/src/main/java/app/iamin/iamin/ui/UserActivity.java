@@ -49,9 +49,6 @@ public class UserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
-        user = EndpointUtils.getUser(this);
-        uiMode = user.getEmail() == null ? UI_MODE_LOGIN : UI_MODE_USER;
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
@@ -64,8 +61,6 @@ public class UserActivity extends AppCompatActivity {
         emailEditText = (EditText) findViewById(R.id.email);
         passwordEditText = (EditText) findViewById(R.id.password);
         btnBar = (LinearLayout) findViewById(R.id.btnBar);
-
-        setUiMode(uiMode);
     }
 
     private void setUiMode(int uiMode) {
@@ -122,6 +117,10 @@ public class UserActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
+
+        user = EndpointUtils.getUser(this);
+        uiMode = user.getEmail() == null ? UI_MODE_LOGIN : UI_MODE_USER;
+        setUiMode(uiMode);
     }
 
     @Override

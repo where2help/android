@@ -1,14 +1,21 @@
 package app.iamin.iamin.ui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
+import app.iamin.iamin.LogoutTask;
 import app.iamin.iamin.R;
+import app.iamin.iamin.event.LogoutEvent;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.service.UtilityService;
 import app.iamin.iamin.util.EndpointUtils;
@@ -19,7 +26,6 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView emailTextView;
 
     private User user;
-    private boolean hasUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +33,6 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         user = EndpointUtils.getUser(this);
-        hasUser = user.getEmail() != null;
 
         usernameTextView = (TextView) findViewById(R.id.username);
         usernameTextView.setText(user.getFirstName() + " " + user.getLastName());
@@ -35,18 +40,21 @@ public class SettingsActivity extends AppCompatActivity {
         emailTextView = (TextView) findViewById(R.id.email);
         emailTextView.setText(user.getEmail());
 
+        setUiMode(user.getEmail() != null);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.action_settings);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setUiMode(boolean hasUser) {
         findViewById(R.id.user).setVisibility(hasUser ? View.VISIBLE : View.GONE);
         findViewById(R.id.logout).setVisibility(hasUser ? View.VISIBLE : View.GONE);
         findViewById(R.id.communications).setVisibility(hasUser ? View.VISIBLE : View.GONE);
         findViewById(R.id.email_switch).setVisibility(hasUser ? View.VISIBLE : View.GONE);
         findViewById(R.id.divider1).setVisibility(hasUser ? View.VISIBLE : View.GONE);
         findViewById(R.id.divider2).setVisibility(hasUser ? View.VISIBLE : View.GONE);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.action_settings);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
     @Override
@@ -83,5 +91,33 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void onFireMissile(View view) {
         UtilityService.triggerNotification(SettingsActivity.this);
+    }
+
+    public void onActionLogout(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you really want to log out?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                new LogoutTask().execute(SettingsActivity.this);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // Do nothing
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Subscribe
+    public void onLogoutUpdate(LogoutEvent event) {
+        if (event.isSuccsess()) {
+            EndpointUtils.clearUser(this);
+            setUiMode(false);
+        } else {
+            // TODO: Handle errors
+            Toast.makeText(this, "Error! Try again!", Toast.LENGTH_SHORT).show();
+        }
     }
 }

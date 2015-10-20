@@ -4,5 +4,6 @@
         <item>needs</item>
         <item>registration</item>
         <item>login</item>
+        <item>logout</item>
     </string-array>
 </resources>

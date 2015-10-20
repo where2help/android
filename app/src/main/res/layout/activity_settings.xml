@@ -84,7 +84,8 @@
                 android:paddingRight="16dp"
                 android:text="Log out"
                 android:textColor="?colorPrimary"
-                android:textSize="@dimen/text_subhead" />
+                android:textSize="@dimen/text_subhead"
+                android:onClick="onActionLogout"/>
 
             <View
                 android:id="@+id/divider2"

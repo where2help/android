@@ -20,10 +20,12 @@ public class EndpointUtils {
     public static final int TASK_NEEDS = 0;
     public static final int TASK_REGISTER = 1;
     public static final int TASK_LOGIN = 2;
+    public static final int TASK_LOGOUT = 3;
 
     private static final String URL_NEEDS = "http://where2help.informatom.com/api/v1/needs";
     private static final String URL_REGISTRATION = "http://where2help.informatom.com/api/v1/auth/";
     private static final String URL_LOGIN = "http://where2help.informatom.com/api/v1/auth/sign_in";
+    private static final String URL_LOGOUT = "http://where2help.informatom.com/api/v1/auth/sign_out";
 
     // Choose endpoint
     public static void showEndpointPicker(final Context context) {
@@ -69,6 +71,7 @@ public class EndpointUtils {
             case TASK_NEEDS: editor.putString("URL_NEEDS", url); break;
             case TASK_REGISTER: editor.putString("URL_REGISTRATION", url); break;
             case TASK_LOGIN: editor.putString("URL_LOGIN", url); break;
+            case TASK_LOGOUT: editor.putString("URL_LOGOUT", url); break;
         }
         //editor.putString(pos == 0 ? "URL_NEEDS" : "URL_REGISTRATION", url);
         editor.apply();
@@ -81,13 +84,14 @@ public class EndpointUtils {
             case TASK_NEEDS: default: return prefs.getString("URL_NEEDS", URL_NEEDS);
             case TASK_REGISTER: return prefs.getString("URL_REGISTRATION", URL_REGISTRATION);
             case TASK_LOGIN: return prefs.getString("URL_LOGIN", URL_LOGIN);
+            case TASK_LOGOUT: return prefs.getString("URL_LOGOUT", URL_LOGOUT);
         }
         //return prefs.getString(pos == 0 ? "URL_NEEDS" : "URL_REGISTRATION", pos == 0 ? URL_NEEDS : URL_REGISTRATION);
     }
 
     // Store headers
     public static void storeHeader(Context context, Headers headers) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("Access-Token", headers.get("Access-Token"));
         editor.putString("Token-Type", headers.get("Token-Type"));
@@ -99,7 +103,7 @@ public class EndpointUtils {
 
     // Get headers
     public static Headers getHeaders(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         return new Headers.Builder()
                 .add("Access-Token", prefs.getString("Access-Token", ""))
                 .add("Token-Type", prefs.getString("Token-Type", ""))
@@ -111,7 +115,7 @@ public class EndpointUtils {
 
     // Store user
     public static void storeUser(Context context, User user) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("User_id", user.getId());
         editor.putString("User_email", user.getEmail());
@@ -131,7 +135,7 @@ public class EndpointUtils {
     // Get user
     public static User getUser(Context context) {
         User user = new User();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         user.setId(prefs.getInt("User_id", 0));
         user.setEmail(prefs.getString("User_email", null));
         user.setFirstName(prefs.getString("User_first_name", null));
@@ -145,5 +149,10 @@ public class EndpointUtils {
         user.setNickname(prefs.getString("User_nickname", null));
         user.setImage(prefs.getString("User_image", null));
         return user;
+    }
+
+    public static void clearUser(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        prefs.edit().clear().apply();
     }
 }
