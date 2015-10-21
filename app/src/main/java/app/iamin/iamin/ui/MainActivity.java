@@ -45,9 +45,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loginOrContinue();
-
         setContentView(R.layout.activity_main);
+
+        user = EndpointUtils.getUser(this);
+        if (user.getEmail() == null) {
+            // If we don't have a user create one
+            UiUtils.fireLoginIntent(this);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
@@ -80,14 +85,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         }
-    }
-
-    private void loginOrContinue(){
-        user = EndpointUtils.getUser(this);
-        if (user.getEmail() != null) return;
-        // If we don't have a user create one
-        UiUtils.fireLoginIntent(this);
-        overridePendingTransition(0, 0); //TODO: smooth out animation
     }
 
     @Override

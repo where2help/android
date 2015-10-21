@@ -117,7 +117,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (event.isSuccsess()) {
             EndpointUtils.clearUser(this);
             UiUtils.fireLoginIntent(this);
-            overridePendingTransition(0, 0); //TODO: smooth out animation
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         } else {
             // TODO: Handle errors
             Toast.makeText(this, "Error! Try again!", Toast.LENGTH_SHORT).show();
