@@ -110,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onRegisterUpdate(RegisterEvent event) {
         boolean isSuccsess = event.isSuccsess(); // TODO: Handle errors
         if (isSuccsess) {
+            findViewById(R.id.btn_register).setVisibility(View.GONE);
             Toast.makeText(this, "SUCCSESS... LOG IN!", Toast.LENGTH_LONG).show();
             setUiMode(UI_MODE_LOGIN);
         }
