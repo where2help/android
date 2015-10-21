@@ -28,6 +28,7 @@ import com.squareup.otto.Subscribe;
 import java.util.regex.Pattern;
 
 import app.iamin.iamin.BusProvider;
+import app.iamin.iamin.VolunteeringTask;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.R;

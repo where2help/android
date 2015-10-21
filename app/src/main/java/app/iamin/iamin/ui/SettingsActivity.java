@@ -86,7 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void onEditEndpoint(View view) {
-        EndpointUtils.showEndpointPicker(SettingsActivity.this);
+        EndpointUtils.showEndpointInputPicker(SettingsActivity.this);
     }
 
     public void onFireMissile(View view) {

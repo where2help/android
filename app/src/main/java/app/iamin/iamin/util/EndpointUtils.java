@@ -9,7 +9,6 @@ import android.widget.EditText;
 
 import com.squareup.okhttp.Headers;
 
-import app.iamin.iamin.R;
 import app.iamin.iamin.model.User;
 
 /**
@@ -17,40 +16,33 @@ import app.iamin.iamin.model.User;
  */
 public class EndpointUtils {
 
+    public static final int TASK_ENDPOINT = 100;
     public static final int TASK_NEEDS = 0;
     public static final int TASK_REGISTER = 1;
     public static final int TASK_LOGIN = 2;
     public static final int TASK_LOGOUT = 3;
+    public static final int TASK_VOLUNTEERING = 4;
 
-    private static final String URL_NEEDS = "http://where2help.informatom.com/api/v1/needs";
-    private static final String URL_REGISTRATION = "http://where2help.informatom.com/api/v1/auth/";
-    private static final String URL_LOGIN = "http://where2help.informatom.com/api/v1/auth/sign_in";
-    private static final String URL_LOGOUT = "http://where2help.informatom.com/api/v1/auth/sign_out";
+    private static final String URL_ENDPOINT = "http://staging-where2help.herokuapp.com/api/v1/";
 
-    // Choose endpoint
-    public static void showEndpointPicker(final Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Pick Endpoint")
-                .setItems(R.array.endpoint, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        showEndpointInputPicker(context, which);
-                    }
-                });
-        builder.show();
-    }
+    private static final String URL_NEEDS = "needs";
+    private static final String URL_REGISTRATION = "auth/";
+    private static final String URL_LOGIN = "auth/sign_in";
+    private static final String URL_LOGOUT = "auth/sign_out";
+    private static final String URL_VOLUNTEERING = "volunteerings";
 
     // Set new endpoint
-    public static void showEndpointInputPicker(final Context context, final int which) {
+    public static void showEndpointInputPicker(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Change Endpoint");
 
         final EditText input = new EditText(context);
-        input.setText(getEndpoint(context, which));
+        input.setText(getEndpoint(context, TASK_ENDPOINT));
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int p) {
-                storeEndpoint(context, input.getText().toString(), which);
+                storeEndpoint(context, input.getText().toString());
             }
         });
 
@@ -64,29 +56,25 @@ public class EndpointUtils {
     }
 
     // Store endpoint
-    public static void storeEndpoint(Context context, String url, int pos) {
+    public static void storeEndpoint(Context context, String url) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        switch(pos) {
-            case TASK_NEEDS: editor.putString("URL_NEEDS", url); break;
-            case TASK_REGISTER: editor.putString("URL_REGISTRATION", url); break;
-            case TASK_LOGIN: editor.putString("URL_LOGIN", url); break;
-            case TASK_LOGOUT: editor.putString("URL_LOGOUT", url); break;
-        }
-        //editor.putString(pos == 0 ? "URL_NEEDS" : "URL_REGISTRATION", url);
+        editor.putString("URL_ENDPOINT", url);
         editor.apply();
     }
 
     // Get endpoint
     public static String getEndpoint(Context context, int pos) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String endpoint = prefs.getString("URL_ENDPOINT", URL_ENDPOINT);
         switch(pos) {
-            case TASK_NEEDS: default: return prefs.getString("URL_NEEDS", URL_NEEDS);
-            case TASK_REGISTER: return prefs.getString("URL_REGISTRATION", URL_REGISTRATION);
-            case TASK_LOGIN: return prefs.getString("URL_LOGIN", URL_LOGIN);
-            case TASK_LOGOUT: return prefs.getString("URL_LOGOUT", URL_LOGOUT);
+            case TASK_ENDPOINT: return endpoint;
+            case TASK_NEEDS: default: return endpoint + URL_NEEDS;
+            case TASK_REGISTER: return endpoint + URL_REGISTRATION;
+            case TASK_LOGIN: return endpoint + URL_LOGIN;
+            case TASK_LOGOUT: return endpoint + URL_LOGOUT;
+            case TASK_VOLUNTEERING: return endpoint + URL_VOLUNTEERING;
         }
-        //return prefs.getString(pos == 0 ? "URL_NEEDS" : "URL_REGISTRATION", pos == 0 ? URL_NEEDS : URL_REGISTRATION);
     }
 
     // Store headers
