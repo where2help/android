@@ -3,9 +3,12 @@ package app.iamin.iamin.util;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.IntentCompat;
 
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.ui.DetailActivity;
+import app.iamin.iamin.ui.LoginActivity;
+import app.iamin.iamin.ui.MainActivity;
 import app.iamin.iamin.ui.SettingsActivity;
 import app.iamin.iamin.ui.UserActivity;
 
@@ -13,6 +16,19 @@ import app.iamin.iamin.ui.UserActivity;
  * Created by Markus on 15.10.15.
  */
 public class UiUtils {
+
+    public static void fireMainIntent(Context context) {
+        Intent intent = new Intent();
+        intent.setClass(context, MainActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void fireLoginIntent(Context context) {
+        Intent intent = new Intent();
+        intent.setClass(context, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+    }
 
     public static Intent getDetailIntent(Context context, Need need) {
         Intent intent = new Intent();

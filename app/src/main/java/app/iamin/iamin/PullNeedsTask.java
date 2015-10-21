@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URL;
 import java.text.ParseException;
 
 import app.iamin.iamin.event.NeedsEvent;
@@ -26,6 +25,7 @@ import app.iamin.iamin.util.EndpointUtils;
  * Created by paul on 10/10/2015.
  */
 public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
+    private static final String TAG = "PullNeedsTask";
 
     private Geocoder coder;
     private Context context;
@@ -44,17 +44,29 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
 
         Headers headers = EndpointUtils.getHeaders(context);
 
+        Log.e(TAG, "LOCAL Access-Token = " + headers.get("Access-Token"));
+        Log.e(TAG, "LOCAL Token-Type = " + headers.get("Token-Type"));
+        Log.e(TAG, "LOCAL Client = " + headers.get("Client"));
+        Log.e(TAG, "LOCAL Expiry = " + headers.get("Expiry"));
+        Log.e(TAG, "LOCAL Uid = " + headers.get("Uid"));
+
         try {
-            //registerUser();
 
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .headers(headers)
-                    .url(new URL(url))
+                    .url(url)
                     .build();
 
             Response response = client.newCall(request).execute();
-            EndpointUtils.storeHeader(context, response.headers());
+
+            Log.e(TAG, "Access-Token = " + response.headers().get("Access-Token"));
+            Log.e(TAG, "Token-Type = " + response.headers().get("Token-Type"));
+            Log.e(TAG, "Client = " + response.headers().get("Client"));
+            Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
+            Log.e(TAG, "Uid = " + response.headers().get("Uid"));
+
+            //EndpointUtils.storeHeader(context, response.headers()); //TODO: store headers!
 
             String result =  response.body().string();
 

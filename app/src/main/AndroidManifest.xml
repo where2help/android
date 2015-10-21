@@ -30,6 +30,10 @@
         </activity>
 
         <activity
+            android:name=".ui.LoginActivity"
+            android:theme="@style/AppThemeLight" />
+
+        <activity
             android:name=".ui.DetailActivity"
             android:theme="@style/AppThemeLight" />
 

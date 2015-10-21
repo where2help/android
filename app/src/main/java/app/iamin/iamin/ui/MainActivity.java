@@ -19,6 +19,8 @@ import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.model.Need;
+import app.iamin.iamin.model.User;
+import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.PullNeedsTask;
 import app.iamin.iamin.R;
@@ -36,11 +38,15 @@ public class MainActivity extends AppCompatActivity implements
     private ImageButton mRetryButton;
     private ProgressBar mProgressBar;
 
+    private User user;
+
     private static final int PERMISSION_REQ = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loginOrContinue();
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -74,6 +80,14 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         }
+    }
+
+    private void loginOrContinue(){
+        user = EndpointUtils.getUser(this);
+        if (user.getEmail() != null) return;
+        // If we don't have a user create one
+        UiUtils.fireLoginIntent(this);
+        overridePendingTransition(0, 0); //TODO: smooth out animation
     }
 
     @Override

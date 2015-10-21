@@ -19,6 +19,7 @@ import app.iamin.iamin.event.LogoutEvent;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.service.UtilityService;
 import app.iamin.iamin.util.EndpointUtils;
+import app.iamin.iamin.util.UiUtils;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -115,7 +116,8 @@ public class SettingsActivity extends AppCompatActivity {
     public void onLogoutUpdate(LogoutEvent event) {
         if (event.isSuccsess()) {
             EndpointUtils.clearUser(this);
-            setUiMode(false);
+            UiUtils.fireLoginIntent(this);
+            overridePendingTransition(0, 0); //TODO: smooth out animation
         } else {
             // TODO: Handle errors
             Toast.makeText(this, "Error! Try again!", Toast.LENGTH_SHORT).show();

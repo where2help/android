@@ -22,6 +22,7 @@ public class EndpointUtils {
     public static final int TASK_LOGIN = 2;
     public static final int TASK_LOGOUT = 3;
     public static final int TASK_VOLUNTEERING = 4;
+    public static final int TASK_VALIDATE = 5;
 
     private static final String URL_ENDPOINT = "http://staging-where2help.herokuapp.com/api/v1/";
 
@@ -30,6 +31,7 @@ public class EndpointUtils {
     private static final String URL_LOGIN = "auth/sign_in";
     private static final String URL_LOGOUT = "auth/sign_out";
     private static final String URL_VOLUNTEERING = "volunteerings";
+    private static final String URL_VALIDATE = "validate_token";
 
     // Set new endpoint
     public static void showEndpointInputPicker(final Context context) {
@@ -74,6 +76,7 @@ public class EndpointUtils {
             case TASK_LOGIN: return endpoint + URL_LOGIN;
             case TASK_LOGOUT: return endpoint + URL_LOGOUT;
             case TASK_VOLUNTEERING: return endpoint + URL_VOLUNTEERING;
+            case TASK_VALIDATE: return endpoint + URL_VALIDATE;
         }
     }
 
