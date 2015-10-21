@@ -44,8 +44,8 @@ public class User {
         user.setFirstName(obj.getString("first_name"));
         user.setLastName(obj.getString("last_name"));
         user.setPhone(obj.getString("phone"));
-        //user.setAdmin(obj.getBoolean("admin"));
-        //user.setNgoAdmin(obj.getBoolean("ngo_admin"));
+        user.setAdmin(obj.getBoolean("admin"));
+        user.setNgoAdmin(obj.getBoolean("ngo_admin"));
         user.setProvider(obj.getString("provider"));
         user.setUid(obj.getString("uid"));
         user.setName(obj.getString("name"));
