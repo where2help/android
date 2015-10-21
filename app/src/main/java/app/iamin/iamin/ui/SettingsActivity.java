@@ -95,7 +95,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void onActionLogout(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Do you really want to log out?");
+        builder.setTitle("Confirm");
+        builder.setMessage("Do you really want to sign out?");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 new LogoutTask().execute(SettingsActivity.this);
