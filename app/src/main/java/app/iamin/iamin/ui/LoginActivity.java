@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
@@ -24,17 +23,11 @@ public class LoginActivity extends AppCompatActivity {
     private static final int UI_MODE_LOGIN = 0;
     private static final int UI_MODE_PROGRESS = 1;
 
-    private int uiMode = UI_MODE_LOGIN;
-
-    TextView titleTextView;
-    TextView descTextView;
-
     EditText emailEditText;
     EditText passwordEditText;
 
     LinearLayout userScreen;
     LinearLayout progressScreen;
-    LinearLayout btnBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +36,10 @@ public class LoginActivity extends AppCompatActivity {
 
         userScreen = (LinearLayout) findViewById(R.id.login_screen);
         progressScreen = (LinearLayout) findViewById(R.id.progress_screen);
-        titleTextView = (TextView) findViewById(R.id.header_title);
-        descTextView = (TextView) findViewById(R.id.header_desc);
         emailEditText = (EditText) findViewById(R.id.email);
         passwordEditText = (EditText) findViewById(R.id.password);
-        btnBar = (LinearLayout) findViewById(R.id.btnBar);
 
-        setUiMode(uiMode);
+        setUiMode(UI_MODE_LOGIN);
     }
 
     private void setUiMode(int uiMode) {
@@ -57,12 +47,6 @@ public class LoginActivity extends AppCompatActivity {
             case UI_MODE_LOGIN:
                 userScreen.setVisibility(View.VISIBLE);
                 progressScreen.setVisibility(View.GONE);
-                emailEditText.setVisibility(View.VISIBLE);
-                passwordEditText.setVisibility(View.VISIBLE);
-                btnBar.setVisibility(View.VISIBLE);
-
-                titleTextView.setText(R.string.welcome);
-                descTextView.setText(R.string.login_message);
                 break;
             case UI_MODE_PROGRESS:
                 userScreen.setVisibility(View.GONE);
@@ -120,9 +104,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginUpdate(LoginEvent event) {
         boolean isSuccsess = event.isSuccsess(); // TODO: Handle errors
         if (isSuccsess) {
-            // TODO: Launch MainActivity
             UiUtils.fireMainIntent(this);
-            // overridePendingTransition(R.anim.enter_right, R.anim.leave_left);
             finish();
         }
     }
