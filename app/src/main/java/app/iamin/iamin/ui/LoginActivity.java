@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
+        setContentView(R.layout.activity_login);
 
         userScreen = (LinearLayout) findViewById(R.id.login_screen);
         progressScreen = (LinearLayout) findViewById(R.id.progress_screen);
