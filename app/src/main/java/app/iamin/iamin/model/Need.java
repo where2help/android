@@ -124,6 +124,8 @@ public class Need {
         } else {
             Address address = new Address(Locale.GERMAN);
             address.setAddressLine(0, attrs.getString("city") + " " + attrs.getString("location"));
+            address.setLatitude(0); // TODO: handle null locations
+            address.setLongitude(0);
             need.setAddress(address);
         }
 
