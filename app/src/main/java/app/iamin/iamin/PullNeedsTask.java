@@ -51,7 +51,6 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
         Log.e(TAG, "LOCAL Uid = " + headers.get("Uid"));
 
         try {
-
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .headers(headers)
@@ -94,46 +93,5 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
     @Override
     protected void onPostExecute(Need[] result) {
         BusProvider.getInstance().post(new NeedsEvent(result));
-    }
-
-/*
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");*/
-
-    private void registerUser() throws IOException {
-        /*SharedPreferences settings;
-        settings = context.getSharedPreferences("IAMIN", 0);
-        if (settings.contains("token")) {
-            return;
-        }
-
-        // get phone number
-        TelephonyManager tMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        String phoneNumber = tMgr.getLine1Number();
-        // get email
-        String email = null;
-        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
-        Account[] accounts = AccountManager.get(context).getAccounts();
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                email = account.name;
-                break;
-            }
-        }
-
-        String json = "{ \"email\": \"" + email + "\", \"phone\":\"" + phoneNumber + "\"}";
-
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .addHeader("Content-Type", "application/json")
-                .url(new URL("http://where2help.herokuapp.com/api/v1/sessions/create"))
-                .post(body)
-                .build();
-        Response response = client.newCall(request).execute();
-        String respJSON = response.body().string();
-
-        System.out.println("response to session: " + respJSON);*/
-
     }
 }
