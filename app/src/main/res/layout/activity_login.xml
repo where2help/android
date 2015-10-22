@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="136dp"
-        android:background="#37474F">
+        android:background="@color/colorPrimaryLight">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                     android:paddingRight="4dp"
                     android:paddingTop="8dp"
                     android:text="@string/login_message"
-                    android:textColor="#8fff"
+                    android:textColor="@color/text_light_sec"
                     android:textSize="@dimen/text_body" />
 
                 <EditText

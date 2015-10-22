@@ -3,9 +3,13 @@ package app.iamin.iamin.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import app.iamin.iamin.R;
+import app.iamin.iamin.model.Need;
+import app.iamin.iamin.util.TimeUtils;
 
 /**
  * Created by Markus on 16.10.15.
@@ -14,13 +18,17 @@ import android.widget.TextView;
  * NeedView will be used in MainActivity, DetailActivity and UserActivity.
  */
 
-public class NeedView extends ViewGroup{
+public class NeedView extends FrameLayout{
 
-    ImageView iconImageView;
-    TextView countTextView;
-    TextView categoryTextView;
-    TextView addressTextView;
-    TextView dateTextView;
+    private ImageView iconView;
+    private TextView countView;
+    private TextView categoryView;
+    private TextView addressView;
+    private TextView dateTextView;
+
+    private Need need;
+
+    private int keyline;
 
     public NeedView(Context context) {
         super(context);
@@ -37,74 +45,53 @@ public class NeedView extends ViewGroup{
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        keyline = getResources().getDimensionPixelSize(R.dimen.keyline_1);
 
-        iconImageView = (ImageView) getChildAt(0);
-        countTextView = (TextView) getChildAt(1);
-        categoryTextView = (TextView) getChildAt(2);
-        addressTextView = (TextView) getChildAt(3);
+        iconView = (ImageView) getChildAt(0);
+        countView = (TextView) getChildAt(1);
+        categoryView = (TextView) getChildAt(2);
+        addressView = (TextView) getChildAt(3);
         dateTextView = (TextView) getChildAt(4);
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    protected void onMeasure(int widthSpec, int heightSpec) {
         // TODO: measure correctly!
-        int widthConstraints = getPaddingLeft() + getPaddingRight();
-        int heightConstraints = 0;
+        int width = MeasureSpec.getSize(widthSpec);
+        int height = getPaddingBottom() + getPaddingTop();
 
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
+        //Measure the iconView-Button
+        iconView.setImageResource(need.getCategoryIcon());
+        measureChildWithMargins(iconView, widthSpec, 0, heightSpec, 0);
 
-        //Measure the iconImageView-Button
-        measureChildWithMargins(
-                iconImageView,
-                widthMeasureSpec,
-                widthConstraints,
-                heightMeasureSpec,
-                heightConstraints);
+        //Measure the countView
+        countView.setText(need.getCount() + "");
+        measureChildWithMargins(countView, widthSpec, 0, heightSpec, 0);
 
-        //Measure the countTextView
-        countTextView.setText("");
-        measureChildWithMargins(
-                countTextView,
-                widthMeasureSpec,
-                widthConstraints,
-                heightMeasureSpec,
-                0);
-
-        //Measure the categoryTextView
-        categoryTextView.setText("");
-        measureChildWithMargins(
-                categoryTextView,
-                widthMeasureSpec,
-                widthConstraints,
-                heightMeasureSpec,
-                heightConstraints);
+        //Measure the categoryView
+        categoryView.setText(need.getCount() == 1 ?
+                need.getCategorySingular() : need.getCategoryPlural());
+        measureChildWithMargins(categoryView, widthSpec, 0, heightSpec, 0);
 
         // Update the constraints
-        heightConstraints += iconImageView.getMeasuredHeight();
+        height += iconView.getMeasuredHeight();
 
-        //Measure the addressTextView
-        addressTextView.setText("");
-        measureChildWithMargins(
-                addressTextView,
-                widthMeasureSpec,
-                widthConstraints,
-                heightMeasureSpec,
-                heightConstraints);
+        //Measure the addressView
+        addressView.setText(need.getAddress().getAddressLine(0));
+        measureChildWithMargins(addressView, widthSpec, 0, heightSpec, 0);
 
         // Update the constraints
-        heightConstraints += addressTextView.getMeasuredHeight();
+        height += addressView.getMeasuredHeight();
 
         //Measure the dateTextView
-        dateTextView.setText("");
-        measureChildWithMargins(
-                dateTextView,
-                widthMeasureSpec,
-                widthConstraints,
-                heightMeasureSpec,
-                heightConstraints);
+        String dayStr = TimeUtils.formatHumanFriendlyShortDate(getContext(), need.getStart());
+        String dString = dayStr + " " + TimeUtils.formatTimeOfDay(need.getStart()) + " - " +
+                TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr";
 
-        height = heightConstraints + dateTextView.getMeasuredHeight();
+        dateTextView.setText(dString);
+        measureChildWithMargins(dateTextView, widthSpec, 0, heightSpec, 0);
+
+        height += dateTextView.getMeasuredHeight();
 
         // Set the dimension for this ViewGroup
         setMeasuredDimension(width, height);
@@ -112,7 +99,7 @@ public class NeedView extends ViewGroup{
 
     @Override
     protected void measureChildWithMargins(View child, int parentWidthMeasureSpec, int horizontalPadding, int parentHeightMeasureSpec, int verticalPadding) {
-        LayoutParams lp = child.getLayoutParams();
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
 
         int childWidthMeasureSpec = getChildMeasureSpec(
                 parentWidthMeasureSpec,
@@ -129,6 +116,49 @@ public class NeedView extends ViewGroup{
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        // TODO: layout children!
+        int baseline =  getPaddingTop() + iconView.getMeasuredHeight();
+        float dp = getResources().getDisplayMetrics().density;
+
+        iconView.layout(
+                getPaddingLeft(),
+                getPaddingTop(),
+                getPaddingLeft() + iconView.getMeasuredWidth(),
+                baseline);
+
+        countView.layout(
+                keyline,
+                baseline - countView.getMeasuredHeight() + (int) (2 * dp),
+                keyline + countView.getMeasuredWidth(),
+                baseline);
+
+        categoryView.layout(
+                keyline + countView.getMeasuredWidth(),
+                baseline - categoryView.getMeasuredHeight(),
+                getMeasuredWidth() - getPaddingRight(),
+                baseline);
+
+        addressView.layout(
+                getPaddingLeft(),
+                baseline,
+                getMeasuredWidth(),
+                baseline + addressView.getMeasuredHeight());
+
+        dateTextView.layout(
+                getPaddingLeft(),
+                baseline + addressView.getMeasuredHeight(),
+                getMeasuredWidth(),
+                getMeasuredHeight() - getPaddingBottom());
     }
+
+    public void setNeed(Need need) {
+        this.need = need;
+    }
+
+    public void setCount(int count) {
+        need.setCount(count);
+        requestLayout();
+        invalidate();
+    }
+
+    // TODO: show distance and duration
 }

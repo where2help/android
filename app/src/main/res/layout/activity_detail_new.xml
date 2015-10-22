@@ -30,78 +30,9 @@
                 android:layout_height="168dp">
             </FrameLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="14dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
-
-                <ImageView
-                    android:id="@+id/category_icon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:scaleType="fitXY"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_medical" />
-
-                <TextView
-                    android:id="@+id/count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:gravity="center_vertical"
-                    android:lines="1"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="8dp"
-                    android:text="1"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="@dimen/text_count"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/category"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="36dp"
-                    android:lines="1"
-                    android:paddingRight="16dp"
-                    android:text="Dummy Text"
-                    android:textColor="@color/colorPrimary"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textSize="@dimen/text_title" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:layout_marginLeft="14dp"
-                android:layout_marginTop="4dp"
-                android:drawableLeft="@drawable/ic_action_place"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:text="Dummy Text"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/text_subhead" />
-
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:layout_marginLeft="14dp"
-                android:layout_marginTop="4dp"
-                android:drawableLeft="@drawable/ic_action_event"
-                android:drawablePadding="12dp"
-                android:gravity="center_vertical"
-                android:text="Dummy Text"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/text_subhead" />
+            <include
+                android:id="@+id/need_view"
+                layout="@layout/listitem_new"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -131,7 +62,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/iamin" />
+                    android:text="@string/iamin"
+                    android:textColor="@color/text_dark"/>
 
                 <LinearLayout
                     android:id="@+id/btnBar"
@@ -144,14 +76,16 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/iamout" />
+                        android:text="@string/iamout"
+                        android:textColor="@color/text_dark"/>
 
                     <Button
                         android:id="@+id/calendar"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/calendar" />
+                        android:text="@string/calendar"
+                        android:textColor="@color/text_dark"/>
                 </LinearLayout>
             </LinearLayout>
 

@@ -28,11 +28,9 @@ import com.squareup.otto.Subscribe;
 import java.util.regex.Pattern;
 
 import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.VolunteeringTask;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.R;
-import app.iamin.iamin.RegisterTask;
 import app.iamin.iamin.event.LocationEvent;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.util.TimeUtils;
@@ -62,10 +60,11 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private SupportMapFragment mMapFragment;
 
     private Need need;
+    private NeedView needView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_detail_new);
 
         need = new Need().fromIntent(getIntent());
 
@@ -79,7 +78,10 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(this);
 
-        categoryTextView = (TextView) findViewById(R.id.category);
+        needView = (NeedView) findViewById(R.id.need_view);
+        needView.setNeed(need);
+
+/*        categoryTextView = (TextView) findViewById(R.id.category);
 
         typeImageView = (ImageView) findViewById(R.id.category_icon);
         typeImageView.setImageResource(need.getCategoryIcon());
@@ -92,7 +94,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
                 TimeUtils.formatHumanFriendlyShortDate(this, need.getStart()),
                         TimeUtils.formatTimeOfDay(need.getStart()),
                         TimeUtils.formatTimeOfDay(need.getEnd()),
-                        TimeUtils.getDuration(need.getStart(), need.getEnd())));
+                        TimeUtils.getDuration(need.getStart(), need.getEnd())));*/
 
         webTextView = (TextView) findViewById(R.id.web);
         webTextView.setText("www.google.at");
@@ -134,19 +136,21 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private void setUiMode(boolean isAttending) {
         if (isAttending) {
-            countTextView.setText(getString(R.string.count, (need.getCount() - 1))); // TODO: cheat ! ;-)
+            needView.setCount((need.getCount() - 1));
+            //countTextView.setText(getString(R.string.count, (need.getCount() - 1))); // TODO: cheat ! ;-)
             submitButton.setEnabled(true);
             submitInfoTextView.setText(getString(R.string.iamin_thank_you, TimeUtils.formatTimeOfDay(need.getStart())));
             submitInfoTextView.setVisibility(View.VISIBLE);
             btnBarLayout.setVisibility(View.VISIBLE);
             submitButton.setText(R.string.action_share);
-            categoryTextView.setText((need.getCount() - 1) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
+            //categoryTextView.setText((need.getCount() - 1) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         } else {
-            countTextView.setText(getString(R.string.count, (need.getCount()))); // TODO: cheat ! ;-)
+            needView.setCount(need.getCount() + 1);
+            //countTextView.setText(getString(R.string.count, (need.getCount()))); // TODO: cheat ! ;-)
             submitInfoTextView.setVisibility(View.GONE);
             btnBarLayout.setVisibility(View.GONE);
             submitButton.setText(R.string.iamin);
-            categoryTextView.setText((need.getCount()) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
+            //categoryTextView.setText((need.getCount()) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         }
     }
 
@@ -169,10 +173,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         LatLng userLocation = event.getLocation();
         if (userLocation != null) {
             String distance = LocationUtils.formatDistanceBetween(need.getLocation(), userLocation);
-            addressTextView.setText(getString(R.string.detail_address_format,
-                    need.getAddress().getAddressLine(0),distance ));
+            //addressTextView.setText(getString(R.string.detail_address_format, need.getAddress().getAddressLine(0),distance ));
         } else {
-            addressTextView.setText(need.getAddress().getAddressLine(0));
+            //addressTextView.setText(need.getAddress().getAddressLine(0));
         }
     }
 

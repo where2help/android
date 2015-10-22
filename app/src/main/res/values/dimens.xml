@@ -8,6 +8,8 @@
     <dimen name="countview_small">11sp</dimen>
     <dimen name="countview_large">20sp</dimen>
 
+    <dimen name="keyline_1">60dp</dimen>
+
     <!-- FONT SIZES -->
     <dimen name="text_padding">8dp</dimen>
     <dimen name="text_hint">10sp</dimen>
