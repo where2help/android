@@ -61,9 +61,13 @@ public class MainActivity extends AppCompatActivity implements
         mAdapter = new ListAdapter(this);
         mLayoutManager = new LinearLayoutManager(this);
 
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
+
         mNeedsView = (NeedsView) findViewById(R.id.recycler_view);
         mNeedsView.setLayoutManager(mLayoutManager);
         mNeedsView.setEmptyView(findViewById(R.id.empty_view));
+        mNeedsView.addItemDecoration(itemDecoration);
         mNeedsView.setAdapter(mAdapter);
 
         mRetryButton = (ImageButton) findViewById(R.id.retry_button);
