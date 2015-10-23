@@ -94,11 +94,25 @@ public class LoginActivity extends AppCompatActivity {
 
     @Subscribe
     public void onRegisterUpdate(RegisterEvent event) {
-        boolean isSuccsess = event.isSuccsess(); // TODO: Handle errors
-        if (isSuccsess) {
-            findViewById(R.id.btn_register).setVisibility(View.GONE);
-            Toast.makeText(this, "SUCCSESS... LOG IN!", Toast.LENGTH_LONG).show();
-            setUiMode(UI_MODE_LOGIN);
+        switch(event.status) {
+            case HttpURLConnection.HTTP_OK:
+                findViewById(R.id.btn_register).setVisibility(View.GONE);
+                Toast.makeText(this, "Willkommen! Bitte melde Dich an!", Toast.LENGTH_LONG).show();
+                setUiMode(UI_MODE_LOGIN);
+                break;
+            case HttpURLConnection.HTTP_FORBIDDEN:
+                Toast.makeText(this, "Überprüfe Deine Angaben!", Toast.LENGTH_SHORT).show();
+                // TODO: Give user more info!
+                setUiMode(UI_MODE_LOGIN);
+                break;
+            case HttpURLConnection.HTTP_NO_CONTENT:
+                Toast.makeText(this, "Keine Verbindung!", Toast.LENGTH_SHORT).show();
+                setUiMode(UI_MODE_LOGIN);
+                break;
+            default:
+                Toast.makeText(this, "Registrieren fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                setUiMode(UI_MODE_LOGIN);
+                break;
         }
     }
 
@@ -122,6 +136,5 @@ public class LoginActivity extends AppCompatActivity {
                 setUiMode(UI_MODE_LOGIN);
                 break;
         }
-
     }
 }

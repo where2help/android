@@ -5,13 +5,9 @@ package app.iamin.iamin.event;
  */
 public class RegisterEvent {
 
-    private boolean isSuccsess = false;
+    public final int status;
 
-    public RegisterEvent(Boolean isSuccsess) {
-        this.isSuccsess = isSuccsess;
-    }
-
-    public boolean isSuccsess() {
-        return this.isSuccsess;
+    public RegisterEvent(int status) {
+        this.status = status;
     }
 }
