@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
+import app.iamin.iamin.Mock;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.util.EndpointUtils;
@@ -53,13 +54,13 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             setContentView(R.layout.activity_main);
 
-            new PullNeedsTask(this).execute();
-
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
             setSupportActionBar(toolbar);
 
+            new PullNeedsTask(this).execute();
             mAdapter = new ListAdapter(this);
+            //mAdapter.setData(Mock.getNeeds(100));
             mLayoutManager = new LinearLayoutManager(this);
 
             RecyclerView.ItemDecoration itemDecoration = new
