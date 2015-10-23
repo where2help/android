@@ -2,7 +2,6 @@ package app.iamin.iamin.model;
 
 import android.content.Intent;
 import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -15,7 +14,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -111,23 +109,23 @@ public class Need {
     public String getSelfLink() { return selfLink; }
 
 
-    public Need fromJSON(JSONObject obj, Geocoder coder) throws JSONException, IOException, ParseException {
+    public Need fromJSON(JSONObject obj) throws JSONException, IOException, ParseException {
         Need need = new Need();
 
         JSONObject attrs = obj.getJSONObject("attributes");
         need.setId(obj.getInt("id"));
         need.setCategory(attrs.getString("category"));
 
-        List<Address> addresses = coder.getFromLocationName(attrs.getString("city") + " " + attrs.getString("location"), 1);
-        if (addresses.size() > 0) {
-            need.setAddress(addresses.get(0));
-        } else {
-            Address address = new Address(Locale.GERMAN);
-            address.setAddressLine(0, attrs.getString("city") + " " + attrs.getString("location"));
-            address.setLatitude(0); // TODO: handle null locations
-            address.setLongitude(0);
-            need.setAddress(address);
-        }
+        Address address = new Address(Locale.GERMAN);
+        address.setAddressLine(0, attrs.getString("city") + " " + attrs.getString("location"));
+
+        if (attrs.getString("lat").equals("null")) address.setLatitude(0);
+        else address.setLatitude(attrs.getDouble("lat"));
+
+        if (attrs.getString("lng").equals("null")) address.setLongitude(0);
+        else address.setLongitude(attrs.getDouble("lng"));
+
+        need.setAddress(address);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         need.setStart(simpleDateFormat.parse(attrs.getString("start-time")));

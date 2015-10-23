@@ -2,7 +2,6 @@
 package app.iamin.iamin;
 
 import android.content.Context;
-import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -28,11 +27,9 @@ import app.iamin.iamin.util.EndpointUtils;
 public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
     private static final String TAG = "PullNeedsTask";
 
-    private Geocoder coder;
     private Context context;
 
     public PullNeedsTask(Context context) {
-        this.coder = new Geocoder(context);
         this.context = context;
     }
 
@@ -77,7 +74,7 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
             needs = new Need[data.length()];
             for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = data.getJSONObject(i);
-                needs[i] = new Need().fromJSON(obj, coder);
+                needs[i] = new Need().fromJSON(obj);
             }
 
         } catch (IOException e) {
