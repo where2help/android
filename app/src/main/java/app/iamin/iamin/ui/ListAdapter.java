@@ -66,7 +66,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     public void onBindViewHolder(ListAdapter.ViewHolder holder, int position) {
         Need need = needs[position];
         holder.needView.setNeed(need);
-        //holder.needView.setBackgroundResource((position % 2) == 0 ? R.color.windowBackground : R.color.windowBackgroundLight);
     }
 
     @Override
