@@ -145,7 +145,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             submitButton.setText(R.string.action_share);
             //categoryTextView.setText((need.getCount() - 1) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         } else {
-            needView.setCount(need.getCount() + 1);
+            needView.setCount(need.getCount());
             //countTextView.setText(getString(R.string.count, (need.getCount()))); // TODO: cheat ! ;-)
             submitInfoTextView.setVisibility(View.GONE);
             btnBarLayout.setVisibility(View.GONE);

@@ -27,75 +27,69 @@
             <FrameLayout
                 android:id="@+id/map"
                 android:layout_width="match_parent"
-                android:layout_height="168dp">
-            </FrameLayout>
+                android:layout_height="168dp"/>
 
             <include
                 android:id="@+id/need_view"
-                layout="@layout/listitem_new"/>
+                layout="@layout/listitem_new" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingLeft="60dp"
+                android:paddingRight="16dp"
+                android:paddingTop="4dp"
+                android:text="Danke! Komm bitte um 14:00!"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_subhead"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/submit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="4dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/iamin"
+                android:textColor="@color/text_dark" />
+
+            <LinearLayout
+                android:id="@+id/btnBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    android:id="@+id/info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="Danke! Komm bitte um 14:00!"
-                    android:textStyle="bold"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="8dp"
-                    android:paddingLeft="46dp"
-                    android:textSize="@dimen/text_subhead"
-                    android:textColor="@color/colorPrimary"
-                    android:visibility="gone" />
+                android:visibility="gone">
 
                 <Button
-                    android:id="@+id/submit"
-                    android:layout_marginTop="8dp"
-                    android:layout_width="match_parent"
+                    android:id="@+id/cancel"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/iamin"
-                    android:textColor="@color/text_dark"/>
+                    android:layout_weight="1"
+                    android:text="@string/iamout"
+                    android:textColor="@color/text_dark" />
 
-                <LinearLayout
-                    android:id="@+id/btnBar"
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/calendar"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:visibility="gone">
-
-                    <Button
-                        android:id="@+id/cancel"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/iamout"
-                        android:textColor="@color/text_dark"/>
-
-                    <Button
-                        android:id="@+id/calendar"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/calendar"
-                        android:textColor="@color/text_dark"/>
-                </LinearLayout>
+                    android:layout_weight="1"
+                    android:text="@string/calendar"
+                    android:textColor="@color/text_dark" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:paddingBottom="16dp"
                 android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum." />
 
             <TextView
@@ -104,27 +98,27 @@
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackground"
                 android:clickable="true"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:gravity="center_vertical"
+                android:text="Mehr Infos: www...."
                 android:textColor="@color/colorAccent"
-                android:textSize="@dimen/text_body"
-                android:text="Mehr Infos: www...." />
+                android:textSize="@dimen/text_body" />
 
             <TextView
                 android:id="@+id/organisation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:gravity="center_vertical"
+                android:text="Organisation: Train of Hope"
                 android:textColor="@color/grey"
-                android:textSize="@dimen/text_body"
-                android:text="Organisation: Train of Hope" />
+                android:textSize="@dimen/text_body" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </LinearLayout>
