@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -44,8 +43,6 @@ public class LoginTask extends AsyncTask<Context, Void, Response> {
         String url = EndpointUtils.getEndpoint(contexts[0], EndpointUtils.TASK_LOGIN);
         Log.d(TAG, url);
 
-        Headers headers = EndpointUtils.getHeaders(contexts[0]);
-
         RequestBody formBody = new FormEncodingBuilder()
                 .add("email", email)
                 .add("password", password)
@@ -54,7 +51,6 @@ public class LoginTask extends AsyncTask<Context, Void, Response> {
         try {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .headers(headers)
                     .url(url)
                     .post(formBody)
                     .build();

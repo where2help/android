@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements
             // If we don't have a user create one
             UiUtils.fireLoginIntent(this);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        } else { // TODO: finish before
+            new PullNeedsTask(this).execute();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -72,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements
 
         mRetryButton = (ImageButton) findViewById(R.id.retry_button);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
-        new PullNeedsTask(this).execute();
 
         // Check fine location permission has been granted
         if (!LocationUtils.checkFineLocationPermission(this)) {

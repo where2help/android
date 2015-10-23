@@ -87,7 +87,7 @@ public class EndpointUtils {
         editor.putString("Access-Token", headers.get("Access-Token"));
         editor.putString("Token-Type", headers.get("Token-Type"));
         editor.putString("Client", headers.get("Client"));
-        editor.putString("Expiry", headers.get("Expiry"));
+        //editor.putString("Expiry", headers.get("Expiry"));
         editor.putString("Uid", headers.get("Uid"));
         editor.apply();
     }
@@ -99,7 +99,7 @@ public class EndpointUtils {
                 .add("Access-Token", prefs.getString("Access-Token", ""))
                 .add("Token-Type", prefs.getString("Token-Type", ""))
                 .add("Client", prefs.getString("Client", ""))
-                .add("Expiry", prefs.getString("Expiry", ""))
+                //.add("Expiry", prefs.getString("Expiry", ""))
                 .add("Uid", prefs.getString("Uid", ""))
                 .build();
     }

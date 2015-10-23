@@ -1,3 +1,4 @@
+
 package app.iamin.iamin;
 
 import android.content.Context;
@@ -65,16 +66,16 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
             Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
             Log.e(TAG, "Uid = " + response.headers().get("Uid"));
 
-            //EndpointUtils.storeHeader(context, response.headers()); //TODO: store headers!
+            EndpointUtils.storeHeader(context, response.headers()); //TODO: store headers!
 
-            String result =  response.body().string();
+            String result = response.body().string();
 
             Log.e("PullNeedsActiveTask", result);
 
             JSONArray data = new JSONObject(result).getJSONArray("data");
 
             needs = new Need[data.length()];
-            for (int i = 0; i<data.length(); i++) {
+            for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = data.getJSONObject(i);
                 needs[i] = new Need().fromJSON(obj, coder);
             }
@@ -91,7 +92,7 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
     }
 
     @Override
-    protected void onPostExecute(Need[] result) {
-        BusProvider.getInstance().post(new NeedsEvent(result));
+    protected void onPostExecute(Need[] needs) {
+        BusProvider.getInstance().post(new NeedsEvent(needs));
     }
 }
