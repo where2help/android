@@ -16,19 +16,35 @@ public class Mock {
     // This will mock the /api/v1/needs endpoint.
     public static Need[] getNeeds(int size) {
         Need[] needs = new Need[size];
-        int count = 0;
         for (int i = 0; i < size; i++) {
-            Need need = new Need();
-            need.setId(count++);
-            need.setCount(generateCount(1, 50));
-            need.setCategory(generateCategory());
-            need.setAddress(generateAddress());
-            Date[] dates = generateStartEnd();
-            need.setStart(dates[0]);
-            need.setEnd(dates[1]);
-            needs[i] = need;
+            if (i == 0) {
+                // First need is customizable
+                needs[i] = getCustomNeed();
+            } else {
+                Need need = new Need();
+                need.setId(i);
+                need.setCount(generateCount(1, 50));
+                need.setCategory(generateCategory());
+                need.setAddress(generateAddress());
+                Date[] dates = generateStartEnd();
+                need.setStart(dates[0]);
+                need.setEnd(dates[1]);
+                needs[i] = need;
+            }
         }
         return needs;
+    }
+
+    private static Need getCustomNeed() {
+        Need need = new Need();
+        need.setId(0);
+        need.setCount(100);
+        need.setCategory(generateCategory());
+        need.setAddress(generateAddress());
+        Date[] dates = generateStartEnd();
+        need.setStart(dates[0]);
+        need.setEnd(dates[1]);
+        return need;
     }
 
     private static int generateCount(int min, int max) {
@@ -36,7 +52,7 @@ public class Mock {
     }
 
     private static int generateCategory() {
-        return new Random().nextInt(3);
+        return new Random().nextInt(4);
     }
 
     private static String location[] = {
