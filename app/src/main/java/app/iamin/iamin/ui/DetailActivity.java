@@ -12,7 +12,6 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -48,14 +47,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private Button cancelButton;
     private Button calendarButton;
 
-    private TextView categoryTextView;
-    private TextView addressTextView;
-    private TextView dateTextView;
     private TextView submitInfoTextView;
     private TextView webTextView;
-    private TextView countTextView;
-
-    private ImageView typeImageView;
 
     private SupportMapFragment mMapFragment;
 
@@ -81,21 +74,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         needView = (NeedView) findViewById(R.id.need_view);
         needView.setNeed(need);
 
-/*        categoryTextView = (TextView) findViewById(R.id.category);
-
-        typeImageView = (ImageView) findViewById(R.id.category_icon);
-        typeImageView.setImageResource(need.getCategoryIcon());
-
-        addressTextView = (TextView) findViewById(R.id.address);
-        addressTextView.setText(need.getAddress().getAddressLine(0));
-
-        dateTextView = (TextView) findViewById(R.id.date);
-        dateTextView.setText(getString(R.string.detail_date_format,
-                TimeUtils.formatHumanFriendlyShortDate(this, need.getStart()),
-                        TimeUtils.formatTimeOfDay(need.getStart()),
-                        TimeUtils.formatTimeOfDay(need.getEnd()),
-                        TimeUtils.getDuration(need.getStart(), need.getEnd())));*/
-
         webTextView = (TextView) findViewById(R.id.web);
         webTextView.setText("www.google.at");
         webTextView.setOnClickListener(this);
@@ -104,16 +82,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
         btnBarLayout = (LinearLayout) findViewById(R.id.btnBar);
 
-        calendarButton = (Button) findViewById(R.id.calendar);
-        calendarButton.setOnClickListener(this);
-
-        cancelButton = (Button) findViewById(R.id.cancel);
-        cancelButton.setOnClickListener(this);
-
         submitButton = (Button) findViewById(R.id.submit);
         submitButton.setOnClickListener(this);
-
-        countTextView = (TextView) findViewById(R.id.count);
 
         setUiMode(isAttending);
     }
@@ -137,20 +107,25 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private void setUiMode(boolean isAttending) {
         if (isAttending) {
             needView.setCount((need.getCount() - 1));
-            //countTextView.setText(getString(R.string.count, (need.getCount() - 1))); // TODO: cheat ! ;-)
+
             submitButton.setEnabled(true);
+
             submitInfoTextView.setText(getString(R.string.iamin_thank_you, TimeUtils.formatTimeOfDay(need.getStart())));
             submitInfoTextView.setVisibility(View.VISIBLE);
+
+            calendarButton = (Button) findViewById(R.id.calendar);
+            calendarButton.setOnClickListener(this);
+
+            cancelButton = (Button) findViewById(R.id.cancel);
+            cancelButton.setOnClickListener(this);
+
             btnBarLayout.setVisibility(View.VISIBLE);
             submitButton.setText(R.string.action_share);
-            //categoryTextView.setText((need.getCount() - 1) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         } else {
             needView.setCount(need.getCount());
-            //countTextView.setText(getString(R.string.count, (need.getCount()))); // TODO: cheat ! ;-)
             submitInfoTextView.setVisibility(View.GONE);
             btnBarLayout.setVisibility(View.GONE);
             submitButton.setText(R.string.iamin);
-            //categoryTextView.setText((need.getCount()) == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         }
     }
 

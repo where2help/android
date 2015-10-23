@@ -38,8 +38,12 @@ public class LoginActivity extends AppCompatActivity {
 
         userScreen = (LinearLayout) findViewById(R.id.login_screen);
         progressScreen = (LinearLayout) findViewById(R.id.progress_screen);
+
         emailEditText = (EditText) findViewById(R.id.email);
+        emailEditText.setText("android_user@example.com");
+
         passwordEditText = (EditText) findViewById(R.id.password);
+        passwordEditText.setText("supersecret");
 
         setUiMode(UI_MODE_LOGIN);
     }
