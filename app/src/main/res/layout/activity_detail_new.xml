@@ -35,14 +35,12 @@
 
             <TextView
                 android:id="@+id/info"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:paddingBottom="8dp"
+                android:paddingBottom="12dp"
                 android:paddingLeft="60dp"
                 android:paddingRight="16dp"
-                android:paddingTop="4dp"
-                android:text="Danke! Komm bitte um 14:00!"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/text_subhead"
                 android:textStyle="bold"
@@ -54,8 +52,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="14dp"
                 android:layout_marginRight="14dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/iamin"
                 android:textColor="@color/text_dark" />
 
             <LinearLayout
@@ -64,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp"
+                android:paddingBottom="8dp"
                 android:visibility="gone">
 
                 <Button
@@ -87,6 +84,7 @@
                 android:id="@+id/desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="8dp"
                 android:paddingBottom="16dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"

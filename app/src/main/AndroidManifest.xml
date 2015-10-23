@@ -32,7 +32,7 @@
 
         <activity
             android:name=".ui.LoginActivity"
-            android:theme="@style/AppThemeLight" />
+            android:theme="@style/AppThemeDark" />
 
         <activity
             android:name=".ui.DetailActivity"
@@ -40,12 +40,7 @@
 
         <activity
             android:name=".ui.UserActivity"
-            android:parentActivityName="app.iamin.iamin.ui.MainActivity"
-            android:theme="@style/AppThemeLight">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="app.iamin.iamin.ui.MainActivity" />
+            android:theme="@style/AppThemeDark">
         </activity>
 
         <activity

@@ -17,6 +17,10 @@
         <item name="android:windowBackground">@color/windowBackgroundLight</item>
     </style>
 
+    <style name="AppThemeDark" parent="AppTheme">
+        <item name="android:windowBackground">@color/colorPrimaryLight</item>
+    </style>
+
     <style name="Widget.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="windowActionModeOverlay">true</item>
     </style>

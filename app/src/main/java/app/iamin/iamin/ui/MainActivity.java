@@ -45,47 +45,47 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
         user = EndpointUtils.getUser(this);
         if (user.getEmail() == null) {
             // If we don't have a user create one
             UiUtils.fireLoginIntent(this);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        } else { // TODO: finish before
+        } else {
+            setContentView(R.layout.activity_main);
+
             new PullNeedsTask(this).execute();
-        }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
-        setSupportActionBar(toolbar);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
+            setSupportActionBar(toolbar);
 
-        mAdapter = new ListAdapter(this);
-        mLayoutManager = new LinearLayoutManager(this);
+            mAdapter = new ListAdapter(this);
+            mLayoutManager = new LinearLayoutManager(this);
 
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
+            RecyclerView.ItemDecoration itemDecoration = new
+                    DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
 
-        mNeedsView = (NeedsView) findViewById(R.id.recycler_view);
-        mNeedsView.setLayoutManager(mLayoutManager);
-        mNeedsView.setEmptyView(findViewById(R.id.empty_view));
-        mNeedsView.addItemDecoration(itemDecoration);
-        mNeedsView.setAdapter(mAdapter);
+            mNeedsView = (NeedsView) findViewById(R.id.recycler_view);
+            mNeedsView.setLayoutManager(mLayoutManager);
+            mNeedsView.setEmptyView(findViewById(R.id.empty_view));
+            mNeedsView.addItemDecoration(itemDecoration);
+            mNeedsView.setAdapter(mAdapter);
 
-        mRetryButton = (ImageButton) findViewById(R.id.retry_button);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+            mRetryButton = (ImageButton) findViewById(R.id.retry_button);
+            mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        // Check fine location permission has been granted
-        if (!LocationUtils.checkFineLocationPermission(this)) {
-            // See if user has denied permission in the past
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show a simple snackbar explaining the request instead
-                showPermissionSnackbar();
-            } else {
-                // Otherwise request permission from user
-                if (savedInstanceState == null) {
-                    requestFineLocationPermission();
+            // Check fine location permission has been granted
+            if (!LocationUtils.checkFineLocationPermission(this)) {
+                // See if user has denied permission in the past
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // Show a simple snackbar explaining the request instead
+                    showPermissionSnackbar();
+                } else {
+                    // Otherwise request permission from user
+                    if (savedInstanceState == null) {
+                        requestFineLocationPermission();
+                    }
                 }
             }
         }
