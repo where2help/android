@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity implements
             toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
             setSupportActionBar(toolbar);
 
-            new PullNeedsTask(this).execute();
+            //new PullNeedsTask(this).execute();
             mAdapter = new ListAdapter(this);
-            //mAdapter.setData(Mock.getNeeds(100));
+            mAdapter.setData(Mock.getNeeds(100));
             mLayoutManager = new LinearLayoutManager(this);
 
             RecyclerView.ItemDecoration itemDecoration = new

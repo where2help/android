@@ -13,6 +13,7 @@ import app.iamin.iamin.model.Need;
  */
 public class Mock {
 
+    // This will mock the /api/v1/needs endpoint.
     public static Need[] getNeeds(int size) {
         Need[] needs = new Need[size];
         int count = 0;
@@ -85,7 +86,7 @@ public class Mock {
 
     private static Date[] generateStartEnd() {
         Date start = new Date(System.currentTimeMillis() + (long) (new Random().nextDouble() * 300 * 60 * 60 * 60 * 1000));
-        Date end = new Date(start.getTime() + new Random().nextInt(3 * 60 * 60 * 60 * 1000));
+        Date end = new Date(start.getTime() + new Random().nextInt(3 * 60 * 60 * 1000));
         return new Date[]{start, end};
     }
 }
