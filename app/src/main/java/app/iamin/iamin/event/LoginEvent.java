@@ -5,13 +5,9 @@ package app.iamin.iamin.event;
  */
 public class LoginEvent {
 
-    private boolean isSuccsess = false;
+    public final int status;
 
-    public LoginEvent(Boolean isSuccsess) {
-        this.isSuccsess = isSuccsess;
-    }
-
-    public boolean isSuccsess() {
-        return this.isSuccsess;
+    public LoginEvent(int status) {
+        this.status = status;
     }
 }

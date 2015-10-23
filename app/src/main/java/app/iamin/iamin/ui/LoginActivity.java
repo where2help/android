@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
+import java.net.HttpURLConnection;
+
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.LoginTask;
 import app.iamin.iamin.R;
@@ -102,10 +104,24 @@ public class LoginActivity extends AppCompatActivity {
 
     @Subscribe
     public void onLoginUpdate(LoginEvent event) {
-        boolean isSuccsess = event.isSuccsess(); // TODO: Handle errors
-        if (isSuccsess) {
-            UiUtils.fireMainIntent(this);
-            finish();
+        switch(event.status) {
+            case HttpURLConnection.HTTP_OK:
+                UiUtils.fireMainIntent(this);
+                finish();
+                break;
+            case HttpURLConnection.HTTP_UNAUTHORIZED:
+                Toast.makeText(this, "Überprüfe Deine Angaben!", Toast.LENGTH_SHORT).show();
+                setUiMode(UI_MODE_LOGIN);
+                break;
+            case HttpURLConnection.HTTP_NO_CONTENT:
+                Toast.makeText(this, "Keine Verbindung!", Toast.LENGTH_SHORT).show();
+                setUiMode(UI_MODE_LOGIN);
+                break;
+            default:
+                Toast.makeText(this, "Login fehlgeschlagen!", Toast.LENGTH_SHORT).show();
+                setUiMode(UI_MODE_LOGIN);
+                break;
         }
+
     }
 }
