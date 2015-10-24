@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:descendantFocusability="beforeDescendants"
-    android:fitsSystemWindows="true"
-    android:focusableInTouchMode="true"
     tools:context=".ui.UserActivity">
 
     <FrameLayout
@@ -29,6 +26,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="16dp"
             android:scaleType="fitXY"
+            android:contentDescription="@null"
             android:src="@drawable/ic_account_circle_white_24dp" />
 
         <TextView
@@ -37,7 +35,6 @@
             android:layout_height="?actionBarSize"
             android:layout_gravity="center|bottom"
             android:gravity="center"
-            android:text="Username"
             android:textColor="#fff"
             android:textSize="@dimen/text_title" />
     </FrameLayout>
@@ -57,7 +54,6 @@
                 android:id="@+id/header_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Username"
                 android:textColor="@color/text_light_sec"
                 android:textSize="@dimen/text_body" />
         </LinearLayout>
