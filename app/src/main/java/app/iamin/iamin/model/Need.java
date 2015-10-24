@@ -1,5 +1,6 @@
 package app.iamin.iamin.model;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import app.iamin.iamin.R;
+import app.iamin.iamin.util.TimeUtils;
 
 /**
  * Created by Paul on 10-10-2015.
@@ -46,16 +48,26 @@ public class Need {
 
     private Date mStart = new Date();
     private Date mEnd = new Date();
+    private String mDate;
 
     private int mCount = 0;
     private String selfLink;
 
-    public Need() {}
+    public Need() {
+    }
 
-    public void setId(int id) { this.id = id; }
-    public int getId() { return id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public void setCategory(int category) { this.mCategory = category; }
+    public int getId() {
+        return id;
+    }
+
+    public void setCategory(int category) {
+        this.mCategory = category;
+    }
+
     public void setCategory(String category) {
         if (Need.CATEGORY_NAMES.containsKey(category)) {
             this.mCategory = Need.CATEGORY_NAMES.get(category);
@@ -63,53 +75,107 @@ public class Need {
             this.mCategory = CATEGORY_VOLUNTEER;
         }
     }
+
     public int getCategory() {
         return mCategory;
     }
+
     public String getCategoryPlural() {
-        switch(this.mCategory) {
-            case CATEGORY_DOCTOR: return "Ärzte";
-            case CATEGORY_LAWYER: return "Rechtsberater";
-            case CATEGORY_INTERPRETER: return "Dolmetscher";
-            case CATEGORY_VOLUNTEER: default: return "Freiwillige";
-        }
-    }
-    public String getCategorySingular() {
-        switch(this.mCategory) {
-            case CATEGORY_DOCTOR: return "Arzt";
-            case CATEGORY_LAWYER: return "Rechtsberater";
-            case CATEGORY_INTERPRETER: return "Dolmetscher";
-            case CATEGORY_VOLUNTEER: default: return "Freiwilliger";
-        }
-    }
-    public int getCategoryIcon() {
-        switch(this.mCategory) {
-            case CATEGORY_DOCTOR: return R.drawable.ic_medical;
-            case CATEGORY_LAWYER: return R.drawable.ic_legal;
-            case CATEGORY_INTERPRETER: return R.drawable.ic_interpretor;
-            case CATEGORY_VOLUNTEER: default: return R.drawable.ic_volunteer;
+        switch (this.mCategory) {
+            case CATEGORY_DOCTOR:
+                return "Ärzte";
+            case CATEGORY_LAWYER:
+                return "Rechtsberater";
+            case CATEGORY_INTERPRETER:
+                return "Dolmetscher";
+            case CATEGORY_VOLUNTEER:
+            default:
+                return "Freiwillige";
         }
     }
 
-    public void setAddress(Address addr) { mAddress = addr; }
-    public Address getAddress() { return mAddress; }
+    public String getCategorySingular() {
+        switch (this.mCategory) {
+            case CATEGORY_DOCTOR:
+                return "Arzt";
+            case CATEGORY_LAWYER:
+                return "Rechtsberater";
+            case CATEGORY_INTERPRETER:
+                return "Dolmetscher";
+            case CATEGORY_VOLUNTEER:
+            default:
+                return "Freiwilliger";
+        }
+    }
+
+    public int getCategoryIcon() {
+        switch (this.mCategory) {
+            case CATEGORY_DOCTOR:
+                return R.drawable.ic_medical;
+            case CATEGORY_LAWYER:
+                return R.drawable.ic_legal;
+            case CATEGORY_INTERPRETER:
+                return R.drawable.ic_interpretor;
+            case CATEGORY_VOLUNTEER:
+            default:
+                return R.drawable.ic_volunteer;
+        }
+    }
+
+    public void setAddress(Address addr) {
+        mAddress = addr;
+    }
+
+    public Address getAddress() {
+        return mAddress;
+    }
+
     public LatLng getLocation() {
         return new LatLng(mAddress.getLatitude(), mAddress.getLongitude());
     }
 
-    public void setStart(Date start) { mStart = start;}
-    public Date getStart() { return mStart; }
-    public void setEnd(Date end) { mEnd = end; }
-    public Date getEnd() { return mEnd; }
+    public void setStart(Date start) {
+        mStart = start;
+    }
 
-    public void setCount(int stillOpen) { mCount = stillOpen; }
-    public int getCount() { return mCount; }
+    public Date getStart() {
+        return mStart;
+    }
 
-    public void setSelfLink(String selfLink) { this.selfLink = selfLink; }
-    public String getSelfLink() { return selfLink; }
+    public void setEnd(Date end) {
+        mEnd = end;
+    }
+
+    public Date getEnd() {
+        return mEnd;
+    }
+
+    public void setDate(String date) {
+        mDate = date;
+    }
+
+    public String getDate() {
+        return mDate;
+    }
+
+    public void setCount(int stillOpen) {
+        mCount = stillOpen;
+    }
+
+    public int getCount() {
+        return mCount;
+    }
+
+    public void setSelfLink(String selfLink) {
+        this.selfLink = selfLink;
+    }
+
+    public String getSelfLink() {
+        return selfLink;
+    }
 
 
-    public Need fromJSON(JSONObject obj) throws JSONException, IOException, ParseException {
+    public Need fromJSON(Context context, JSONObject obj) throws JSONException, IOException, ParseException {
         Need need = new Need();
 
         JSONObject attrs = obj.getJSONObject("attributes");
@@ -130,6 +196,9 @@ public class Need {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         need.setStart(simpleDateFormat.parse(attrs.getString("start-time")));
         need.setEnd(simpleDateFormat.parse(attrs.getString("end-time")));
+        need.setDate(TimeUtils.formatHumanFriendlyShortDate(context, need.getStart()) + " " +
+                TimeUtils.formatTimeOfDay(need.getStart()) + " - " +
+                TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr");
 
         need.setCount(attrs.getInt("volunteers-needed"));
         need.setSelfLink(obj.getJSONObject("links").getString("self"));
@@ -152,6 +221,7 @@ public class Need {
 
         need.setStart(new Date(bundle.getLong("start")));
         need.setEnd(new Date(bundle.getLong("end")));
+        need.setDate(bundle.getString("date"));
 
         need.setCount(bundle.getInt("count"));
         need.setSelfLink(bundle.getString("selfLink"));

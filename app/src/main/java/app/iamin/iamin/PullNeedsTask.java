@@ -74,7 +74,7 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
             needs = new Need[data.length()];
             for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = data.getJSONObject(i);
-                needs[i] = new Need().fromJSON(obj);
+                needs[i] = new Need().fromJSON(context, obj);
             }
 
         } catch (IOException e) {

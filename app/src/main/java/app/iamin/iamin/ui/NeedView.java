@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import app.iamin.iamin.R;
 import app.iamin.iamin.model.Need;
-import app.iamin.iamin.util.TimeUtils;
 
 /**
  * Created by Markus on 16.10.15.
@@ -84,11 +83,7 @@ public class NeedView extends FrameLayout{
         height += addressView.getMeasuredHeight();
 
         //Measure the dateTextView
-        String dayStr = TimeUtils.formatHumanFriendlyShortDate(getContext(), need.getStart());
-        String dString = dayStr + " " + TimeUtils.formatTimeOfDay(need.getStart()) + " - " +
-                TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr";
-
-        dateTextView.setText(dString);
+        dateTextView.setText(need.getDate());
         measureChildWithMargins(dateTextView, widthSpec, 0, heightSpec, 0);
 
         height += dateTextView.getMeasuredHeight();

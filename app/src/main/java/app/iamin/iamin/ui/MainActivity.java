@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements
 
             //new PullNeedsTask(this).execute();
             mAdapter = new NeedsAdapter(this);
-            mAdapter.setData(Mock.getNeeds(100));
+            mAdapter.setData(Mock.getNeeds(this, 100));
             mLayoutManager = new LinearLayoutManager(this);
 
             RecyclerView.ItemDecoration itemDecoration = new

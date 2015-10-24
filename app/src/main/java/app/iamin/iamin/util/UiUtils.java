@@ -43,6 +43,7 @@ public class UiUtils {
 
         intent.putExtra("start", need.getStart().getTime());
         intent.putExtra("end", need.getEnd().getTime());
+        intent.putExtra("date", need.getDate());
 
         intent.putExtra("count", need.getCount());
         intent.putExtra("selfLink", need.getSelfLink());
