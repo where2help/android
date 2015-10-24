@@ -31,7 +31,7 @@
 
             <include
                 android:id="@+id/need_view"
-                layout="@layout/listitem_new" />
+                layout="@layout/need_item" />
 
             <TextView
                 android:id="@+id/info"

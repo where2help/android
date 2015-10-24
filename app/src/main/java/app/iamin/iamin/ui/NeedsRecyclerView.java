@@ -8,7 +8,8 @@ import android.view.View;
 /**
  * Created by Markus on 12.10.15.
  */
-public class NeedsView extends RecyclerView {
+public class NeedsRecyclerView extends RecyclerView {
+
     private View mEmptyView;
 
     private AdapterDataObserver mDataObserver = new AdapterDataObserver() {
@@ -19,15 +20,15 @@ public class NeedsView extends RecyclerView {
         }
     };
 
-    public NeedsView(Context context) {
+    public NeedsRecyclerView(Context context) {
         super(context);
     }
 
-    public NeedsView(Context context, AttributeSet attrs) {
+    public NeedsRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public NeedsView(Context context, AttributeSet attrs, int defStyle) {
+    public NeedsRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

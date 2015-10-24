@@ -32,9 +32,9 @@ import app.iamin.iamin.util.UiUtils;
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private NeedsView mNeedsView;
+    private NeedsRecyclerView mNeedsView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ListAdapter mAdapter;
+    private NeedsAdapter mAdapter;
 
     private ImageButton mRetryButton;
     private ProgressBar mProgressBar;
@@ -59,14 +59,14 @@ public class MainActivity extends AppCompatActivity implements
             setSupportActionBar(toolbar);
 
             //new PullNeedsTask(this).execute();
-            mAdapter = new ListAdapter(this);
+            mAdapter = new NeedsAdapter(this);
             mAdapter.setData(Mock.getNeeds(100));
             mLayoutManager = new LinearLayoutManager(this);
 
             RecyclerView.ItemDecoration itemDecoration = new
                     DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
 
-            mNeedsView = (NeedsView) findViewById(R.id.recycler_view);
+            mNeedsView = (NeedsRecyclerView) findViewById(R.id.recycler_view);
             mNeedsView.setLayoutManager(mLayoutManager);
             mNeedsView.setEmptyView(findViewById(R.id.empty_view));
             mNeedsView.addItemDecoration(itemDecoration);
