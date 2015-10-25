@@ -10,6 +10,8 @@
 
     <dimen name="keyline_1">60dp</dimen>
 
+    <dimen name="padding">16dp</dimen>
+
     <!-- FONT SIZES -->
     <dimen name="text_padding">8dp</dimen>
     <dimen name="text_hint">10sp</dimen>
