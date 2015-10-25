@@ -1,8 +1,12 @@
 package app.iamin.iamin.ui;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -11,6 +15,7 @@ import android.widget.Toast;
 import com.squareup.otto.Subscribe;
 
 import java.net.HttpURLConnection;
+import java.util.regex.Pattern;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.LoginTask;
@@ -54,8 +59,22 @@ public class LoginActivity extends AppCompatActivity {
         setUiMode(UI_MODE_LOGIN);
     }
 
+    private String getUserMail() {
+        String email = null;
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
+        Account[] accounts = AccountManager.get(this).getAccounts();
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                email = account.name;
+                break;
+            }
+        }
+        Log.d("onActionSubmit", email);
+        return email;
+    }
+
     private void setUiMode(int uiMode) {
-        switch(uiMode) {
+        switch (uiMode) {
             case UI_MODE_LOGIN:
                 userScreen.setVisibility(View.VISIBLE);
                 progressScreen.setVisibility(View.GONE);
@@ -120,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Subscribe
     public void onRegisterUpdate(RegisterEvent event) {
-        switch(event.status) {
+        switch (event.status) {
             case HttpURLConnection.HTTP_OK:
                 findViewById(R.id.btn_register).setVisibility(View.GONE);
                 Toast.makeText(this, "Willkommen! Bitte melde Dich an!", Toast.LENGTH_LONG).show();
@@ -144,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Subscribe
     public void onLoginUpdate(LoginEvent event) {
-        switch(event.status) {
+        switch (event.status) {
             case HttpURLConnection.HTTP_OK:
                 UiUtils.fireMainIntent(this);
                 finish();
