@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.Mock;
+import app.iamin.iamin.PullNeedsTaskMock;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.util.EndpointUtils;
@@ -59,8 +59,9 @@ public class MainActivity extends AppCompatActivity implements
             setSupportActionBar(toolbar);
 
             //new PullNeedsTask(this).execute();
+            new PullNeedsTaskMock(this).execute();
+
             mAdapter = new NeedsAdapter(this);
-            mAdapter.setData(Mock.getNeeds(this, 100));
             mLayoutManager = new LinearLayoutManager(this);
 
             RecyclerView.ItemDecoration itemDecoration = new
