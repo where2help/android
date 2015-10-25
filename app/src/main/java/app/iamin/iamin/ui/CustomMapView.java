@@ -24,7 +24,7 @@ import app.iamin.iamin.model.Need;
 import app.iamin.iamin.util.UiUtils;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
@@ -63,11 +63,10 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         return false;
     }
 
-    @TargetApi(ICE_CREAM_SANDWICH)
+    @TargetApi(LOLLIPOP)
     private void playEnterAnimation() {
         ValueAnimator anim = ValueAnimator.ofInt(255, 0);
-        anim.setStartDelay(100);
-        anim.setDuration(500);
+        anim.setDuration(300);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -86,7 +85,7 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         anim.start();
     }
 
-    @TargetApi(ICE_CREAM_SANDWICH)
+    @TargetApi(LOLLIPOP)
     private void dropPin(){
         ImageView pin = createPin();
         pin.setAlpha(0f);
@@ -95,12 +94,11 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         pin.setTranslationY(-getMeasuredHeight() / 2);
         addView(pin);
         pin.animate()
-                .setStartDelay(100)
                 .alpha(1)
                 .rotationBy(45)
                 .scaleX(1).scaleY(1)
                 .setInterpolator(new FastOutLinearInInterpolator())
-                .translationY(0).setDuration(250).start();
+                .translationY(0).setDuration(200).start();
     }
 
     private ImageView createPin(){
@@ -123,7 +121,7 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
 
     @Override
     public void onMapLoaded() {
-        if (SDK_INT < ICE_CREAM_SANDWICH) {
+        if (SDK_INT < LOLLIPOP) {
             setForeground(null);
             addView(createPin());
         } else {

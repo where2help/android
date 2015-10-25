@@ -1,7 +1,10 @@
 package app.iamin.iamin.ui;
 
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +25,9 @@ import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
 
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
+
 /**
  * Created by Markus on 10.10.15.
  */
@@ -37,10 +43,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private TextView submitInfoTextView;
     private TextView webTextView;
 
-    private CustomMapView mapView;
-
     private Need need;
     private NeedView needView;
+
+    private CustomMapView mapView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,9 +59,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         need = new Need().fromIntent(getIntent());
 
-        mapView = (CustomMapView) findViewById(R.id.map);
-        mapView.setNeed(need);
-        mapView.onCreate(savedInstanceState);
+        if (savedInstanceState != null || SDK_INT < LOLLIPOP) setupMap();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(need.getCategoryPlural() + " - " + need.getAddress().getAddressLine(0));
@@ -77,6 +81,18 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         submitButton.setOnClickListener(this);
 
         setUiMode(isAttending);
+    }
+
+    @Override
+    public void onEnterAnimationComplete() {
+        super.onEnterAnimationComplete();
+        if (mapView == null) setupMap();
+    }
+
+    private void setupMap(){
+        mapView = (CustomMapView) findViewById(R.id.map);
+        mapView.setNeed(need);
+        mapView.onCreate(null);
     }
 
     private void setUiMode(boolean isAttending) {
