@@ -24,10 +24,13 @@
             android:orientation="vertical"
             android:paddingBottom="16dp">
 
-            <FrameLayout
+            <app.iamin.iamin.ui.CustomMapView
+                xmlns:map="http://schemas.android.com/apk/res-auto"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:id="@+id/map"
                 android:layout_width="match_parent"
-                android:layout_height="168dp"/>
+                android:layout_height="168dp"
+                map:liteMode="true"/>
 
             <include
                 android:id="@+id/need_view"

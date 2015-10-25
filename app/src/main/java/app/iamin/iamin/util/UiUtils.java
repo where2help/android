@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.IntentCompat;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.ui.DetailActivity;
 import app.iamin.iamin.ui.LoginActivity;
@@ -109,5 +111,16 @@ public class UiUtils {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(need.getSelfLink()));
         context.startActivity(intent);
+    }
+
+    public static void fireMapIntent(Context context, Need need) {
+        LatLng location = need.getLocation();
+        String geo = location.latitude + "," + location.longitude;
+        Uri gmmIntentUri = Uri.parse("geo:" + geo + "?q=" + need.getAddress().getAddressLine(0));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(mapIntent);
+        }
     }
 }

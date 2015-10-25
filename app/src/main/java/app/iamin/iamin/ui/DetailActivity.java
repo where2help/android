@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,11 +14,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.otto.Subscribe;
@@ -38,7 +34,7 @@ import app.iamin.iamin.util.UiUtils;
 /**
  * Created by Markus on 10.10.15.
  */
-public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
+public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     private boolean isAttending = false; // TODO: set value based on registration !
 
@@ -50,7 +46,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private TextView submitInfoTextView;
     private TextView webTextView;
 
-    private SupportMapFragment mMapFragment;
+    private CustomMapView mapView;
 
     private Need need;
     private NeedView needView;
@@ -59,12 +55,16 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_new);
 
-        need = new Need().fromIntent(getIntent());
-
         if (savedInstanceState != null) {
             // Restore value from saved state
             isAttending = savedInstanceState.getBoolean("isAttending");
         }
+
+        need = new Need().fromIntent(getIntent());
+
+        mapView = (CustomMapView) findViewById(R.id.map);
+        mapView.setNeed(need);
+        mapView.onCreate(savedInstanceState);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(need.getCategoryPlural() + " - " + need.getAddress().getAddressLine(0));
@@ -86,22 +86,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         submitButton.setOnClickListener(this);
 
         setUiMode(isAttending);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        if (mMapFragment == null) {
-            GoogleMapOptions options = new GoogleMapOptions().liteMode(true)
-                    .camera(CameraPosition.fromLatLngZoom(need.getLocation(), 13));
-
-            mMapFragment = SupportMapFragment.newInstance(options);
-            mMapFragment.getMapAsync(DetailActivity.this);
-
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.map, mMapFragment);
-            ft.commit();
-        }
     }
 
     private void setUiMode(boolean isAttending) {
@@ -152,14 +136,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         } else {
             //addressTextView.setText(need.getAddress().getAddressLine(0));
         }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap map) {
-        map.getUiSettings().setMapToolbarEnabled(false);
-        map.addMarker(new MarkerOptions()
-                .title(need.getAddress().getAddressLine(0))
-                .position(need.getLocation()));
     }
 
     public void onRegisterSuccess() {
