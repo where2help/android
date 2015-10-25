@@ -6,7 +6,7 @@
     <color name="colorAccentLight">#eaf9fb</color>
     <color name="colorAccent">#22cacf</color>
     <color name="colorAccentDark">#22cacf</color>
-    <color name="windowBackground">#f0f2f4</color>
+    <color name="windowBackgroundDark">#f0f2f4</color>
     <color name="windowBackgroundLight">#FFFFFF</color>
     <color name="grey">#6B767A</color>
 
