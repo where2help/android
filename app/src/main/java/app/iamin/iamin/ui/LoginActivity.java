@@ -1,8 +1,8 @@
 package app.iamin.iamin.ui;
 
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,12 +18,16 @@ import app.iamin.iamin.R;
 import app.iamin.iamin.RegisterTask;
 import app.iamin.iamin.event.LoginEvent;
 import app.iamin.iamin.event.RegisterEvent;
+import app.iamin.iamin.util.TextUtils;
 import app.iamin.iamin.util.UiUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final int UI_MODE_LOGIN = 0;
     private static final int UI_MODE_PROGRESS = 1;
+
+    TextInputLayout emailInput;
+    TextInputLayout passwordInput;
 
     EditText emailEditText;
     EditText passwordEditText;
@@ -39,11 +43,13 @@ public class LoginActivity extends AppCompatActivity {
         userScreen = (LinearLayout) findViewById(R.id.login_screen);
         progressScreen = (LinearLayout) findViewById(R.id.progress_screen);
 
+        emailInput = (TextInputLayout) findViewById(R.id.input_email);
         emailEditText = (EditText) findViewById(R.id.email);
-        emailEditText.setText("android_user@example.com");
+        //emailEditText.setText("android_user@example.com");
 
+        passwordInput = (TextInputLayout) findViewById(R.id.input_password);
         passwordEditText = (EditText) findViewById(R.id.password);
-        passwordEditText.setText("supersecret");
+        //passwordEditText.setText("supersecret");
 
         setUiMode(UI_MODE_LOGIN);
     }
@@ -81,7 +87,15 @@ public class LoginActivity extends AppCompatActivity {
     public void onActionRegister(View view) {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+        emailInput.setErrorEnabled(false);
+        passwordInput.setErrorEnabled(false);
+        if (!TextUtils.isEmailValid(email)) {
+            emailInput.setErrorEnabled(true);
+            emailInput.setError("Check email");
+        } else if (!TextUtils.isPasswordValid(password)) {
+            passwordInput.setErrorEnabled(true);
+            passwordInput.setError("Use at least 8 characters");
+        } else {
             new RegisterTask(email, password, password).execute(this);
             setUiMode(UI_MODE_PROGRESS);
         }
@@ -90,7 +104,15 @@ public class LoginActivity extends AppCompatActivity {
     public void onActionLogin(View view) {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+        emailInput.setErrorEnabled(false);
+        passwordInput.setErrorEnabled(false);
+        if (!TextUtils.isEmailValid(email)) {
+            emailInput.setErrorEnabled(true);
+            emailInput.setError("Check email");
+        } else if (!TextUtils.isPasswordValid(password)) {
+            passwordInput.setErrorEnabled(true);
+            passwordInput.setError("Wrong password");
+        } else {
             new LoginTask(email, password).execute(this);
             setUiMode(UI_MODE_PROGRESS);
         }

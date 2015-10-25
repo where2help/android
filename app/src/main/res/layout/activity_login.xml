@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -66,29 +67,39 @@
                     android:textColor="@color/text_light_sec"
                     android:textSize="@dimen/text_body" />
 
-                <EditText
-                    android:id="@+id/email"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_email"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="16dp"
-                    android:ems="10"
-                    android:hint="@string/email"
-                    android:inputType="textEmailAddress"
-                    android:textIsSelectable="false"
-                    android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
+                    android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/password"
+                    <EditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress"
+                        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_password"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="16dp"
-                    android:ems="10"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:textIsSelectable="false"
-                    android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="16dp"
+                        android:ems="10"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"
+                        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
+                </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
                     android:id="@+id/btnBar"
@@ -129,17 +140,6 @@
                     style="?android:attr/progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
-                <ImageButton
-                    android:id="@+id/retry_button"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:onClick="onRetry"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_refresh_black_48dp"
-                    android:tint="@color/colorPrimary"
-                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>
