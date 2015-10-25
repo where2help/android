@@ -23,7 +23,7 @@ import app.iamin.iamin.R;
 import app.iamin.iamin.RegisterTask;
 import app.iamin.iamin.event.LoginEvent;
 import app.iamin.iamin.event.RegisterEvent;
-import app.iamin.iamin.util.TextUtils;
+import app.iamin.iamin.util.LoginUtils;
 import app.iamin.iamin.util.UiUtils;
 
 public class LoginActivity extends AppCompatActivity {
@@ -108,10 +108,10 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordEditText.getText().toString();
         emailInput.setErrorEnabled(false);
         passwordInput.setErrorEnabled(false);
-        if (!TextUtils.isEmailValid(email)) {
+        if (!LoginUtils.isEmailValid(email)) {
             emailInput.setErrorEnabled(true);
             emailInput.setError("Check email");
-        } else if (!TextUtils.isPasswordValid(password)) {
+        } else if (!LoginUtils.isPasswordValid(password)) {
             passwordInput.setErrorEnabled(true);
             passwordInput.setError("Use at least 8 characters");
         } else {
@@ -125,10 +125,10 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordEditText.getText().toString();
         emailInput.setErrorEnabled(false);
         passwordInput.setErrorEnabled(false);
-        if (!TextUtils.isEmailValid(email)) {
+        if (!LoginUtils.isEmailValid(email)) {
             emailInput.setErrorEnabled(true);
             emailInput.setError("Check email");
-        } else if (!TextUtils.isPasswordValid(password)) {
+        } else if (!LoginUtils.isPasswordValid(password)) {
             passwordInput.setErrorEnabled(true);
             passwordInput.setError("Wrong password");
         } else {

@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Markus on 24.10.15.
  */
-public class TextUtils {
+public class LoginUtils {
 
     public static boolean isEmailValid(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
