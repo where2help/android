@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -48,10 +47,10 @@ public class Need {
 
     private Date mStart = new Date();
     private Date mEnd = new Date();
-    private String mDate;
+    private String mDate = "";
 
     private int mCount = 0;
-    private String selfLink;
+    private String selfLink = "";
 
     public Need() {
     }
@@ -184,18 +183,12 @@ public class Need {
 
         Address address = new Address(Locale.GERMAN);
         address.setAddressLine(0, attrs.getString("city") + " " + attrs.getString("location"));
-
-        if (attrs.getString("lat").equals("null")) address.setLatitude(0);
-        else address.setLatitude(attrs.getDouble("lat"));
-
-        if (attrs.getString("lng").equals("null")) address.setLongitude(0);
-        else address.setLongitude(attrs.getDouble("lng"));
-
+        address.setLatitude(attrs.getString("lat").equals("null") ? 0 : attrs.getDouble("lat"));
+        address.setLongitude(attrs.getString("lng").equals("null") ? 0 : attrs.getDouble("lng"));
         need.setAddress(address);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        need.setStart(simpleDateFormat.parse(attrs.getString("start-time")));
-        need.setEnd(simpleDateFormat.parse(attrs.getString("end-time")));
+        need.setStart(TimeUtils.FORMAT_API.parse(attrs.getString("start-time")));
+        need.setEnd(TimeUtils.FORMAT_API.parse(attrs.getString("end-time")));
         need.setDate(TimeUtils.formatHumanFriendlyShortDate(context, need.getStart()) + " " +
                 TimeUtils.formatTimeOfDay(need.getStart()) + " - " +
                 TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr");

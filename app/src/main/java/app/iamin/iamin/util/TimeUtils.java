@@ -18,6 +18,8 @@ public class TimeUtils {
     public static final int HOUR = 60 * MINUTE;
     public static final int DAY = 24 * HOUR;
 
+    public static final SimpleDateFormat FORMAT_API = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
     private static final SimpleDateFormat FORMAT_SHORT_DATE = new SimpleDateFormat("dd. MMM");
     private static final SimpleDateFormat FORMAT_TIME_OF_DAY = new SimpleDateFormat("HH:mm");
 
