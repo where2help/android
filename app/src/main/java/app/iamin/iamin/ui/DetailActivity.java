@@ -1,26 +1,17 @@
 package app.iamin.iamin.ui;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.otto.Subscribe;
-
-import java.util.regex.Pattern;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.model.Need;
@@ -171,20 +162,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private void onActionSubmit() {
         submitButton.setText(R.string.register_status);
         submitButton.setEnabled(false);
-
-        String email = null;
-        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
-        Account[] accounts = AccountManager.get(this).getAccounts();
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                email = account.name;
-                break;
-            }
-        }
-        Log.d("onActionSubmit", email);
-        //TODO: If email is null ask user for email
-        email = "jane@doe.com";
-        onRegisterSuccess();
+        onRegisterSuccess(); //TODO: Handle "i'm in"
     }
 
     private void onActionCancel() {
