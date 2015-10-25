@@ -67,8 +67,6 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
 
             String result = response.body().string();
 
-            Log.e("PullNeedsActiveTask", result);
-
             JSONArray data = new JSONObject(result).getJSONArray("data");
 
             needs = new Need[data.length()];
@@ -78,11 +76,14 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
             }
 
         } catch (IOException e) {
-            e.printStackTrace(); // TODO
+            e.printStackTrace();
+            return null;
         } catch (JSONException e) {
-            e.printStackTrace(); // TODO
+            e.printStackTrace();
+            return null;
         } catch (ParseException e) {
-            e.printStackTrace(); // TODO
+            e.printStackTrace();
+            return null;
         }
 
         return needs;
