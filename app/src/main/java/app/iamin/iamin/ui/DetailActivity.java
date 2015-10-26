@@ -1,10 +1,7 @@
 package app.iamin.iamin.ui;
 
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,15 +10,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.model.Need;
-import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.R;
 import app.iamin.iamin.event.LocationEvent;
-import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
 
@@ -67,6 +61,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         toolbar.setNavigationOnClickListener(this);
 
         needView = (NeedView) findViewById(R.id.need_view);
+        needView.setInDetail(true);
         needView.setNeed(need);
 
         webTextView = (TextView) findViewById(R.id.web);
@@ -124,8 +119,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        LocationService.requestLocation(this);
-        // TODO: also update need (data) when user comes back
+        // LocationService.requestLocation(this);
+        // TODO: update need (data) when user comes back
     }
 
     @Override
@@ -136,13 +131,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     @Subscribe
     public void onLocationUpdate(LocationEvent event) {
-        LatLng userLocation = event.getLocation();
+/*        LatLng userLocation = event.getLocation();
         if (userLocation != null) {
             String distance = LocationUtils.formatDistanceBetween(need.getLocation(), userLocation);
-            //addressTextView.setText(getString(R.string.detail_address_format, need.getAddress().getAddressLine(0),distance ));
-        } else {
-            //addressTextView.setText(need.getAddress().getAddressLine(0));
-        }
+            needView.setDistance(distance);
+        }*/
     }
 
     public void onRegisterSuccess() {
