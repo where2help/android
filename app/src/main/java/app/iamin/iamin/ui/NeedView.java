@@ -35,6 +35,8 @@ public class NeedView extends FrameLayout {
 
     private float dp;
 
+    private boolean inDetail = false;
+
     public NeedView(Context context) {
         this(context, null);
     }
@@ -50,11 +52,17 @@ public class NeedView extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+
         iconView = (ImageView) getChildAt(0);
         countView = (TextView) getChildAt(1);
         categoryView = (TextView) getChildAt(2);
         addressView = (TextView) getChildAt(3);
         dateTextView = (TextView) getChildAt(4);
+
+        if (!inDetail) {
+            addressView.setMaxLines(1);
+            dateTextView.setMaxLines(1);
+        }
 
         isAttached = true;
         fill();
@@ -62,34 +70,26 @@ public class NeedView extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
-        int width = MeasureSpec.getSize(widthSpec);
-        int height = 2 * padding;
-
-        // Measure the iconView-Button
-        measureChildWithMargins(iconView, widthSpec, 0, heightSpec, 0);
+        // Measure the iconView
+        measureChild(iconView, widthSpec, heightSpec);
 
         // Measure the countView
-        measureChildWithMargins(countView, widthSpec, 0, heightSpec, 0);
+        measureChild(countView, widthSpec, heightSpec);
 
         // Measure the categoryView
-        measureChildWithMargins(categoryView, widthSpec, 0, heightSpec, 0);
-
-        // Update height
-        height += iconView.getMeasuredHeight();
+        measureChild(categoryView, widthSpec, heightSpec);
 
         // Measure the addressView
-        measureChildWithMargins(addressView, widthSpec, 0, heightSpec, 0);
-
-        // Update height
-        height += addressView.getMeasuredHeight();
+        measureChildWithMargins(addressView, widthSpec, padding * 2, heightSpec, 0);
 
         // Measure the dateTextView
-        measureChildWithMargins(dateTextView, widthSpec, 0, heightSpec, 0);
-
-        // Update height
-        height += dateTextView.getMeasuredHeight();
+        measureChildWithMargins(dateTextView, widthSpec, padding * 2, heightSpec, 0);
 
         // Set dimensions
+        int width = MeasureSpec.getSize(widthSpec);
+        int height = 2 * padding + iconView.getMeasuredHeight() + addressView.getMeasuredHeight()
+                + dateTextView.getMeasuredHeight();
+
         setMeasuredDimension(width, height);
     }
 
@@ -100,7 +100,7 @@ public class NeedView extends FrameLayout {
         iconView.layout(
                 padding,
                 padding,
-                padding + iconView.getMeasuredWidth(),
+                baseline,
                 baseline);
 
         countView.layout(
@@ -146,5 +146,22 @@ public class NeedView extends FrameLayout {
         if (isAttached) countView.setText(need.getCount() + "");
     }
 
-    // TODO: show distance and duration
+/*    public void setDistance(String distance) {
+        String address = need.getAddress().getAddressLine(0);
+        SpannableString span = new SpannableString(address + " (" + distance + ")");
+        span.setSpan(new RelativeSizeSpan(0.75f), address.length() + 1, span.length(), 0);
+        addressView.setText(span);
+    }
+
+    private SpannableString getDuration() {
+        String date = need.getDate();
+        String duration = TimeUtils.getDuration(need.getStart(), need.getEnd());
+        SpannableString span = new SpannableString(date + " (" + duration + ")");
+        span.setSpan(new RelativeSizeSpan(0.75f), date.length() + 1, span.length(), 0);
+        return span;
+    }*/
+
+    public void setInDetail(boolean inDetail) {
+        this.inDetail = inDetail;
+    }
 }
