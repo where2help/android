@@ -1,7 +1,5 @@
 package app.iamin.iamin.ui;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +20,6 @@ import app.iamin.iamin.PullNeedsTaskMock;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.util.EndpointUtils;
-import app.iamin.iamin.util.LocationUtils;
 import app.iamin.iamin.PullNeedsTask;
 import app.iamin.iamin.R;
 import app.iamin.iamin.event.NeedsEvent;
@@ -41,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private User user;
 
-    private static final int PERMISSION_REQ = 0;
+    // private static final int PERMISSION_REQ = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements
             toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
             setSupportActionBar(toolbar);
 
-            //new PullNeedsTask(this).execute();
-            new PullNeedsTaskMock(this).execute();
+            new PullNeedsTask(this).execute();
+            //new PullNeedsTaskMock(this).execute();
 
             mAdapter = new NeedsAdapter(this);
             mLayoutManager = new LinearLayoutManager(this);
@@ -76,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements
             mRetryButton = (ImageButton) findViewById(R.id.retry_button);
             mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-            // Check fine location permission has been granted
+           /* // Check fine location permission has been granted
             if (!LocationUtils.checkFineLocationPermission(this)) {
                 // See if user has denied permission in the past
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -89,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements
                         requestFineLocationPermission();
                     }
                 }
-            }
+            }*/
         }
     }
 
@@ -139,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements
         BusProvider.getInstance().register(this);
         LocationService.requestLocation(this);
         // TODO: update needs
-        // new PullNeedsActiveTask(this, mAdapter, getEndpoint(this, 0)).execute();
+        // new PullNeedsTask(this).execute();
     }
 
     @Override
@@ -148,9 +145,9 @@ public class MainActivity extends AppCompatActivity implements
         BusProvider.getInstance().unregister(this);
     }
 
-    /**
+/*    *//**
      * Permissions request result callback
-     */
+     *//*
     @Override
     public void onRequestPermissionsResult(
             int requestCode, String[] permissions, int[] grantResults) {
@@ -162,27 +159,27 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
+    *//**
      * Request the fine location permission from the user
-     */
+     *//*
     private void requestFineLocationPermission() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQ);
     }
 
-    /**
+    *//**
      * Run when fine location permission has been granted
-     */
+     *//*
     private void fineLocationPermissionGranted() {
         LocationService.requestLocation(this);
     }
 
-    /**
+    *//**
      * Show a permission explanation snackbar
-     */
+     *//*
     private void showPermissionSnackbar() {
         // TODO: yell at user
-/*        Snackbar.make(
+*//*        Snackbar.make(
                 findViewById(R.id.container), R.string.permission_explanation, Snackbar.LENGTH_LONG)
                 .setAction(R.string.permission_explanation_action, new View.OnClickListener() {
                     @Override
@@ -190,6 +187,6 @@ public class MainActivity extends AppCompatActivity implements
                         requestFineLocationPermission();
                     }
                 })
-                .show();*/
-    }
+                .show();*//*
+    }*/
 }
