@@ -3,6 +3,8 @@ package app.iamin.iamin.util;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.widget.EditText;
@@ -145,5 +147,12 @@ public class EndpointUtils {
     public static void clearUser(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         prefs.edit().clear().apply();
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
