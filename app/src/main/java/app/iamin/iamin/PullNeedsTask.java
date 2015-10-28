@@ -37,7 +37,7 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
     protected Need[] doInBackground(Void... params) {
 
         Need[] needs = null;
-        String url = EndpointUtils.getEndpoint(context, EndpointUtils.TASK_NEEDS);
+        String url = EndpointUtils.getEndpoint(context) + "needs";
         Log.d("PullNeedsActiveTask", url);
 
         Headers headers = EndpointUtils.getHeaders(context);

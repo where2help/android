@@ -27,7 +27,7 @@ public class LogoutTask extends AsyncTask<Context, Void, Response> {
 
     @Override
     protected Response doInBackground(Context ... contexts) {
-        String url = EndpointUtils.getEndpoint(contexts[0], EndpointUtils.TASK_LOGOUT);
+        String url = EndpointUtils.getEndpoint(contexts[0]) + "auth/sign_out";
         Log.d(TAG, url);
 
         Headers headers = EndpointUtils.getHeaders(contexts[0]);

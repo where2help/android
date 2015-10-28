@@ -49,7 +49,7 @@ public class RegisterTask extends AsyncTask<Context, Void, List<String>> {
             return errors;
         }
 
-        String url = EndpointUtils.getEndpoint(contexts[0], EndpointUtils.TASK_REGISTER);
+        String url = EndpointUtils.getEndpoint(contexts[0]) + "auth/";
         Log.d(TAG, url);
 
         RequestBody formBody = new FormEncodingBuilder()
@@ -79,7 +79,7 @@ public class RegisterTask extends AsyncTask<Context, Void, List<String>> {
                     .getJSONArray("full_messages");
 
             if (messages != null) {
-                for (int i=0;i<messages.length();i++){
+                for (int i = 0; i < messages.length(); i++){
                     errors.add(messages.get(i).toString());
                     Log.e(TAG, "Error Message: " + messages.get(i).toString());
                 }

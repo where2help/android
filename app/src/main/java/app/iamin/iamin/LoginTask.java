@@ -49,7 +49,7 @@ public class LoginTask extends AsyncTask<Context, Void, List<String>> {
             return errors;
         }
 
-        String url = EndpointUtils.getEndpoint(contexts[0], EndpointUtils.TASK_LOGIN);
+        String url = EndpointUtils.getEndpoint(contexts[0]) + "auth/sign_in";
         Log.d(TAG, url);
 
         RequestBody formBody = new FormEncodingBuilder()
