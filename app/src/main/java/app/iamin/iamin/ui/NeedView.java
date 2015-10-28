@@ -130,7 +130,7 @@ public class NeedView extends FrameLayout {
 
     private void fill() {
         iconView.setImageResource(need.getCategoryIcon());
-        countView.setText(need.getCount() + "");
+        countView.setText(String.valueOf(need.getCount()));
         categoryView.setText(need.getCount() == 1 ? need.getCategorySingular() : need.getCategoryPlural());
         addressView.setText(need.getAddress().getAddressLine(0));
         dateTextView.setText(need.getDate());
@@ -143,10 +143,11 @@ public class NeedView extends FrameLayout {
 
     public void setCount(int count) {
         this.need.setCount(count);
-        if (isAttached) countView.setText(need.getCount() + "");
+        if (isAttached) countView.setText(String.valueOf(need.getCount()));
     }
 
-/*    public void setDistance(String distance) {
+/*
+    public void setDistance(String distance) {
         String address = need.getAddress().getAddressLine(0);
         SpannableString span = new SpannableString(address + " (" + distance + ")");
         span.setSpan(new RelativeSizeSpan(0.75f), address.length() + 1, span.length(), 0);
@@ -159,8 +160,8 @@ public class NeedView extends FrameLayout {
         SpannableString span = new SpannableString(date + " (" + duration + ")");
         span.setSpan(new RelativeSizeSpan(0.75f), date.length() + 1, span.length(), 0);
         return span;
-    }*/
-
+    }
+*/
     public void setInDetail(boolean inDetail) {
         this.inDetail = inDetail;
     }
