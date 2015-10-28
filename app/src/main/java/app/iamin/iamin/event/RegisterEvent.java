@@ -9,7 +9,7 @@ public class RegisterEvent {
 
     public final List<String> errors;
 
-    public RegisterEvent( List<String> result) {
-        this.errors = result;
+    public RegisterEvent( List<String> errors) {
+        this.errors = errors;
     }
 }
