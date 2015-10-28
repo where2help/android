@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
-import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -133,23 +132,13 @@ public class LoginActivity extends AppCompatActivity {
 
     @Subscribe
     public void onLoginUpdate(LoginEvent event) {
-        switch (event.status) {
-            case HttpURLConnection.HTTP_OK:
-                UiUtils.fireMainIntent(this);
-                finish();
-                break;
-            case HttpURLConnection.HTTP_UNAUTHORIZED:
-                Toast.makeText(this, "Überprüfe Deine Angaben!", Toast.LENGTH_SHORT).show();
-                setUiMode(UI_MODE_LOGIN);
-                break;
-            case HttpURLConnection.HTTP_NO_CONTENT:
-                Toast.makeText(this, "Keine Verbindung!", Toast.LENGTH_SHORT).show();
-                setUiMode(UI_MODE_LOGIN);
-                break;
-            default:
-                Toast.makeText(this, "Login fehlgeschlagen!", Toast.LENGTH_SHORT).show();
-                setUiMode(UI_MODE_LOGIN);
-                break;
+        List<String> errors = event.errors;
+        if (errors == null) {
+            UiUtils.fireMainIntent(this);
+            finish();
+        } else {
+            showErrorMessage(errors);
+            setUiMode(UI_MODE_LOGIN);
         }
     }
 
