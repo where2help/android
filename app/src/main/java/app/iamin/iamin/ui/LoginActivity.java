@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.squareup.otto.Subscribe;
 
 import java.net.HttpURLConnection;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import app.iamin.iamin.BusProvider;
@@ -23,7 +24,6 @@ import app.iamin.iamin.R;
 import app.iamin.iamin.RegisterTask;
 import app.iamin.iamin.event.LoginEvent;
 import app.iamin.iamin.event.RegisterEvent;
-import app.iamin.iamin.util.LoginUtils;
 import app.iamin.iamin.util.UiUtils;
 
 public class LoginActivity extends AppCompatActivity {
@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
         emailInput = (TextInputLayout) findViewById(R.id.input_email);
         emailEditText = (EditText) findViewById(R.id.email);
-        //emailEditText.setText("android_user@example.com");
+        emailEditText.setText("android_user@example.com");
 
         passwordInput = (TextInputLayout) findViewById(R.id.input_password);
         passwordEditText = (EditText) findViewById(R.id.password);
@@ -106,58 +106,28 @@ public class LoginActivity extends AppCompatActivity {
     public void onActionRegister(View view) {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        emailInput.setErrorEnabled(false);
-        passwordInput.setErrorEnabled(false);
-        if (!LoginUtils.isEmailValid(email)) {
-            emailInput.setErrorEnabled(true);
-            emailInput.setError("Check email");
-        } else if (!LoginUtils.isPasswordValid(password)) {
-            passwordInput.setErrorEnabled(true);
-            passwordInput.setError("Use at least 8 characters");
-        } else {
-            new RegisterTask(email, password, password).execute(this);
-            setUiMode(UI_MODE_PROGRESS);
-        }
+        new RegisterTask(email, password, password).execute(this); // TODO: Confirm password!
+        setUiMode(UI_MODE_PROGRESS);
     }
 
     public void onActionLogin(View view) {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        emailInput.setErrorEnabled(false);
-        passwordInput.setErrorEnabled(false);
-        if (!LoginUtils.isEmailValid(email)) {
-            emailInput.setErrorEnabled(true);
-            emailInput.setError("Check email");
-        } else if (!LoginUtils.isPasswordValid(password)) {
-            passwordInput.setErrorEnabled(true);
-            passwordInput.setError("Wrong password");
-        } else {
-            new LoginTask(email, password).execute(this);
-            setUiMode(UI_MODE_PROGRESS);
-        }
+        new LoginTask(email, password).execute(this);
+        setUiMode(UI_MODE_PROGRESS);
     }
 
     @Subscribe
     public void onRegisterUpdate(RegisterEvent event) {
-        switch (event.status) {
-            case HttpURLConnection.HTTP_OK:
-                findViewById(R.id.btn_register).setVisibility(View.GONE);
-                Toast.makeText(this, "Willkommen! Bitte melde Dich an!", Toast.LENGTH_LONG).show();
-                setUiMode(UI_MODE_LOGIN);
-                break;
-            case HttpURLConnection.HTTP_FORBIDDEN:
-                Toast.makeText(this, "Überprüfe Deine Angaben!", Toast.LENGTH_SHORT).show();
-                // TODO: Give user more info!
-                setUiMode(UI_MODE_LOGIN);
-                break;
-            case HttpURLConnection.HTTP_NO_CONTENT:
-                Toast.makeText(this, "Keine Verbindung!", Toast.LENGTH_SHORT).show();
-                setUiMode(UI_MODE_LOGIN);
-                break;
-            default:
-                Toast.makeText(this, "Registrieren fehlgeschlagen!", Toast.LENGTH_SHORT).show();
-                setUiMode(UI_MODE_LOGIN);
-                break;
+        List<String> errors = event.errors;
+        if (errors == null) {
+            findViewById(R.id.btn_register).setVisibility(View.GONE);
+            Toast.makeText(this, "Willkommen! Bitte melde Dich an!", Toast.LENGTH_LONG).show();
+            setUiMode(UI_MODE_LOGIN);
+            // TODO: auto login
+        } else {
+            showErrorMessage(errors);
+            setUiMode(UI_MODE_LOGIN);
         }
     }
 
@@ -181,5 +151,13 @@ public class LoginActivity extends AppCompatActivity {
                 setUiMode(UI_MODE_LOGIN);
                 break;
         }
+    }
+
+    private void showErrorMessage(List<String> errors) {
+        String message = "";
+        for (String error : errors) {
+            message += error + " ";
+        }
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
