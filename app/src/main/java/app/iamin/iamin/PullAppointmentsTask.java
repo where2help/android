@@ -10,9 +10,14 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import app.iamin.iamin.event.NeedsEvent;
+import java.io.IOException;
+import java.text.ParseException;
+
+import app.iamin.iamin.event.AppointmentsEvent;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.util.EndpointUtils;
@@ -20,12 +25,12 @@ import app.iamin.iamin.util.EndpointUtils;
 /**
  * Created by paul on 10/10/2015.
  */
-public class PullVolunteeringsTask extends AsyncTask<Void, Integer, Need[]> {
-    private static final String TAG = "PullVolunteeringsTask";
+public class PullAppointmentsTask extends AsyncTask<Void, Integer, Need[]> {
+    private static final String TAG = "PullAppointmentsTask";
 
     private Context context;
 
-    public PullVolunteeringsTask(Context context) {
+    public PullAppointmentsTask(Context context) {
         this.context = context;
     }
 
@@ -52,7 +57,7 @@ public class PullVolunteeringsTask extends AsyncTask<Void, Integer, Need[]> {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .headers(headers)
-                    .url(url + "users/" + user.getId() + "/volunteerings")
+                    .url(url + "users/" + user.getId() + "/appointments")
             .build();
 
             Response response = client.newCall(request).execute();
@@ -66,8 +71,9 @@ public class PullVolunteeringsTask extends AsyncTask<Void, Integer, Need[]> {
             EndpointUtils.storeHeader(context, response.headers());
 
             String result = response.body().string();
+            Log.e(TAG, "USER ID: " + user.getId());
             Log.e(TAG, "RESULT: " + result);
-/*
+
             JSONArray data = new JSONObject(result).getJSONArray("data");
 
             needs = new Need[data.length()];
@@ -75,10 +81,14 @@ public class PullVolunteeringsTask extends AsyncTask<Void, Integer, Need[]> {
                 JSONObject obj = data.getJSONObject(i);
                 needs[i] = new Need().fromJSON(context, obj);
             }
-*/
+
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return needs;
@@ -86,6 +96,6 @@ public class PullVolunteeringsTask extends AsyncTask<Void, Integer, Need[]> {
 
     @Override
     protected void onPostExecute(Need[] needs) {
-        BusProvider.getInstance().post(new NeedsEvent(needs));
+        BusProvider.getInstance().post(new AppointmentsEvent(needs));
     }
 }
