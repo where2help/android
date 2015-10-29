@@ -39,23 +39,35 @@
             android:textSize="@dimen/text_title" />
     </FrameLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <app.iamin.iamin.ui.NeedsRecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="136dp">
+        android:layout_marginTop="136dp"
+        android:scrollbars="vertical" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+    <LinearLayout
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/header_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_light_sec"
-                android:textSize="@dimen/text_body" />
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/retry_button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:onClick="onRetry"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_refresh_black_48dp"
+            android:tint="@color/colorPrimary"
+            android:visibility="gone" />
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

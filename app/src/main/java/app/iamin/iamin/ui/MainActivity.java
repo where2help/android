@@ -17,7 +17,6 @@ import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.PullNeedsTask;
-import app.iamin.iamin.PullAppointmentsTask;
 import app.iamin.iamin.R;
 import app.iamin.iamin.event.NeedsEvent;
 import app.iamin.iamin.model.Need;
@@ -55,9 +54,8 @@ public class MainActivity extends AppCompatActivity implements
             toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
             setSupportActionBar(toolbar);
 
-            //new PullNeedsTask(this).execute();
+            new PullNeedsTask(this).execute();
             // new PullNeedsTaskMock(this).execute();
-            new PullAppointmentsTask(this).execute();
 
             mAdapter = new NeedsAdapter(this);
             mLayoutManager = new LinearLayoutManager(this);
