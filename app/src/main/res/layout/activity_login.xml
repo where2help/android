@@ -59,7 +59,7 @@
                     android:id="@+id/header_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="8dp"
+                    android:paddingBottom="16dp"
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
                     android:paddingTop="8dp"
@@ -70,7 +70,8 @@
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/input_email"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:theme="@style/ThemeEditTextLight">
 
                     <EditText
                         android:id="@+id/email"
@@ -81,13 +82,14 @@
                         android:ems="10"
                         android:hint="@string/email"
                         android:inputType="textEmailAddress"
-                        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
+                        android:theme="@style/ThemeEditTextLight" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/input_password"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:theme="@style/ThemeEditTextLight">
 
                     <EditText
                         android:id="@+id/password"
@@ -98,7 +100,7 @@
                         android:ems="10"
                         android:hint="@string/password"
                         android:inputType="textPassword"
-                        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
+                        android:theme="@style/ThemeEditTextLight" />
                 </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
