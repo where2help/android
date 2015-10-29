@@ -2,28 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
-<!--    <item
-        android:id="@+id/action_endpoint"
-        android:orderInCategory="100"
-        android:title="Edit Endpoints"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_missile"
-        android:orderInCategory="100"
-        android:title="Fire Missile!"
-        app:showAsAction="never" />-->
 
     <item
         android:id="@+id/action_user"
-        android:orderInCategory="100"
-        android:title="User"
         android:icon="@drawable/ic_account_circle_white_24dp"
-        app:showAsAction="always" />
-
-<!--    <item
-        android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="Settings"
-        app:showAsAction="never" />-->
+        android:title="@string/user"
+        app:showAsAction="always" />
 </menu>

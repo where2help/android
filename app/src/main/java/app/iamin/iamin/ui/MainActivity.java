@@ -16,14 +16,13 @@ import android.widget.ProgressBar;
 import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.PullNeedsTaskMock;
-import app.iamin.iamin.model.Need;
-import app.iamin.iamin.model.User;
-import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.PullNeedsTask;
 import app.iamin.iamin.R;
 import app.iamin.iamin.event.NeedsEvent;
+import app.iamin.iamin.model.Need;
+import app.iamin.iamin.model.User;
 import app.iamin.iamin.service.LocationService;
+import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.UiUtils;
 
 public class MainActivity extends AppCompatActivity implements
@@ -56,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements
             setSupportActionBar(toolbar);
 
             new PullNeedsTask(this).execute();
-            //new PullNeedsTaskMock(this).execute();
+            // new PullNeedsTaskMock(this).execute();
+            // new PullVolunteeringsTask(this).execute();
 
             mAdapter = new NeedsAdapter(this);
             mLayoutManager = new LinearLayoutManager(this);
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 /*    *//**
-     * Permissions request result callback
+     * Permissions request errors callback
      *//*
     @Override
     public void onRequestPermissionsResult(

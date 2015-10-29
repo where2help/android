@@ -26,5 +26,6 @@
     <string name="cancel_negative">Ja...</string>
     <string name="action_share">Weitersagen!</string>
     <string name="register_status">Registriere...</string>
+    <string name="user">User</string>
 
 </resources>
