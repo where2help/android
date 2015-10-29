@@ -51,7 +51,6 @@
                     android:paddingLeft="60dp"
                     android:paddingRight="16dp"
                     android:paddingTop="16dp"
-                    android:text="Username"
                     android:textColor="?colorPrimary"
                     android:textSize="@dimen/text_subhead" />
 
@@ -63,7 +62,6 @@
                     android:paddingBottom="16dp"
                     android:paddingLeft="60dp"
                     android:paddingRight="16dp"
-                    android:text="user@email.com"
                     android:textSize="@dimen/text_body" />
             </FrameLayout>
 
@@ -82,7 +80,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="Log out"
+                android:text="@string/action_log_out"
                 android:textColor="?colorPrimary"
                 android:textSize="@dimen/text_subhead"
                 android:onClick="onActionLogout"/>
@@ -101,7 +99,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="Terms &amp; Privacy"
+                android:text="@string/action_terms_privacy"
                 android:textColor="?colorPrimary"
                 android:textSize="@dimen/text_subhead" />
 
@@ -113,7 +111,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="Communications"
+                android:text="@string/communication_settings"
                 android:textSize="@dimen/text_body" />
 
             <android.support.v7.widget.SwitchCompat
@@ -123,7 +121,7 @@
                 android:background="?selectableItemBackground"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="Emails"
+                android:text="@string/action_emails"
                 android:textColor="?colorPrimary"
                 android:textSize="@dimen/text_subhead" />
 
@@ -134,7 +132,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="Developer Options"
+                android:text="@string/developer_settings"
                 android:textSize="@dimen/text_body" />
 
             <TextView
@@ -146,7 +144,7 @@
                 android:onClick="onEditEndpoint"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="Edit Endpoint"
+                android:text="@string/action_edit_endpoint"
                 android:textColor="?colorPrimary"
                 android:textSize="@dimen/text_subhead" />
 
@@ -164,7 +162,7 @@
                 android:onClick="onFireMissile"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="Fire Missile!"
+                android:text="@string/action_fire_missile"
                 android:textColor="?colorPrimary"
                 android:textSize="@dimen/text_subhead" />
 

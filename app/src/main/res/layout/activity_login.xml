@@ -30,7 +30,7 @@
             android:layout_height="?actionBarSize"
             android:layout_gravity="center|bottom"
             android:gravity="center"
-            android:text="@string/welcome"
+            android:text="@string/welcome_message"
             android:textColor="#fff"
             android:textSize="@dimen/text_title" />
     </FrameLayout>
@@ -115,14 +115,14 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/grey"
                         android:onClick="onActionRegister"
-                        android:text="@string/register" />
+                        android:text="@string/sign_up" />
 
                     <Button
                         android:id="@+id/btn_login"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="onActionLogin"
-                        android:text="@string/login" />
+                        android:text="@string/sign_in" />
                 </LinearLayout>
             </LinearLayout>
 

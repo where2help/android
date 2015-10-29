@@ -96,7 +96,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
             submitButton.setEnabled(true);
 
-            submitInfoTextView.setText(getString(R.string.iamin_thank_you, TimeUtils.formatTimeOfDay(need.getStart())));
+            submitInfoTextView.setText(getString(R.string.thank_you_message, TimeUtils.formatTimeOfDay(need.getStart())));
             submitInfoTextView.setVisibility(View.VISIBLE);
 
             calendarButton = (Button) findViewById(R.id.calendar);
@@ -111,7 +111,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             needView.setCount(need.getCount());
             submitInfoTextView.setVisibility(View.GONE);
             btnBarLayout.setVisibility(View.GONE);
-            submitButton.setText(R.string.iamin);
+            submitButton.setText(R.string.action_iamin);
         }
     }
 
