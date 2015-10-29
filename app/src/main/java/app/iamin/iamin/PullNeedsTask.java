@@ -19,7 +19,8 @@ import java.text.ParseException;
 
 import app.iamin.iamin.event.NeedsEvent;
 import app.iamin.iamin.model.Need;
-import app.iamin.iamin.util.EndpointUtils;
+
+import static app.iamin.iamin.util.EndpointUtils.*;
 
 /**
  * Created by paul on 10/10/2015.
@@ -36,17 +37,13 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
     @Override
     protected Need[] doInBackground(Void... params) {
 
+        if (!isOnline(context)) return null;
+
         Need[] needs = null;
-        String url = EndpointUtils.getEndpoint(context) + "needs";
-        Log.d("PullNeedsActiveTask", url);
+        String url = getEndpoint(context) + "needs";
+        Log.d(TAG, url);
 
-        Headers headers = EndpointUtils.getHeaders(context);
-
-        Log.e(TAG, "LOCAL Access-Token = " + headers.get("Access-Token"));
-        Log.e(TAG, "LOCAL Token-Type = " + headers.get("Token-Type"));
-        Log.e(TAG, "LOCAL Client = " + headers.get("Client"));
-        Log.e(TAG, "LOCAL Expiry = " + headers.get("Expiry"));
-        Log.e(TAG, "LOCAL Uid = " + headers.get("Uid"));
+        Headers headers = getHeaders(context);
 
         try {
             OkHttpClient client = new OkHttpClient();
@@ -57,22 +54,16 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
 
             Response response = client.newCall(request).execute();
 
-            Log.e(TAG, "Access-Token = " + response.headers().get("Access-Token"));
-            Log.e(TAG, "Token-Type = " + response.headers().get("Token-Type"));
-            Log.e(TAG, "Client = " + response.headers().get("Client"));
-            Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
-            Log.e(TAG, "Uid = " + response.headers().get("Uid"));
+            if (response.isSuccessful()) {
+                storeHeader(context, response.headers());
 
-            EndpointUtils.storeHeader(context, response.headers()); //TODO: store headers!
-
-            String result = response.body().string();
-
-            JSONArray data = new JSONObject(result).getJSONArray("data");
-
-            needs = new Need[data.length()];
-            for (int i = 0; i < data.length(); i++) {
-                JSONObject obj = data.getJSONObject(i);
-                needs[i] = new Need().fromJSON(context, obj);
+                String result = response.body().string();
+                JSONArray data = new JSONObject(result).getJSONArray("data");
+                needs = new Need[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject obj = data.getJSONObject(i);
+                    needs[i] = new Need().fromJSON(context, obj);
+                }
             }
 
         } catch (IOException e) {

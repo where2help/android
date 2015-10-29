@@ -70,12 +70,12 @@ public class VolunteerHandler {
 
             User user = getUser(context);
             if (user.getEmail() == null) {
-                errors.add("No user found");
+                errors.add(context.getString(R.string.error_user_not_found));
                 return errors;
             }
 
             if (!isOnline(context)) {
-                errors.add("Anmeldung nicht möglich. Überprüfen Sie Ihre Netzwerkverbindung.");
+                errors.add(context.getString(R.string.error_no_connection));
                 return errors;
             }
 

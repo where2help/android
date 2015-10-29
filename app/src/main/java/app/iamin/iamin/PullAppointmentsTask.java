@@ -24,6 +24,7 @@ import app.iamin.iamin.model.User;
 import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
 import static app.iamin.iamin.util.EndpointUtils.getHeaders;
 import static app.iamin.iamin.util.EndpointUtils.getUser;
+import static app.iamin.iamin.util.EndpointUtils.isOnline;
 import static app.iamin.iamin.util.EndpointUtils.storeHeader;
 
 /**
@@ -40,9 +41,12 @@ public class PullAppointmentsTask extends AsyncTask<Void, Integer, Need[]> {
 
     @Override
     protected Need[] doInBackground(Void... params) {
-        Need[] needs = null;
 
+        if (!isOnline(context)) return null;
+
+        Need[] needs = null;
         User user = getUser(context);
+
         if (user.getEmail() == null) return null;
 
         String url = getEndpoint(context) + "users/" + user.getId() + "/appointments";
@@ -58,25 +62,19 @@ public class PullAppointmentsTask extends AsyncTask<Void, Integer, Need[]> {
                     .build();
 
             Response response = client.newCall(request).execute();
-/*
-            Log.e(TAG, "Access-Token = " + response.headers().get("Access-Token"));
-            Log.e(TAG, "Token-Type = " + response.headers().get("Token-Type"));
-            Log.e(TAG, "Client = " + response.headers().get("Client"));
-            Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
-            Log.e(TAG, "Uid = " + response.headers().get("Uid"));
-*/
-            storeHeader(context, response.headers());
 
-            String result = response.body().string();
-            Log.e(TAG, "USER ID: " + user.getId());
-            Log.e(TAG, "RESULT: " + result);
+            if (response.isSuccessful()) {
+                storeHeader(context, response.headers());
 
-            JSONArray data = new JSONObject(result).getJSONArray("data");
+                String result = response.body().string();
+                Log.e(TAG, "RESULT: " + result);
 
-            needs = new Need[data.length()];
-            for (int i = 0; i < data.length(); i++) {
-                JSONObject obj = data.getJSONObject(i);
-                needs[i] = new Need().fromJSON(context, obj);
+                JSONArray data = new JSONObject(result).getJSONArray("data");
+                needs = new Need[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject obj = data.getJSONObject(i);
+                    needs[i] = new Need().fromJSON(context, obj);
+                }
             }
 
         } catch (IOException e) {
@@ -84,8 +82,10 @@ public class PullAppointmentsTask extends AsyncTask<Void, Integer, Need[]> {
             return null;
         } catch (ParseException e) {
             e.printStackTrace();
+            return null;
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
         }
 
         return needs;

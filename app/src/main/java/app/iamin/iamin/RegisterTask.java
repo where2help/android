@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.iamin.iamin.event.RegisterEvent;
-import app.iamin.iamin.util.EndpointUtils;
+
+import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
+import static app.iamin.iamin.util.EndpointUtils.isOnline;
+import static app.iamin.iamin.util.EndpointUtils.storeHeader;
 
 /**
  * AsyncTask that wraps an OkHttpRequest. Designed to register a new user.
@@ -42,14 +45,15 @@ public class RegisterTask extends AsyncTask<Context, Void, List<String>> {
 
     @Override
     protected List<String> doInBackground(Context ... contexts) {
+        Context context = contexts[0];
         List<String> errors = new ArrayList<>();
 
-        if (!EndpointUtils.isOnline(contexts[0])) {
-            errors.add("Registrierung nicht möglich. Überprüfen Sie Ihre Netzwerkverbindung.");
+        if (!isOnline(context)) {
+            errors.add(context.getString(R.string.error_no_connection));
             return errors;
         }
 
-        String url = EndpointUtils.getEndpoint(contexts[0]) + "auth/";
+        String url = getEndpoint(contexts[0]) + "auth/";
         Log.d(TAG, url);
 
         RequestBody formBody = new FormEncodingBuilder()
@@ -72,7 +76,10 @@ public class RegisterTask extends AsyncTask<Context, Void, List<String>> {
             String responseBody = response.body().string();
             Log.e(TAG, "RESPONSE: " + responseBody);
 
-            if (response.isSuccessful()) return null;
+            if (response.isSuccessful()) {
+                storeHeader(context, response.headers());
+                return null;
+            }
 
             JSONArray messages =  new JSONObject(responseBody)
                     .getJSONObject("errors")
@@ -84,14 +91,6 @@ public class RegisterTask extends AsyncTask<Context, Void, List<String>> {
                     Log.e(TAG, "Error Message: " + messages.get(i).toString());
                 }
             }
-
-/*          Log.e(TAG, "Access-Token = " + response.headers().get("Access-Token"));
-            Log.e(TAG, "Token-Type = " + response.headers().get("Token-Type"));
-            Log.e(TAG, "Client = " + response.headers().get("Client"));
-            Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
-            Log.e(TAG, "Uid = " + response.headers().get("Uid"));*/
-
-            EndpointUtils.storeHeader(contexts[0], response.headers());
 
         } catch (IOException e) {
             errors.add(e.getMessage());

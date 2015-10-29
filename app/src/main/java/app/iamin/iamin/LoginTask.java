@@ -21,7 +21,11 @@ import java.util.List;
 
 import app.iamin.iamin.event.LoginEvent;
 import app.iamin.iamin.model.User;
-import app.iamin.iamin.util.EndpointUtils;
+
+import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
+import static app.iamin.iamin.util.EndpointUtils.isOnline;
+import static app.iamin.iamin.util.EndpointUtils.storeHeader;
+import static app.iamin.iamin.util.EndpointUtils.storeUser;
 
 /**
  * AsyncTask that wraps an OkHttpRequest. Designed to sign in a user.
@@ -42,14 +46,15 @@ public class LoginTask extends AsyncTask<Context, Void, List<String>> {
 
     @Override
     protected List<String> doInBackground(Context... contexts) {
+        Context context = contexts[0];
         List<String> errors = new ArrayList<>();
 
-        if (!EndpointUtils.isOnline(contexts[0])) {
-            errors.add("Anmeldung nicht möglich. Überprüfen Sie Ihre Netzwerkverbindung.");
+        if (!isOnline(context)) {
+            errors.add(context.getString(R.string.error_no_connection));
             return errors;
         }
 
-        String url = EndpointUtils.getEndpoint(contexts[0]) + "auth/sign_in";
+        String url = getEndpoint(context) + "auth/sign_in";
         Log.d(TAG, url);
 
         RequestBody formBody = new FormEncodingBuilder()
@@ -64,41 +69,19 @@ public class LoginTask extends AsyncTask<Context, Void, List<String>> {
                     .post(formBody)
                     .build();
             Response response = client.newCall(request).execute();
+
             String responseBody = response.body().string();
             Log.e(TAG, "RESPONSE: " + responseBody);
 
             if (response.isSuccessful()) {
                 JSONObject obj = new JSONObject(responseBody).getJSONObject("data");
                 User user = new User().fromJSON(obj);
-/*
-                Log.e(TAG, "Access-Token = " + response.headers().get("Access-Token"));
-                Log.e(TAG, "Token-Type = " + response.headers().get("Token-Type"));
-                Log.e(TAG, "Client = " + response.headers().get("Client"));
-                Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
-                Log.e(TAG, "Uid = " + response.headers().get("Uid"));
-
-                Log.d(TAG, "User id = " + user.getId());
-                Log.d(TAG, "User email = " + user.getEmail());
-                Log.d(TAG, "User first_name = " + user.getFirstName());
-                Log.d(TAG, "User last_name = " + user.getLastName());
-                Log.d(TAG, "User phone = " + user.getPhone());
-                Log.d(TAG, "User admin = " + user.isAdmin());
-                Log.d(TAG, "User ngo_admin = " + user.isNgoAdmin());
-                Log.d(TAG, "User provider = " + user.getProvider());
-                Log.d(TAG, "User uid = " + user.getUid());
-                Log.d(TAG, "User name = " + user.getName());
-                Log.d(TAG, "User nickname = " + user.getNickname());
-                Log.d(TAG, "User image = " + user.getImage());
-*/
-                EndpointUtils.storeUser(contexts[0], user);
-                EndpointUtils.storeHeader(contexts[0], response.headers());
-
+                storeUser(context, user);
+                storeHeader(context, response.headers());
                 return null;
             }
 
-            JSONArray messages = new JSONObject(responseBody)
-                    .getJSONArray("errors");
-
+            JSONArray messages = new JSONObject(responseBody).getJSONArray("errors");
             if (messages != null) {
                 for (int i = 0; i < messages.length(); i++) {
                     errors.add(messages.get(i).toString());
