@@ -20,7 +20,11 @@ import java.text.ParseException;
 import app.iamin.iamin.event.AppointmentsEvent;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.model.User;
-import app.iamin.iamin.util.EndpointUtils;
+
+import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
+import static app.iamin.iamin.util.EndpointUtils.getHeaders;
+import static app.iamin.iamin.util.EndpointUtils.getUser;
+import static app.iamin.iamin.util.EndpointUtils.storeHeader;
 
 /**
  * Created by paul on 10/10/2015.
@@ -36,29 +40,22 @@ public class PullAppointmentsTask extends AsyncTask<Void, Integer, Need[]> {
 
     @Override
     protected Need[] doInBackground(Void... params) {
+        Need[] needs = null;
 
-        User user = EndpointUtils.getUser(context);
+        User user = getUser(context);
         if (user.getEmail() == null) return null;
 
-
-        Need[] needs = null;
-        String url = EndpointUtils.getEndpoint(context);
+        String url = getEndpoint(context) + "users/" + user.getId() + "/appointments";
         Log.d(TAG, url);
 
-        Headers headers = EndpointUtils.getHeaders(context);
-/*
-        Log.e(TAG, "LOCAL Access-Token = " + headers.get("Access-Token"));
-        Log.e(TAG, "LOCAL Token-Type = " + headers.get("Token-Type"));
-        Log.e(TAG, "LOCAL Client = " + headers.get("Client"));
-        Log.e(TAG, "LOCAL Expiry = " + headers.get("Expiry"));
-        Log.e(TAG, "LOCAL Uid = " + headers.get("Uid"));
-*/
+        Headers headers = getHeaders(context);
+
         try {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .headers(headers)
-                    .url(url + "users/" + user.getId() + "/appointments")
-            .build();
+                    .url(url)
+                    .build();
 
             Response response = client.newCall(request).execute();
 /*
@@ -68,7 +65,7 @@ public class PullAppointmentsTask extends AsyncTask<Void, Integer, Need[]> {
             Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
             Log.e(TAG, "Uid = " + response.headers().get("Uid"));
 */
-            EndpointUtils.storeHeader(context, response.headers());
+            storeHeader(context, response.headers());
 
             String result = response.body().string();
             Log.e(TAG, "USER ID: " + user.getId());

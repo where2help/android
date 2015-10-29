@@ -23,7 +23,7 @@ import static app.iamin.iamin.util.EndpointUtils.*;
  * This handles a users volunteering status for a given need.
  */
 public class VolunteerHandler {
-    private static final String TAG = "VolunteeringTask";
+    private static final String TAG = "VolunteerHandler";
 
     private Context context;
 
