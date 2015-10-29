@@ -44,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
         setUiMode(user.getEmail() != null);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.action_settings);
+        toolbar.setTitle(R.string.settings);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
