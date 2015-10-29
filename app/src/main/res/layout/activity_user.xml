@@ -69,5 +69,16 @@
             android:src="@drawable/ic_refresh_black_48dp"
             android:tint="@color/colorPrimary"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/empty_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/empty_message"
+            android:textColor="@color/text_light_hint"
+            android:textSize="@dimen/text_body"
+            android:visibility="gone"/>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

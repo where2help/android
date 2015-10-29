@@ -32,6 +32,7 @@ public class UserActivity extends AppCompatActivity {
 
     private ImageButton mRetryButton;
     private ProgressBar mProgressBar;
+    private TextView mEmptyTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,6 @@ public class UserActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        new PullAppointmentsTask(this).execute();
-
         mAdapter = new NeedsAdapter(this);
         mLayoutManager = new LinearLayoutManager(this);
 
@@ -65,6 +64,7 @@ public class UserActivity extends AppCompatActivity {
 
         mRetryButton = (ImageButton) findViewById(R.id.retry_button);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mEmptyTextView = (TextView) findViewById(R.id.empty_message);
 
         TextView titleTextView = (TextView) findViewById(R.id.header_title);
         titleTextView.setText(user.getFirstName());
@@ -74,7 +74,12 @@ public class UserActivity extends AppCompatActivity {
     public void onNeedsUpdate(AppointmentsEvent event) {
         Need[] needs = event.getNeeds();
         if (needs != null) {
-            mAdapter.setData(needs);
+            if (needs.length == 0) {
+                mProgressBar.setVisibility(View.GONE);
+                mEmptyTextView.setVisibility(View.VISIBLE);
+            } else {
+                mAdapter.setData(needs);
+            }
         } else {
             mProgressBar.setVisibility(View.GONE);
             mRetryButton.setVisibility(View.VISIBLE);
@@ -114,6 +119,7 @@ public class UserActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
+        new PullAppointmentsTask(this).execute();
     }
 
     @Override
