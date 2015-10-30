@@ -1,17 +1,19 @@
 package app.iamin.iamin.event;
 
+import java.util.List;
+
 /**
  * Created by Markus on 13.10.15.
  */
 public class LogoutEvent {
 
-    private boolean isSuccsess = false;
+    private List<String> errors;
 
-    public LogoutEvent(Boolean isSuccsess) {
-        this.isSuccsess = isSuccsess;
+    public LogoutEvent(List<String> errors) {
+        this.errors = errors;
     }
 
-    public boolean isSuccsess() {
-        return this.isSuccsess;
+    public List<String> getErrors() {
+        return this.errors;
     }
 }
