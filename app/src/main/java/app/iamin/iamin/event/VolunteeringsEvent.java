@@ -5,11 +5,11 @@ import java.util.List;
 /**
  * Created by Markus on 13.10.15.
  */
-public class NeedsEvent {
+public class VolunteeringsEvent {
 
     private final List<String> errors;
 
-    public NeedsEvent(List<String> errors) {
+    public VolunteeringsEvent(List<String> errors) {
         this.errors = errors;
     }
 

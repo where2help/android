@@ -21,6 +21,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 
 import app.iamin.iamin.R;
 import app.iamin.iamin.model.Need;
+import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.UiUtils;
 
 import static android.os.Build.VERSION.SDK_INT;
@@ -115,7 +116,7 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
     @Override
     public void onMapReady(GoogleMap map) {
         map.getUiSettings().setMapToolbarEnabled(false);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(need.getLocation(), 13f));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(NeedUtils.getLocation(need), 13f));
         map.setOnMapLoadedCallback(this);
     }
 

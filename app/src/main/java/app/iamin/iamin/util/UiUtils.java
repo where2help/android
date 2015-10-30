@@ -8,6 +8,7 @@ import android.support.v4.content.IntentCompat;
 import com.google.android.gms.maps.model.LatLng;
 
 import app.iamin.iamin.model.Need;
+import app.iamin.iamin.model.NeedOld;
 import app.iamin.iamin.ui.DetailActivity;
 import app.iamin.iamin.ui.LoginActivity;
 import app.iamin.iamin.ui.MainActivity;
@@ -39,16 +40,20 @@ public class UiUtils {
         intent.putExtra("id", need.getId());
         intent.putExtra("category", need.getCategory());
 
-        intent.putExtra("address", need.getAddress().getAddressLine(0));
-        intent.putExtra("latitude", need.getAddress().getLatitude());
-        intent.putExtra("longitude", need.getAddress().getLongitude());
+        intent.putExtra("city", need.getCity());
+        intent.putExtra("location", need.getLocation());
+        intent.putExtra("latitude", need.getLat());
+        intent.putExtra("longitude", need.getLng());
 
         intent.putExtra("start", need.getStart().getTime());
         intent.putExtra("end", need.getEnd().getTime());
         intent.putExtra("date", need.getDate());
 
+        intent.putExtra("needed", need.getNeeded());
         intent.putExtra("count", need.getCount());
         intent.putExtra("selfLink", need.getSelfLink());
+
+        intent.putExtra("attending", need.isAttending());
         return intent;
     }
 
@@ -57,7 +62,7 @@ public class UiUtils {
         Intent intent = new Intent();
         intent.setClass(context, DetailActivity.class);
         intent.putExtra("id", 0);
-        intent.putExtra("category", Need.CATEGORY_VOLUNTEER);
+        intent.putExtra("category", NeedOld.CATEGORY_VOLUNTEER);
 
         intent.putExtra("address", "Westbahnhof");
         intent.putExtra("latitude", 0);
@@ -89,10 +94,10 @@ public class UiUtils {
                 .putExtra("beginTime", need.getStart())
                 .putExtra("endTime", need.getEnd())
                 .putExtra("allDay", false)
-                .putExtra("title", "Where2Help - " + need.getCategoryPlural())
-                .putExtra("description", "Where2Help - " + need.getCategoryPlural() + " für " +
+                .putExtra("title", "Where2Help - " + NeedUtils.getCategoryPlural(need.getCategory()))
+                .putExtra("description", "Where2Help - " + NeedUtils.getCategoryPlural(need.getCategory()) + " für " +
                         TimeUtils.getDuration(need.getStart(), need.getEnd()) + ".")
-                .putExtra("eventLocation", need.getAddress().getAddressLine(0));
+                .putExtra("eventLocation", need.getCity()+ " " + need.getLocation());
         context.startActivity(intent);
     }
 
@@ -100,23 +105,23 @@ public class UiUtils {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + need.getCategoryPlural() + " am " +
+        intent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + NeedUtils.getCategoryPlural(need.getCategory()) + " am " +
                 TimeUtils.formatHumanFriendlyShortDate(context, need.getStart()) + " " +
                 TimeUtils.formatTimeOfDay(need.getStart()) + " - " + TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr" + " für " + TimeUtils.getDuration(need.getStart(), need.getEnd()) + " am " +
-                need.getAddress().getAddressLine(0) + ". (" + need.getSelfLink() + ")");
+                need.getCity()+ " " + need.getLocation() + ". (" + need.getSelfLink() + ")");
         context.startActivity(intent);
     }
 
-    public static void fireWebIntent(Context context, Need need) {
+    public static void fireWebIntent(Context context, NeedOld need) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(need.getSelfLink()));
         context.startActivity(intent);
     }
 
     public static void fireMapIntent(Context context, Need need) {
-        LatLng location = need.getLocation();
+        LatLng location = NeedUtils.getLocation(need);
         String geo = location.latitude + "," + location.longitude;
-        Uri gmmIntentUri = Uri.parse("geo:" + geo + "?q=" + need.getAddress().getAddressLine(0));
+        Uri gmmIntentUri = Uri.parse("geo:" + geo + "?q=" + need.getCity()+ " " + need.getLocation());
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
         if (mapIntent.resolveActivity(context.getPackageManager()) != null) {

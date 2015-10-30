@@ -17,12 +17,15 @@ import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.PullAppointmentsTask;
+import app.iamin.iamin.PullVolunteeringsTask;
 import app.iamin.iamin.R;
-import app.iamin.iamin.event.AppointmentsEvent;
+import app.iamin.iamin.event.VolunteeringsEvent;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.UiUtils;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -33,6 +36,8 @@ public class UserActivity extends AppCompatActivity {
     private ImageButton mRetryButton;
     private ProgressBar mProgressBar;
     private TextView mEmptyTextView;
+
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,10 @@ public class UserActivity extends AppCompatActivity {
         mAdapter = new NeedsAdapter(this);
         mLayoutManager = new LinearLayoutManager(this);
 
+        realm = Realm.getInstance(this);
+        RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
+        mAdapter.setData(needs);
+
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
 
@@ -68,23 +77,6 @@ public class UserActivity extends AppCompatActivity {
 
         TextView titleTextView = (TextView) findViewById(R.id.header_title);
         titleTextView.setText(user.getFirstName());
-    }
-
-    @Subscribe
-    public void onNeedsUpdate(AppointmentsEvent event) {
-        Need[] needs = event.getNeeds();
-        if (needs != null) {
-            if (needs.length == 0) {
-                mProgressBar.setVisibility(View.GONE);
-                mEmptyTextView.setVisibility(View.VISIBLE);
-            } else {
-                mAdapter.setData(needs);
-            }
-        } else {
-            mProgressBar.setVisibility(View.GONE);
-            mRetryButton.setVisibility(View.VISIBLE);
-            mRetryButton.setEnabled(true);
-        }
     }
 
     public void onRetry(View v) {
@@ -119,13 +111,36 @@ public class UserActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        new PullAppointmentsTask(this).execute();
+        new PullVolunteeringsTask(this).execute();
+    }
+
+    @Subscribe
+    public void onVolunteeringsUpdate(VolunteeringsEvent event) {
+        if (event.getErrors().size() == 0) {
+            RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
+            if (needs.size() == 0) {
+                mProgressBar.setVisibility(View.GONE);
+                mEmptyTextView.setVisibility(View.VISIBLE);
+            } else {
+                mAdapter.setData(needs);
+            }
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            mRetryButton.setVisibility(View.VISIBLE);
+            mRetryButton.setEnabled(true);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 
     @Override

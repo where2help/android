@@ -7,9 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import app.iamin.iamin.model.Need;
 import app.iamin.iamin.R;
+import app.iamin.iamin.model.Need;
 import app.iamin.iamin.util.UiUtils;
+import io.realm.RealmResults;
 
 /**
  * Created by Paul on 10-10-2015.
@@ -17,7 +18,7 @@ import app.iamin.iamin.util.UiUtils;
 public class NeedsAdapter extends RecyclerView.Adapter<NeedsAdapter.ViewHolder> {
 
     private Context mContext;
-    private Need[] mNeeds;
+    private RealmResults<Need> mNeeds;
 
     public NeedsAdapter(Context context) {
         mContext = context;
@@ -33,13 +34,13 @@ public class NeedsAdapter extends RecyclerView.Adapter<NeedsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(NeedsAdapter.ViewHolder holder, int position) {
-        Need need = mNeeds[position];
+        Need need = mNeeds.get(position);
         holder.mNeedView.setNeed(need);
     }
 
     @Override
     public int getItemCount() {
-        return mNeeds == null ? 0 : mNeeds.length;
+        return mNeeds == null ? 0 : mNeeds.size();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class NeedsAdapter extends RecyclerView.Adapter<NeedsAdapter.ViewHolder> 
         return position;
     }
 
-    public void setData(Need[] needs) {
+    public void setData(RealmResults<Need> needs) {
         mNeeds = needs;
         notifyDataSetChanged();
     }
@@ -79,7 +80,7 @@ public class NeedsAdapter extends RecyclerView.Adapter<NeedsAdapter.ViewHolder> 
     private final ItemClickListener clickListener = new ItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            Intent intent = UiUtils.getDetailIntent(mContext, mNeeds[position]);
+            Intent intent = UiUtils.getDetailIntent(mContext, mNeeds.get(position));
             mContext.startActivity(intent);
         }
     };

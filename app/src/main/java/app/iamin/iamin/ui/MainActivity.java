@@ -17,13 +17,17 @@ import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
 import app.iamin.iamin.PullNeedsTask;
+import app.iamin.iamin.PullVolunteeringsTask;
 import app.iamin.iamin.R;
 import app.iamin.iamin.event.NeedsEvent;
+import app.iamin.iamin.event.VolunteeringsEvent;
 import app.iamin.iamin.model.Need;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.UiUtils;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback {
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements
     private ImageButton mRetryButton;
     private ProgressBar mProgressBar;
 
+    private Realm realm;
     private User user;
 
     // private static final int PERMISSION_REQ = 0;
@@ -110,10 +115,27 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Called when fetching new needs is done. If successful this starts a PullVolunteeringsTask.
+     */
     @Subscribe
     public void onNeedsUpdate(NeedsEvent event) {
-        Need[] needs = event.getNeeds();
-        if (needs != null) {
+        if (event.getErrors().size() == 0) {
+            // All local needs are up to date
+            new PullVolunteeringsTask(this).execute();
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            mRetryButton.setVisibility(View.VISIBLE);
+            mRetryButton.setEnabled(true);
+        }
+    }
+
+    @Subscribe
+    public void onVolunteeringsUpdate(VolunteeringsEvent event) {
+        if (event.getErrors().size() == 0) {
+            // All local needs have the correct isAttending status
+            realm = Realm.getInstance(this);
+            RealmResults<Need> needs = realm.where(Need.class).findAll();
             mAdapter.setData(needs);
         } else {
             mProgressBar.setVisibility(View.GONE);
@@ -144,7 +166,13 @@ public class MainActivity extends AppCompatActivity implements
         BusProvider.getInstance().unregister(this);
     }
 
-/*    *//**
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
+
+    /*    *//**
      * Permissions request errors callback
      *//*
     @Override

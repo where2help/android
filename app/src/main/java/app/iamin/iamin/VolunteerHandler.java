@@ -17,7 +17,11 @@ import java.util.List;
 
 import app.iamin.iamin.model.User;
 
-import static app.iamin.iamin.util.EndpointUtils.*;
+import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
+import static app.iamin.iamin.util.EndpointUtils.getHeaders;
+import static app.iamin.iamin.util.EndpointUtils.getUser;
+import static app.iamin.iamin.util.EndpointUtils.isOnline;
+import static app.iamin.iamin.util.EndpointUtils.storeHeader;
 
 /**
  * This handles a users volunteering status for a given need.
@@ -58,15 +62,33 @@ public class VolunteerHandler {
             this.needId = needId;
         }
 
-        protected void onPostExecute(List<String> errors) {
-            //TODO: handle errors
+        private String formBody(int userId, int needId) {
+            return "{ \"data\":{\"type\":\"volunteerings\",\"attributes\":{" +
+                    "\"user-id\":\""+ userId + "\",\"need-id\":\"" + needId +"\"}}}";
+        }
+
+        private Request buildRequest(int action, String url, Headers headers, RequestBody requestBody) {
+            switch (action) {
+                default:
+                case CREATE:
+                    return new Request.Builder()
+                            .headers(headers)
+                            .url(url)
+                            .post(requestBody)
+                            .build();
+                case DELETE:
+                    return new Request.Builder()
+                            .headers(headers)
+                            .url(url)
+                            .delete(requestBody).build();
+            }
         }
 
         @Override
         protected List<String> doInBackground(Context... contexts) {
             Context context = contexts[0];
             List<String> errors = new ArrayList<>();
-            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+            MediaType JSON = MediaType.parse("application/vnd.api+json; charset=utf-8");
 
             User user = getUser(context);
             if (user.getEmail() == null) {
@@ -79,7 +101,8 @@ public class VolunteerHandler {
                 return errors;
             }
 
-            String url = getEndpoint(context) + "users/" + user.getId() + "/relationships/volunteerings";
+            String url = getEndpoint(context) + "volunteerings";
+            Log.e(TAG, "URL: " + url);
             String body = formBody(user.getId(), needId);
             Headers headers = getHeaders(context);
             RequestBody requestBody = RequestBody.create(JSON, body);
@@ -90,6 +113,8 @@ public class VolunteerHandler {
                 Response response = client.newCall(request).execute();
                 String responseBody = response.body().string();
                 Log.e(TAG, "RESPONSE: " + responseBody);
+                Log.e(TAG, "STATUS: " + response.message());
+                Log.e(TAG, "STATUS CODE: " + response.code());
 
                 if (response.isSuccessful()) {
                     storeHeader(context, response.headers());
@@ -104,20 +129,8 @@ public class VolunteerHandler {
             return errors;
         }
 
-        private String formBody(int userId, int needId) {
-            return "{'user_id':'" + userId + "',"
-                    + "'need_id':'" + needId + "'}";
-        }
-
-        private Request buildRequest(int action, String url, Headers headers, RequestBody requestBody) {
-            Log.d(TAG, url);
-            switch (action) {
-                default:
-                case CREATE:
-                    return new Request.Builder().headers(headers).url(url).post(requestBody).build();
-                case DELETE:
-                    return new Request.Builder().headers(headers).url(url).delete(requestBody).build();
-            }
+        protected void onPostExecute(List<String> errors) {
+            //TODO: handle errors
         }
     }
 }

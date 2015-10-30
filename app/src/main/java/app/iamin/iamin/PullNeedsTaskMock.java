@@ -13,9 +13,9 @@ import java.io.InputStream;
 import java.text.ParseException;
 
 import app.iamin.iamin.event.NeedsEvent;
-import app.iamin.iamin.model.Need;
+import app.iamin.iamin.model.NeedOld;
 
-public class PullNeedsTaskMock extends AsyncTask<Void, Integer, Need[]> {
+public class PullNeedsTaskMock extends AsyncTask<Void, Integer, NeedOld[]> {
 
     private Context context;
 
@@ -24,9 +24,9 @@ public class PullNeedsTaskMock extends AsyncTask<Void, Integer, Need[]> {
     }
 
     @Override
-    protected Need[] doInBackground(Void... params) {
+    protected NeedOld[] doInBackground(Void... params) {
 
-        Need[] needs = null;
+        NeedOld[] needs = null;
 
         try {
             InputStream inputStream = context.getAssets().open("mock.json");
@@ -39,11 +39,13 @@ public class PullNeedsTaskMock extends AsyncTask<Void, Integer, Need[]> {
 
             JSONArray data = new JSONObject(result).getJSONArray("data");
 
-            needs = new Need[data.length()];
+            needs = new NeedOld[data.length()];
             for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = data.getJSONObject(i);
-                needs[i] = new Need().fromJSON(context, obj);
+                needs[i] = new NeedOld().fromJSON(context, obj);
             }
+
+            // TODO: Write to realm
 
         } catch (IOException | JSONException | ParseException e) {
             e.printStackTrace();
@@ -54,7 +56,7 @@ public class PullNeedsTaskMock extends AsyncTask<Void, Integer, Need[]> {
     }
 
     @Override
-    protected void onPostExecute(Need[] needs) {
-        BusProvider.getInstance().post(new NeedsEvent(needs));
+    protected void onPostExecute(NeedOld[] needs) {
+        BusProvider.getInstance().post(new NeedsEvent(null));
     }
 }

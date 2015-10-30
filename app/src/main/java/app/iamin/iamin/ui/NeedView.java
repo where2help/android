@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import app.iamin.iamin.R;
 import app.iamin.iamin.model.Need;
+import app.iamin.iamin.util.NeedUtils;
 
 /**
  * Created by Markus on 16.10.15.
@@ -129,10 +130,11 @@ public class NeedView extends FrameLayout {
     }
 
     private void fill() {
-        iconView.setImageResource(need.getCategoryIcon());
-        countView.setText(String.valueOf(need.getCount()));
-        categoryView.setText(need.getCount() == 1 ? need.getCategorySingular() : need.getCategoryPlural());
-        addressView.setText(need.getAddress().getAddressLine(0));
+        int category = need.getCategory();
+        iconView.setImageResource(NeedUtils.getCategoryIcon(category));
+        countView.setText(String.valueOf(need.getNeeded()));
+        categoryView.setText(category == 1 ? NeedUtils.getCategorySingular(category) : NeedUtils.getCategoryPlural(category));
+        addressView.setText(need.getCity() + " " + need.getLocation());
         dateTextView.setText(need.getDate());
     }
 

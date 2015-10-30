@@ -13,9 +13,11 @@ import android.widget.TextView;
 import com.squareup.otto.Subscribe;
 
 import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.model.Need;
 import app.iamin.iamin.R;
+import app.iamin.iamin.VolunteerHandler;
 import app.iamin.iamin.event.LocationEvent;
+import app.iamin.iamin.model.Need;
+import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
 
@@ -42,21 +44,22 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private CustomMapView mapView;
 
+    private VolunteerHandler volunteerHandler;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        if (savedInstanceState != null) {
-            // Restore value from saved state
-            isAttending = savedInstanceState.getBoolean("isAttending");
-        }
+        volunteerHandler = new VolunteerHandler(this);
 
-        need = new Need().fromIntent(getIntent());
+        need = NeedUtils.createNeedfromIntent(getIntent());
+
+        isAttending = need.isAttending();
 
         if (savedInstanceState != null || SDK_INT < LOLLIPOP) setupMap();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(need.getCategoryPlural() + " - " + need.getAddress().getAddressLine(0));
+        toolbar.setTitle(NeedUtils.getCategoryPlural(need.getCategory()) + " - " + need.getLocation());
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(this);
 
@@ -163,7 +166,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 UiUtils.fireCalendarIntent(DetailActivity.this, need);
                 break;
             case R.id.web:
-                UiUtils.fireWebIntent(DetailActivity.this, need);
+                //UiUtils.fireWebIntent(DetailActivity.this, need);
+                volunteerHandler.delete(need.getId());
                 break;
         }
     }
@@ -171,6 +175,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private void onActionSubmit() {
         submitButton.setText(R.string.register_status);
         submitButton.setEnabled(false);
+        volunteerHandler.create(need.getId());
         onRegisterSuccess(); //TODO: Handle "i'm in"
     }
 
@@ -190,12 +195,5 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current state
-        savedInstanceState.putBoolean("isAttending", isAttending);
-        super.onSaveInstanceState(savedInstanceState);
     }
 }

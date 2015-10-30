@@ -16,16 +16,25 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import app.iamin.iamin.event.NeedsEvent;
 import app.iamin.iamin.model.Need;
+import app.iamin.iamin.util.LogUtils;
+import app.iamin.iamin.util.NeedUtils;
+import app.iamin.iamin.util.TimeUtils;
+import io.realm.Realm;
 
-import static app.iamin.iamin.util.EndpointUtils.*;
+import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
+import static app.iamin.iamin.util.EndpointUtils.getHeaders;
+import static app.iamin.iamin.util.EndpointUtils.isOnline;
+import static app.iamin.iamin.util.EndpointUtils.storeHeader;
 
 /**
  * Created by paul on 10/10/2015.
  */
-public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
+public class PullNeedsTask extends AsyncTask<Void, Integer, List<String>> {
     private static final String TAG = "PullNeedsTask";
 
     private Context context;
@@ -35,11 +44,15 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
     }
 
     @Override
-    protected Need[] doInBackground(Void... params) {
+    protected List<String> doInBackground(Void... params) {
 
-        if (!isOnline(context)) return null;
+        List<String> errors = new ArrayList<>();
 
-        Need[] needs = null;
+        if (!isOnline(context)) {
+            errors.add(context.getString(R.string.error_no_connection));
+            return errors;
+        }
+
         String url = getEndpoint(context) + "needs";
         Log.d(TAG, url);
 
@@ -54,34 +67,74 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, Need[]> {
 
             Response response = client.newCall(request).execute();
 
+            LogUtils.logHeaders(TAG, response);
+            Log.e(TAG, "STATUS: " + response.message());
+
             if (response.isSuccessful()) {
                 storeHeader(context, response.headers());
 
                 String result = response.body().string();
                 JSONArray data = new JSONObject(result).getJSONArray("data");
-                needs = new Need[data.length()];
+
+                // First clear database
+                Realm realm = Realm.getInstance(context);
+                realm.beginTransaction();
+                realm.where(Need.class).findAll().clear();
+                realm.commitTransaction();
+
+                // Write into database
+                realm.beginTransaction();
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject obj = data.getJSONObject(i);
-                    needs[i] = new Need().fromJSON(context, obj);
+                    saveNeed(realm, obj);
                 }
+                realm.commitTransaction();
+                realm.close();
             }
 
         } catch (IOException e) {
+            errors.add(e.getMessage());
             e.printStackTrace();
-            return null;
         } catch (JSONException e) {
+            errors.add(e.getMessage());
             e.printStackTrace();
-            return null;
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            errors.add(e.getMessage());
         }
 
-        return needs;
+        return errors;
     }
 
     @Override
-    protected void onPostExecute(Need[] needs) {
-        BusProvider.getInstance().post(new NeedsEvent(needs));
+    protected void onPostExecute(List<String> errors) {
+        BusProvider.getInstance().post(new NeedsEvent(errors));
+    }
+
+    private void saveNeed(Realm realm, JSONObject obj) throws JSONException, IOException, ParseException{
+        Need need = realm.createObject(Need.class);
+
+        need.setId(obj.getInt("id"));
+        need.setSelfLink(obj.getJSONObject("links").getString("self"));
+
+        JSONObject attrs = obj.getJSONObject("attributes");
+
+        need.setCategory(NeedUtils.getCategory(attrs.getString("category")));
+
+        need.setCity(attrs.getString("city"));
+        need.setLocation(attrs.getString("location"));
+        need.setLat(attrs.getString("lat").equals("null") ? 0 : attrs.getDouble("lat"));
+        need.setLng(attrs.getString("lng").equals("null") ? 0 : attrs.getDouble("lng"));
+
+        need.setStart(TimeUtils.FORMAT_API.parse(attrs.getString("start-time")));
+        need.setEnd(TimeUtils.FORMAT_API.parse(attrs.getString("end-time")));
+        need.setDate(TimeUtils.formatHumanFriendlyShortDate(context, need.getStart()) + " " +
+                TimeUtils.formatTimeOfDay(need.getStart()) + " - " +
+                TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr");
+
+        need.setNeeded(attrs.getInt("volunteers-needed"));
+        need.setCount(attrs.getInt("volunteers-count"));
+
+        need.setIsAttending(false);
     }
 }

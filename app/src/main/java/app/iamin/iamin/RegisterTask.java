@@ -103,7 +103,7 @@ public class RegisterTask extends AsyncTask<Context, Void, List<String>> {
         return errors;
     }
 
-    protected void onPostExecute(List<String> result) {
-        BusProvider.getInstance().post(new RegisterEvent(result));
+    protected void onPostExecute(List<String> errors) {
+        BusProvider.getInstance().post(new RegisterEvent(errors));
     }
 }
