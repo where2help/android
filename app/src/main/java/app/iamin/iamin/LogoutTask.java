@@ -10,27 +10,32 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import app.iamin.iamin.event.LogoutEvent;
-import app.iamin.iamin.util.EndpointUtils;
+
+import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
+import static app.iamin.iamin.util.EndpointUtils.getHeaders;
+import static app.iamin.iamin.util.EndpointUtils.storeHeader;
 
 /**
  * AsyncTask that wraps an OkHttpRequest. Designed to log out a user.
  */
-public class LogoutTask extends AsyncTask<Context, Void, Response> {
+public class LogoutTask extends AsyncTask<Context, Void, List<String>> {
     private static final String TAG = "LogoutTask";
-
-    private Exception savedException;
 
     public LogoutTask() {
     }
 
     @Override
-    protected Response doInBackground(Context ... contexts) {
-        String url = EndpointUtils.getEndpoint(contexts[0]) + "auth/sign_out";
+    protected List<String> doInBackground(Context ... contexts) {
+        List<String> errors = new ArrayList<>();
+        Context context = contexts[0];
+        String url = getEndpoint(context) + "auth/sign_out";
         Log.d(TAG, url);
 
-        Headers headers = EndpointUtils.getHeaders(contexts[0]);
+        Headers headers = getHeaders(context);
 
         try {
             OkHttpClient client = new OkHttpClient();
@@ -40,38 +45,24 @@ public class LogoutTask extends AsyncTask<Context, Void, Response> {
                     .delete()
                     .build();
             Response response = client.newCall(request).execute();
-            EndpointUtils.storeHeader(contexts[0], response.headers());
+
+            if (response.isSuccessful()) {
+                storeHeader(context, response.headers());
+            }
 
             String responseBody = response.body().string();
-
             Log.e(TAG, responseBody);
 
-            return response;
 
         } catch (IOException e) {
-            this.savedException = e;
-            cancel(true);
+            errors.add(e.getMessage());
+            e.printStackTrace();
         }
 
-        return null;
+        return errors;
     }
 
-    protected void onPostExecute(Response response) {
-        // TODO: Do something with response
-        Log.e(TAG, "Access-Token = " + response.headers().get("Access-Token"));
-        Log.e(TAG, "Token-Type = " + response.headers().get("Token-Type"));
-        Log.e(TAG, "Client = " + response.headers().get("Client"));
-        Log.e(TAG, "Expiry = " + response.headers().get("Expiry"));
-        Log.e(TAG, "Uid = " + response.headers().get("Uid"));
-
-        BusProvider.getInstance().post(new LogoutEvent(true));
-    }
-
-    @Override
-    protected void onCancelled() {
-        // TODO: Do something with this.savedException
-        this.savedException.printStackTrace();
-
-        BusProvider.getInstance().post(new LogoutEvent(false));
+    protected void onPostExecute(List<String> errors) {
+        BusProvider.getInstance().post(new LogoutEvent(errors));
     }
 }
