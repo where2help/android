@@ -12,7 +12,7 @@ import app.iamin.iamin.model.User;
  */
 public class LogUtils {
 
-    private static void logLocalHeaders(String TAG, Headers headers){
+    public static void logLocalHeaders(String TAG, Headers headers){
         Log.e(TAG, "LOCAL Access-Token = " + headers.get("Access-Token"));
         Log.e(TAG, "LOCAL Token-Type = " + headers.get("Token-Type"));
         Log.e(TAG, "LOCAL Client = " + headers.get("Client"));
@@ -20,7 +20,7 @@ public class LogUtils {
         Log.e(TAG, "LOCAL Uid = " + headers.get("Uid"));
     }
 
-    private static void logHeaders(String TAG, Response response){
+    public static void logHeaders(String TAG, Response response){
         Log.e(TAG, "Access-Token = " + response.headers().get("Access-Token"));
         Log.e(TAG, "Token-Type = " + response.headers().get("Token-Type"));
         Log.e(TAG, "Client = " + response.headers().get("Client"));
@@ -28,7 +28,7 @@ public class LogUtils {
         Log.e(TAG, "Uid = " + response.headers().get("Uid"));
     }
 
-    private static void logUser(String TAG, User user) {
+    public static void logUser(String TAG, User user) {
         Log.d(TAG, "User id = " + user.getId());
         Log.d(TAG, "User email = " + user.getEmail());
         Log.d(TAG, "User first_name = " + user.getFirstName());
