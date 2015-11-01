@@ -1,9 +1,12 @@
 package app.iamin.iamin.ui;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -25,6 +28,7 @@ import app.iamin.iamin.model.Need;
 import app.iamin.iamin.model.User;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.util.EndpointUtils;
+import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        realm = Realm.getInstance(this);
         user = EndpointUtils.getUser(this);
         if (user.getEmail() == null) {
             // If we don't have a user create one
@@ -76,6 +81,49 @@ public class MainActivity extends AppCompatActivity implements
 
             mRetryButton = (ImageButton) findViewById(R.id.retry_button);
             mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            final PopupMenu popup = new PopupMenu(this, fab);
+            popup.inflate(R.menu.menu_filter);
+            popup.setGravity(GravityCompat.END);
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.all_categories:
+                            RealmResults<Need> needs = realm.where(Need.class).findAll();
+                            mAdapter.setData(needs);
+                            break;
+                        case R.id.general:
+                            mAdapter.setData(realm.where(Need.class)
+                                    .equalTo("category", NeedUtils.CATEGORY_VOLUNTEER).findAll());
+                            break;
+                        case R.id.legal:
+                            mAdapter.setData(realm.where(Need.class)
+                                    .equalTo("category", NeedUtils.CATEGORY_LAWYER).findAll());
+                            break;
+                        case R.id.medical:
+                            mAdapter.setData(realm.where(Need.class)
+                                    .equalTo("category", NeedUtils.CATEGORY_DOCTOR).findAll());
+                            break;
+                        case R.id.translation:
+                            mAdapter.setData(realm.where(Need.class)
+                                    .equalTo("category", NeedUtils.CATEGORY_INTERPRETER).findAll());
+                            break;
+                    }
+                    item.setChecked(true);
+                    return true;
+                }
+            });
+
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popup.show();
+                }
+            });
+            //more.setOnTouchListener(popup.getDragToOpenListener());
 
            /* // Check fine location permission has been granted
             if (!LocationUtils.checkFineLocationPermission(this)) {
@@ -134,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements
     public void onVolunteeringsUpdate(VolunteeringsEvent event) {
         if (event.getErrors().size() == 0) {
             // All local needs have the correct isAttending status
-            realm = Realm.getInstance(this);
             RealmResults<Need> needs = realm.where(Need.class).findAll();
             mAdapter.setData(needs);
         } else {

@@ -11,6 +11,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/windowBackgroundLight</item>
         <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="popupMenuStyle">@style/ThemePopupMenu</item>
     </style>
 
     <style name="AppThemeLight" parent="AppTheme">
@@ -26,15 +27,15 @@
     </style>
 
     <style name="ThemeEditTextLight">
-        <!-- bottom line color -->
         <item name="colorControlNormal">@color/text_light_sec</item>
-        <!-- text color -->
         <item name="android:textColor">@color/text_light</item>
-        <!-- hint text color -->
         <item name="android:textColorHint">@color/text_light_hint</item>
-
         <item name="android:textColorPrimary">@color/text_light</item>
-
         <item name="android:textColorSecondary">@color/text_light_sec</item>
+    </style>
+
+    <style name="ThemePopupMenu" parent="@style/Widget.AppCompat.PopupMenu">
+        <item name="android:dropDownVerticalOffset">-56dp</item>
+        <item name="android:dropDownHorizontalOffset">0dp</item>
     </style>
 </resources>
