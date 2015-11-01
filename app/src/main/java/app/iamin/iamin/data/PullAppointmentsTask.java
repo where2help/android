@@ -1,5 +1,5 @@
 
-package app.iamin.iamin;
+package app.iamin.iamin.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -15,14 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
 
-import app.iamin.iamin.event.VolunteeringsEvent;
-import app.iamin.iamin.model.Need;
-import app.iamin.iamin.model.User;
-import io.realm.Realm;
-import io.realm.RealmResults;
+import app.iamin.iamin.data.model.NeedOld;
+import app.iamin.iamin.data.model.User;
 
 import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
 import static app.iamin.iamin.util.EndpointUtils.getHeaders;
@@ -33,28 +29,21 @@ import static app.iamin.iamin.util.EndpointUtils.storeHeader;
 /**
  * Created by paul on 10/10/2015.
  */
-public class PullVolunteeringsTask extends AsyncTask<Void, Integer, List<String>> {
+public class PullAppointmentsTask extends AsyncTask<Void, Integer, NeedOld[]> {
     private static final String TAG = "PullAppointmentsTask";
 
     private Context context;
 
-    public PullVolunteeringsTask(Context context) {
+    public PullAppointmentsTask(Context context) {
         this.context = context;
     }
 
     @Override
-    protected List<String> doInBackground(Void... params) {
+    protected NeedOld[] doInBackground(Void... params) {
 
-        List<String> errors = new ArrayList<>();
+        if (!isOnline(context)) return null;
 
-        if (!isOnline(context)) {
-            errors.add(context.getString(R.string.error_no_connection));
-            return errors;
-        }
-
-        // This are all ids from needs the user is attending
-        List<Integer> ids = new ArrayList<>();
-        Realm realm = Realm.getInstance(context);
+        NeedOld[] needs = null;
         User user = getUser(context);
 
         if (user.getEmail() == null) return null;
@@ -80,33 +69,29 @@ public class PullVolunteeringsTask extends AsyncTask<Void, Integer, List<String>
                 Log.e(TAG, "RESULT: " + result);
 
                 JSONArray data = new JSONObject(result).getJSONArray("data");
+                needs = new NeedOld[data.length()];
                 for (int i = 0; i < data.length(); i++) {
-                    realm.beginTransaction();
-
                     JSONObject obj = data.getJSONObject(i);
-                    int id = obj.getInt("id");
-
-                    RealmResults<Need> need = realm.where(Need.class).equalTo("id", id).findAll();
-                    need.first().setIsAttending(true);
-
-                    realm.commitTransaction();
+                    needs[i] = new NeedOld().fromJSON(context, obj);
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            realm.cancelTransaction();
+            return null;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
         } catch (JSONException e) {
             e.printStackTrace();
-            realm.cancelTransaction();
+            return null;
         }
 
-        realm.close();
-        return errors;
+        return needs;
     }
 
     @Override
-    protected void onPostExecute(List<String> errors) {
-        BusProvider.getInstance().post(new VolunteeringsEvent(errors));
+    protected void onPostExecute(NeedOld[] needs) {
+       // BusProvider.getInstance().post(new VolunteeringsEvent(needs));
     }
 }

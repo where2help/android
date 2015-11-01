@@ -7,8 +7,8 @@ import android.support.v4.content.IntentCompat;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import app.iamin.iamin.model.Need;
-import app.iamin.iamin.model.NeedOld;
+import app.iamin.iamin.data.model.Need;
+import app.iamin.iamin.data.model.NeedOld;
 import app.iamin.iamin.ui.DetailActivity;
 import app.iamin.iamin.ui.LoginActivity;
 import app.iamin.iamin.ui.MainActivity;

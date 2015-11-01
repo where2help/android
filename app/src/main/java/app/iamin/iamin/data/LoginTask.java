@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -19,8 +19,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.iamin.iamin.event.LoginEvent;
-import app.iamin.iamin.model.User;
+import app.iamin.iamin.R;
+import app.iamin.iamin.data.event.LoginEvent;
+import app.iamin.iamin.data.model.User;
 
 import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
 import static app.iamin.iamin.util.EndpointUtils.isOnline;

@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.data;
 
 import android.os.Handler;
 import android.os.Looper;

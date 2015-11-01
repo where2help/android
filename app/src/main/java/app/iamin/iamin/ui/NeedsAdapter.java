@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import app.iamin.iamin.R;
-import app.iamin.iamin.model.Need;
+import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.RealmResults;
 

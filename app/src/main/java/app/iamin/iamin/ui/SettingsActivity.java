@@ -12,11 +12,11 @@ import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
-import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.LogoutTask;
+import app.iamin.iamin.data.BusProvider;
+import app.iamin.iamin.data.LogoutTask;
 import app.iamin.iamin.R;
-import app.iamin.iamin.event.LogoutEvent;
-import app.iamin.iamin.model.User;
+import app.iamin.iamin.data.event.LogoutEvent;
+import app.iamin.iamin.data.model.User;
 import app.iamin.iamin.service.UtilityService;
 import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.UiUtils;

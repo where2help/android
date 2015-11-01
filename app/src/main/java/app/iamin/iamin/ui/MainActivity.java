@@ -18,14 +18,14 @@ import android.widget.ProgressBar;
 
 import com.squareup.otto.Subscribe;
 
-import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.PullNeedsTask;
-import app.iamin.iamin.PullVolunteeringsTask;
+import app.iamin.iamin.data.BusProvider;
+import app.iamin.iamin.data.PullNeedsTask;
+import app.iamin.iamin.data.PullVolunteeringsTask;
 import app.iamin.iamin.R;
-import app.iamin.iamin.event.NeedsEvent;
-import app.iamin.iamin.event.VolunteeringsEvent;
-import app.iamin.iamin.model.Need;
-import app.iamin.iamin.model.User;
+import app.iamin.iamin.data.event.NeedsEvent;
+import app.iamin.iamin.data.event.VolunteeringsEvent;
+import app.iamin.iamin.data.model.Need;
+import app.iamin.iamin.data.model.User;
 import app.iamin.iamin.service.LocationService;
 import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.NeedUtils;

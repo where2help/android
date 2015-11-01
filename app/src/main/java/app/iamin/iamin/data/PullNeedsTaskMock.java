@@ -1,5 +1,5 @@
 
-package app.iamin.iamin;
+package app.iamin.iamin.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 
-import app.iamin.iamin.event.NeedsEvent;
-import app.iamin.iamin.model.NeedOld;
+import app.iamin.iamin.data.event.NeedsEvent;
+import app.iamin.iamin.data.model.NeedOld;
 
 public class PullNeedsTaskMock extends AsyncTask<Void, Integer, NeedOld[]> {
 

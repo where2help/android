@@ -1,15 +1,15 @@
-package app.iamin.iamin.event;
+package app.iamin.iamin.data.event;
 
 import java.util.List;
 
 /**
  * Created by Markus on 13.10.15.
  */
-public class NeedsEvent {
+public class LogoutEvent {
 
-    private final List<String> errors;
+    private List<String> errors;
 
-    public NeedsEvent(List<String> errors) {
+    public LogoutEvent(List<String> errors) {
         this.errors = errors;
     }
 

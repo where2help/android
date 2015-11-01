@@ -5,7 +5,7 @@ import android.util.Log;
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Response;
 
-import app.iamin.iamin.model.User;
+import app.iamin.iamin.data.model.User;
 
 /**
  * Created by Markus on 29.10.15.

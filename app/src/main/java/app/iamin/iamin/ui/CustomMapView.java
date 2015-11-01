@@ -20,7 +20,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
 import app.iamin.iamin.R;
-import app.iamin.iamin.model.Need;
+import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.UiUtils;
 

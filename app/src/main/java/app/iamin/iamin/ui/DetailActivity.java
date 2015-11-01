@@ -12,11 +12,11 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
-import app.iamin.iamin.BusProvider;
+import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.R;
-import app.iamin.iamin.VolunteerHandler;
-import app.iamin.iamin.event.LocationEvent;
-import app.iamin.iamin.model.Need;
+import app.iamin.iamin.data.VolunteerHandler;
+import app.iamin.iamin.data.event.LocationEvent;
+import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;

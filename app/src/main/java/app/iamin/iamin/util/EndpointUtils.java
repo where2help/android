@@ -11,7 +11,7 @@ import android.widget.EditText;
 
 import com.squareup.okhttp.Headers;
 
-import app.iamin.iamin.model.User;
+import app.iamin.iamin.data.model.User;
 
 /**
  * Created by Markus on 14.10.15.

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import app.iamin.iamin.R;
-import app.iamin.iamin.model.Need;
+import app.iamin.iamin.data.model.Need;
 
 /**
  * Created by Markus on 30.10.15.

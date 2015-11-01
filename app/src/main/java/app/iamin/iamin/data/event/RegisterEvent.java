@@ -1,4 +1,4 @@
-package app.iamin.iamin.event;
+package app.iamin.iamin.data.event;
 
 import java.util.List;
 

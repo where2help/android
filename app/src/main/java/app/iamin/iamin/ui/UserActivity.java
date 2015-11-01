@@ -15,13 +15,13 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
-import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.PullAppointmentsTask;
-import app.iamin.iamin.PullVolunteeringsTask;
+import app.iamin.iamin.data.BusProvider;
+import app.iamin.iamin.data.PullAppointmentsTask;
+import app.iamin.iamin.data.PullVolunteeringsTask;
 import app.iamin.iamin.R;
-import app.iamin.iamin.event.VolunteeringsEvent;
-import app.iamin.iamin.model.Need;
-import app.iamin.iamin.model.User;
+import app.iamin.iamin.data.event.VolunteeringsEvent;
+import app.iamin.iamin.data.model.Need;
+import app.iamin.iamin.data.model.User;
 import app.iamin.iamin.util.EndpointUtils;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;

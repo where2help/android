@@ -17,12 +17,12 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import app.iamin.iamin.BusProvider;
-import app.iamin.iamin.LoginTask;
+import app.iamin.iamin.data.BusProvider;
+import app.iamin.iamin.data.LoginTask;
 import app.iamin.iamin.R;
-import app.iamin.iamin.RegisterTask;
-import app.iamin.iamin.event.LoginEvent;
-import app.iamin.iamin.event.RegisterEvent;
+import app.iamin.iamin.data.RegisterTask;
+import app.iamin.iamin.data.event.LoginEvent;
+import app.iamin.iamin.data.event.RegisterEvent;
 import app.iamin.iamin.util.UiUtils;
 
 public class LoginActivity extends AppCompatActivity {

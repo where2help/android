@@ -1,4 +1,4 @@
-package app.iamin.iamin;
+package app.iamin.iamin.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -18,7 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.iamin.iamin.event.RegisterEvent;
+import app.iamin.iamin.R;
+import app.iamin.iamin.data.event.RegisterEvent;
 
 import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
 import static app.iamin.iamin.util.EndpointUtils.isOnline;

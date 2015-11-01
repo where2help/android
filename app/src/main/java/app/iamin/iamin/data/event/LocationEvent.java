@@ -1,4 +1,4 @@
-package app.iamin.iamin.event;
+package app.iamin.iamin.data.event;
 
 import com.google.android.gms.maps.model.LatLng;
 

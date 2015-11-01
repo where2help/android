@@ -1,5 +1,5 @@
 
-package app.iamin.iamin;
+package app.iamin.iamin.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -15,31 +15,31 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.iamin.iamin.event.NeedsEvent;
-import app.iamin.iamin.model.Need;
-import app.iamin.iamin.util.LogUtils;
-import app.iamin.iamin.util.NeedUtils;
-import app.iamin.iamin.util.TimeUtils;
+import app.iamin.iamin.R;
+import app.iamin.iamin.data.event.VolunteeringsEvent;
+import app.iamin.iamin.data.model.Need;
+import app.iamin.iamin.data.model.User;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 import static app.iamin.iamin.util.EndpointUtils.getEndpoint;
 import static app.iamin.iamin.util.EndpointUtils.getHeaders;
+import static app.iamin.iamin.util.EndpointUtils.getUser;
 import static app.iamin.iamin.util.EndpointUtils.isOnline;
 import static app.iamin.iamin.util.EndpointUtils.storeHeader;
 
 /**
  * Created by paul on 10/10/2015.
  */
-public class PullNeedsTask extends AsyncTask<Void, Integer, List<String>> {
-    private static final String TAG = "PullNeedsTask";
+public class PullVolunteeringsTask extends AsyncTask<Void, Integer, List<String>> {
+    private static final String TAG = "PullAppointmentsTask";
 
     private Context context;
 
-    public PullNeedsTask(Context context) {
+    public PullVolunteeringsTask(Context context) {
         this.context = context;
     }
 
@@ -53,7 +53,13 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, List<String>> {
             return errors;
         }
 
-        String url = getEndpoint(context) + "needs";
+        // This are all ids from needs the user is attending
+        List<Integer> ids = new ArrayList<>();
+        User user = getUser(context);
+
+        if (user.getEmail() == null) return null;
+
+        String url = getEndpoint(context) + "users/" + user.getId() + "/appointments";
         Log.d(TAG, url);
 
         Headers headers = getHeaders(context);
@@ -67,26 +73,24 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, List<String>> {
 
             Response response = client.newCall(request).execute();
 
-            LogUtils.logHeaders(TAG, response);
-            Log.e(TAG, "STATUS: " + response.message());
-
             if (response.isSuccessful()) {
                 storeHeader(context, response.headers());
 
                 String result = response.body().string();
+                Log.e(TAG, "RESULT: " + result);
+
                 JSONArray data = new JSONObject(result).getJSONArray("data");
 
-                // First clear database
                 Realm realm = Realm.getInstance(context);
                 realm.beginTransaction();
-                realm.where(Need.class).findAll().clear();
-                realm.commitTransaction();
-
-                // Write into database
-                realm.beginTransaction();
                 for (int i = 0; i < data.length(); i++) {
+                    realm.beginTransaction();
+
                     JSONObject obj = data.getJSONObject(i);
-                    saveNeed(realm, obj);
+                    int id = obj.getInt("id");
+
+                    RealmResults<Need> need = realm.where(Need.class).equalTo("id", id).findAll();
+                    need.first().setIsAttending(true);
                 }
                 realm.commitTransaction();
                 realm.close();
@@ -98,9 +102,6 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, List<String>> {
         } catch (JSONException e) {
             errors.add(e.getMessage());
             e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            errors.add(e.getMessage());
         }
 
         return errors;
@@ -108,33 +109,6 @@ public class PullNeedsTask extends AsyncTask<Void, Integer, List<String>> {
 
     @Override
     protected void onPostExecute(List<String> errors) {
-        BusProvider.getInstance().post(new NeedsEvent(errors));
-    }
-
-    private void saveNeed(Realm realm, JSONObject obj) throws JSONException, IOException, ParseException{
-        Need need = realm.createObject(Need.class);
-
-        need.setId(obj.getInt("id"));
-        need.setSelfLink(obj.getJSONObject("links").getString("self"));
-
-        JSONObject attrs = obj.getJSONObject("attributes");
-
-        need.setCategory(NeedUtils.getCategory(attrs.getString("category")));
-
-        need.setCity(attrs.getString("city"));
-        need.setLocation(attrs.getString("location"));
-        need.setLat(attrs.getString("lat").equals("null") ? 0 : attrs.getDouble("lat"));
-        need.setLng(attrs.getString("lng").equals("null") ? 0 : attrs.getDouble("lng"));
-
-        need.setStart(TimeUtils.FORMAT_API.parse(attrs.getString("start-time")));
-        need.setEnd(TimeUtils.FORMAT_API.parse(attrs.getString("end-time")));
-        need.setDate(TimeUtils.formatHumanFriendlyShortDate(context, need.getStart()) + " " +
-                TimeUtils.formatTimeOfDay(need.getStart()) + " - " +
-                TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr");
-
-        need.setNeeded(attrs.getInt("volunteers-needed"));
-        need.setCount(attrs.getInt("volunteers-count"));
-
-        need.setIsAttending(false);
+        BusProvider.getInstance().post(new VolunteeringsEvent(errors));
     }
 }

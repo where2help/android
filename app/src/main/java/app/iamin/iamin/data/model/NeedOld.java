@@ -1,4 +1,4 @@
-package app.iamin.iamin.model;
+package app.iamin.iamin.data.model;
 
 import android.content.Context;
 import android.content.Intent;

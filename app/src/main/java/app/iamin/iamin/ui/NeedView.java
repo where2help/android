@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import app.iamin.iamin.R;
-import app.iamin.iamin.model.Need;
+import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.util.NeedUtils;
 
 /**
