@@ -51,4 +51,9 @@
         android:textColor="@color/grey"
         android:textSize="@dimen/text_subhead" />
 
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_check_circle_black_24dp"
+        android:tint="@color/colorAccent"/>
 </app.iamin.iamin.ui.NeedView>

@@ -3,6 +3,7 @@ package app.iamin.iamin.ui;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +24,8 @@ public class NeedView extends FrameLayout {
     private boolean isAttached = false;
 
     private ImageView iconView;
+    private ImageView checkView;
+
     private TextView countView;
     private TextView categoryView;
     private TextView addressView;
@@ -55,6 +58,7 @@ public class NeedView extends FrameLayout {
         super.onAttachedToWindow();
 
         iconView = (ImageView) getChildAt(0);
+        checkView = (ImageView) getChildAt(5);
         countView = (TextView) getChildAt(1);
         categoryView = (TextView) getChildAt(2);
         addressView = (TextView) getChildAt(3);
@@ -74,6 +78,9 @@ public class NeedView extends FrameLayout {
         // Measure the iconView
         measureChild(iconView, widthSpec, heightSpec);
 
+        // Measure the checkView
+        measureChild(checkView, widthSpec, heightSpec);
+
         // Measure the countView
         measureChild(countView, widthSpec, heightSpec);
 
@@ -81,10 +88,10 @@ public class NeedView extends FrameLayout {
         measureChild(categoryView, widthSpec, heightSpec);
 
         // Measure the addressView
-        measureChildWithMargins(addressView, widthSpec, padding * 2, heightSpec, 0);
+        measureChildWithMargins(addressView, widthSpec, padding * 3 + checkView.getMeasuredWidth(), heightSpec, 0);
 
         // Measure the dateTextView
-        measureChildWithMargins(dateTextView, widthSpec, padding * 2, heightSpec, 0);
+        measureChildWithMargins(dateTextView, widthSpec, padding * 3, heightSpec, 0);
 
         // Set dimensions
         int width = MeasureSpec.getSize(widthSpec);
@@ -103,6 +110,12 @@ public class NeedView extends FrameLayout {
                 padding,
                 baseline,
                 baseline);
+
+        checkView.layout(
+                getMeasuredWidth() - padding - checkView.getMeasuredWidth(),
+                (getMeasuredHeight() - checkView.getMeasuredWidth()) / 2,
+                getMeasuredWidth() - padding,
+                (getMeasuredHeight() + checkView.getMeasuredWidth()) / 2);
 
         countView.layout(
                 keyline,
@@ -136,6 +149,7 @@ public class NeedView extends FrameLayout {
         categoryView.setText(category == 1 ? NeedUtils.getCategorySingular(category) : NeedUtils.getCategoryPlural(category));
         addressView.setText(need.getCity() + " " + need.getLocation());
         dateTextView.setText(need.getDate());
+        checkView.setVisibility(need.isAttending() ? View.VISIBLE : View.GONE);
     }
 
     public void setNeed(Need need) {
