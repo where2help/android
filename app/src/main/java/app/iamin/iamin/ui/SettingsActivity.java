@@ -114,7 +114,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Subscribe
     public void onLogoutUpdate(LogoutEvent event) {
-        if (event.isSuccsess()) {
+        if (event.getErrors() == null) {
             EndpointUtils.clearUser(this);
             UiUtils.fireLoginIntent(this);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
