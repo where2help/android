@@ -84,7 +84,6 @@ public class PullVolunteeringsTask extends AsyncTask<Void, Integer, List<String>
                 Realm realm = Realm.getInstance(context);
                 realm.beginTransaction();
                 for (int i = 0; i < data.length(); i++) {
-                    realm.beginTransaction();
 
                     JSONObject obj = data.getJSONObject(i);
                     int id = obj.getInt("id");
