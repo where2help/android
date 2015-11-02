@@ -113,24 +113,34 @@ public class UiUtils {
         intent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + NeedUtils.getCategoryPlural(need.getCategory()) + " am " +
                 TimeUtils.formatHumanFriendlyShortDate(context, need.getStart()) + " " +
                 TimeUtils.formatTimeOfDay(need.getStart()) + " - " + TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr" + " für " + TimeUtils.getDuration(need.getStart(), need.getEnd()) + " am " +
-                need.getCity()+ " " + need.getLocation() + ". (" + need.getSelfLink() + ")");
-        context.startActivity(intent);
+                need.getCity() + " " + need.getLocation() + ". (" + need.getSelfLink() + ")");
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        } else {
+            Toast.makeText(context, "No apps found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static void fireWebIntent(Context context, NeedOld need) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(need.getSelfLink()));
-        context.startActivity(intent);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        } else {
+            Toast.makeText(context, "No web browser found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static void fireMapIntent(Context context, Need need) {
         LatLng location = NeedUtils.getLocation(need);
         String geo = location.latitude + "," + location.longitude;
         Uri gmmIntentUri = Uri.parse("geo:" + geo + "?q=" + need.getCity()+ " " + need.getLocation());
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        mapIntent.setPackage("com.google.android.apps.maps");
-        if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(mapIntent);
+        Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        intent.setPackage("com.google.android.apps.maps");
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        } else {
+            Toast.makeText(context, "Google Maps not found", Toast.LENGTH_SHORT).show();
         }
     }
 }
