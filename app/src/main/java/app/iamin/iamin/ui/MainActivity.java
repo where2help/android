@@ -57,73 +57,74 @@ public class MainActivity extends AppCompatActivity implements
             // If we don't have a user create one
             UiUtils.fireLoginIntent(this);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        } else {
-            setContentView(R.layout.activity_main);
+        }
 
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
-            setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_main);
 
-            new PullNeedsTask(this).execute();
-            // new PullNeedsTaskMock(this).execute();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
+        setSupportActionBar(toolbar);
 
-            mAdapter = new NeedsAdapter(this);
-            mLayoutManager = new LinearLayoutManager(this);
+        new PullNeedsTask(this).execute();
+        // new PullNeedsTaskMock(this).execute();
 
-            RecyclerView.ItemDecoration itemDecoration = new
-                    DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
+        mAdapter = new NeedsAdapter(this);
+        mLayoutManager = new LinearLayoutManager(this);
 
-            mNeedsView = (NeedsRecyclerView) findViewById(R.id.recycler_view);
-            mNeedsView.setLayoutManager(mLayoutManager);
-            mNeedsView.setEmptyView(findViewById(R.id.empty_view));
-            mNeedsView.addItemDecoration(itemDecoration);
-            mNeedsView.setAdapter(mAdapter);
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
 
-            mRetryButton = (ImageButton) findViewById(R.id.retry_button);
-            mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mNeedsView = (NeedsRecyclerView) findViewById(R.id.recycler_view);
+        mNeedsView.setLayoutManager(mLayoutManager);
+        mNeedsView.setEmptyView(findViewById(R.id.empty_view));
+        mNeedsView.addItemDecoration(itemDecoration);
+        mNeedsView.setAdapter(mAdapter);
+
+        mRetryButton = (ImageButton) findViewById(R.id.retry_button);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            final PopupMenu popup = new PopupMenu(this, fab);
-            popup.inflate(R.menu.menu_filter);
-            popup.setGravity(GravityCompat.END);
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.all_categories:
-                            RealmResults<Need> needs = realm.where(Need.class).findAll();
-                            mAdapter.setData(needs);
-                            break;
-                        case R.id.general:
-                            mAdapter.setData(realm.where(Need.class)
-                                    .equalTo("category", NeedUtils.CATEGORY_VOLUNTEER).findAll());
-                            break;
-                        case R.id.legal:
-                            mAdapter.setData(realm.where(Need.class)
-                                    .equalTo("category", NeedUtils.CATEGORY_LAWYER).findAll());
-                            break;
-                        case R.id.medical:
-                            mAdapter.setData(realm.where(Need.class)
-                                    .equalTo("category", NeedUtils.CATEGORY_DOCTOR).findAll());
-                            break;
-                        case R.id.translation:
-                            mAdapter.setData(realm.where(Need.class)
-                                    .equalTo("category", NeedUtils.CATEGORY_INTERPRETER).findAll());
-                            break;
-                    }
-                    item.setChecked(true);
-                    return true;
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final PopupMenu popup = new PopupMenu(this, fab);
+        popup.inflate(R.menu.menu_filter);
+        popup.setGravity(GravityCompat.END);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.all_categories:
+                        RealmResults<Need> needs = realm.where(Need.class).findAll();
+                        mAdapter.setData(needs);
+                        break;
+                    case R.id.general:
+                        mAdapter.setData(realm.where(Need.class)
+                                .equalTo("category", NeedUtils.CATEGORY_VOLUNTEER).findAll());
+                        break;
+                    case R.id.legal:
+                        mAdapter.setData(realm.where(Need.class)
+                                .equalTo("category", NeedUtils.CATEGORY_LAWYER).findAll());
+                        break;
+                    case R.id.medical:
+                        mAdapter.setData(realm.where(Need.class)
+                                .equalTo("category", NeedUtils.CATEGORY_DOCTOR).findAll());
+                        break;
+                    case R.id.translation:
+                        mAdapter.setData(realm.where(Need.class)
+                                .equalTo("category", NeedUtils.CATEGORY_INTERPRETER).findAll());
+                        break;
                 }
-            });
+                item.setChecked(true);
+                return true;
+            }
+        });
 
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    popup.show();
-                }
-            });
-            //more.setOnTouchListener(popup.getDragToOpenListener());
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popup.show();
+            }
+        });
+        //more.setOnTouchListener(popup.getDragToOpenListener());
 
            /* // Check fine location permission has been granted
             if (!LocationUtils.checkFineLocationPermission(this)) {
@@ -139,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 }
             }*/
-        }
     }
 
     @Override
