@@ -15,10 +15,12 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
+import java.util.List;
+
+import app.iamin.iamin.R;
 import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.PullAppointmentsTask;
 import app.iamin.iamin.data.PullVolunteeringsTask;
-import app.iamin.iamin.R;
 import app.iamin.iamin.data.event.VolunteeringsEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.data.model.User;
@@ -116,7 +118,8 @@ public class UserActivity extends AppCompatActivity {
 
     @Subscribe
     public void onVolunteeringsUpdate(VolunteeringsEvent event) {
-        if (event.getErrors().size() == 0) {
+        List<String> errors = event.getErrors();
+        if (errors == null) {
             RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
             if (needs.size() == 0) {
                 mProgressBar.setVisibility(View.GONE);
