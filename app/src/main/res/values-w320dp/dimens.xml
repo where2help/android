@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="spacing_normal">8dp</dimen>
+    <dimen name="spacing_micro">4dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="spacing_xlarge">40dp</dimen>
+    <dimen name="spacing_huge">56dp</dimen>
+
+    <dimen name="padding_dialog">16dp</dimen>
+</resources>

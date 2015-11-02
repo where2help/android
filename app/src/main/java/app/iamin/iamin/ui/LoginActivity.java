@@ -2,14 +2,15 @@ package app.iamin.iamin.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
@@ -17,9 +18,9 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import app.iamin.iamin.R;
 import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.LoginTask;
-import app.iamin.iamin.R;
 import app.iamin.iamin.data.RegisterTask;
 import app.iamin.iamin.data.event.LoginEvent;
 import app.iamin.iamin.data.event.RegisterEvent;
@@ -27,25 +28,33 @@ import app.iamin.iamin.util.UiUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final int UI_MODE_LOGIN = 0;
-    private static final int UI_MODE_PROGRESS = 1;
+    private static final int UI_MODE_SIGN_IN = 0;
+    private static final int UI_MODE_SIGN_UP = 1;
+    private static final int UI_MODE_PROGRESS = 2;
 
-    TextInputLayout emailInput;
-    TextInputLayout passwordInput;
+    private int currentUiMode = UI_MODE_SIGN_IN;
 
-    EditText emailEditText;
-    EditText passwordEditText;
+    private TextInputLayout emailInput;
+    private TextInputLayout passwordInput;
+    private TextInputLayout passwordConfInput;
 
-    LinearLayout userScreen;
-    LinearLayout progressScreen;
+    private EditText emailEditText;
+    private EditText passwordEditText;
+    private EditText passwordConfEditText;
+
+    private Button posBtn;
+    private Button negBtn;
+
+    private View buttonBar;
+    private View loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        userScreen = (LinearLayout) findViewById(R.id.login_screen);
-        progressScreen = (LinearLayout) findViewById(R.id.progress_screen);
+        buttonBar = findViewById(R.id.btn_bar);
+        loading = findViewById(R.id.loading);
 
         emailInput = (TextInputLayout) findViewById(R.id.input_email);
         emailEditText = (EditText) findViewById(R.id.email);
@@ -55,7 +64,13 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = (EditText) findViewById(R.id.password);
         //passwordEditText.setText("supersecret");
 
-        setUiMode(UI_MODE_LOGIN);
+        passwordConfInput = (TextInputLayout) findViewById(R.id.input_password_conf);
+        passwordConfEditText = (EditText) findViewById(R.id.password_conf);
+
+        posBtn = (Button) findViewById(R.id.btn_pos);
+        negBtn = (Button) findViewById(R.id.btn_neg);
+
+        setUiMode(UI_MODE_SIGN_IN);
     }
 
     private String getUserMail() {
@@ -73,14 +88,32 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setUiMode(int uiMode) {
+        currentUiMode = uiMode;
         switch (uiMode) {
-            case UI_MODE_LOGIN:
-                userScreen.setVisibility(View.VISIBLE);
-                progressScreen.setVisibility(View.GONE);
+            case UI_MODE_SIGN_IN:
+                posBtn.setText(getString(R.string.sign_in));
+                negBtn.setText(getString(R.string.sign_up));
+                emailInput.setVisibility(View.VISIBLE);
+                passwordInput.setVisibility(View.VISIBLE);
+                passwordConfInput.setVisibility(View.GONE);
+                buttonBar.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.GONE);
+                break;
+            case UI_MODE_SIGN_UP:
+                posBtn.setText(getString(R.string.sign_up));
+                negBtn.setText(getString(R.string.back));
+                emailInput.setVisibility(View.VISIBLE);
+                passwordInput.setVisibility(View.VISIBLE);
+                passwordConfInput.setVisibility(View.VISIBLE);
+                buttonBar.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.GONE);
                 break;
             case UI_MODE_PROGRESS:
-                userScreen.setVisibility(View.GONE);
-                progressScreen.setVisibility(View.VISIBLE);
+                emailInput.setVisibility(View.GONE);
+                passwordInput.setVisibility(View.GONE);
+                passwordConfInput.setVisibility(View.GONE);
+                buttonBar.setVisibility(View.GONE);
+                loading.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -99,20 +132,34 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        switch (currentUiMode) {
+            case UI_MODE_SIGN_UP:
+                setUiMode(UI_MODE_SIGN_IN);
+                break;
+            default:
+                super.onBackPressed();
+        }
     }
 
-    public void onActionRegister(View view) {
-        String email = emailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
-        new RegisterTask(email, password, password).execute(this); // TODO: Confirm password!
-        setUiMode(UI_MODE_PROGRESS);
+    public void onActionNegative(View view) {
+        if (currentUiMode == UI_MODE_SIGN_IN){
+            setUiMode(UI_MODE_SIGN_UP);
+        } else {
+            setUiMode(UI_MODE_SIGN_IN);
+        }
     }
 
-    public void onActionLogin(View view) {
-        String email = emailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
-        new LoginTask(email, password).execute(this);
+    public void onActionPositive(View view) {
+        if (currentUiMode == UI_MODE_SIGN_IN) {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            new LoginTask(email, password).execute(this);
+        } else {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            String passwordConf = passwordConfEditText.getText().toString();
+            new RegisterTask(email, password, passwordConf).execute(this);
+        }
         setUiMode(UI_MODE_PROGRESS);
     }
 
@@ -120,13 +167,12 @@ public class LoginActivity extends AppCompatActivity {
     public void onRegisterUpdate(RegisterEvent event) {
         List<String> errors = event.errors;
         if (errors == null) {
-            findViewById(R.id.btn_register).setVisibility(View.GONE);
-            Toast.makeText(this, "Willkommen! Bitte melde Dich an!", Toast.LENGTH_LONG).show();
-            setUiMode(UI_MODE_LOGIN);
-            // TODO: auto login
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            new LoginTask(email, password).execute(this);
         } else {
             showErrorMessage(errors);
-            setUiMode(UI_MODE_LOGIN);
+            setUiMode(UI_MODE_SIGN_UP);
         }
     }
 
@@ -138,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         } else {
             showErrorMessage(errors);
-            setUiMode(UI_MODE_LOGIN);
+            setUiMode(UI_MODE_SIGN_IN);
         }
     }
 
@@ -148,5 +194,10 @@ public class LoginActivity extends AppCompatActivity {
             message += error + " ";
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void dismiss(View view) {
+        setResult(Activity.RESULT_CANCELED);
+        finish();
     }
 }

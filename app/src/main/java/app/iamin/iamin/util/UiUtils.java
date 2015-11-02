@@ -3,7 +3,6 @@ package app.iamin.iamin.util;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.content.IntentCompat;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -30,8 +29,6 @@ public class UiUtils {
     public static void fireLoginIntent(Context context) {
         Intent intent = new Intent();
         intent.setClass(context, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         context.startActivity(intent);
     }
 

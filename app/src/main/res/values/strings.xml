@@ -18,7 +18,7 @@
     <string name="thank_you_message">Danke! Bitte komm um %1$s!</string>
     <string name="action_iamout">Absagen</string>
     <string name="action_calendar">Kalender</string>
-    <string name="welcome_message">Willkommen bei Where2Help!</string>
+    <string name="welcome_message">Log in to where2help</string>
     <string name="login_message">Melde Dich an, damit wir Dich über mögliche Änderungen von Veranstaltungen rechtzeitig informieren können.</string>
     <string name="empty_message">Du hast noch keinen Hilfeanfragen zugesagt\n\n\nヽ(。_°)ノ</string>
     <string name="cancel_message">Wir brauchen dich! Willst du wirklich absagen?</string>
@@ -36,5 +36,7 @@
     <string name="action_fire_missile">Fire Missile!</string>
     <string name="error_no_connection">Anmeldung nicht möglich. Überprüfen Sie Ihre Netzwerkverbindung.</string>
     <string name="error_user_not_found">Keinen Benutzer gefunden</string>
+    <string name="password_conf">Passwort bestätigen</string>
+    <string name="back">Zurück</string>
 
 </resources>

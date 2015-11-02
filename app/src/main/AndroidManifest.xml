@@ -32,7 +32,8 @@
 
         <activity
             android:name=".ui.LoginActivity"
-            android:theme="@style/AppThemeDark" />
+            android:theme="@style/AppThemeLogin"
+            android:windowSoftInputMode="adjustResize"/>
 
         <activity
             android:name=".ui.DetailActivity"
