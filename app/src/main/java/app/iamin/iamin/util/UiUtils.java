@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.IntentCompat;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -89,16 +90,20 @@ public class UiUtils {
     }
 
     public static void fireCalendarIntent(Context context, Need need) {
-        Intent intent = new Intent(Intent.ACTION_INSERT)
+        Intent intent = new Intent(Intent.ACTION_EDIT)
                 .setType("vnd.android.cursor.item/event")
-                .putExtra("beginTime", need.getStart())
-                .putExtra("endTime", need.getEnd())
+                .putExtra("beginTime", need.getStart().getTime())
+                .putExtra("endTime", need.getEnd().getTime())
                 .putExtra("allDay", false)
                 .putExtra("title", "Where2Help - " + NeedUtils.getCategoryPlural(need.getCategory()))
                 .putExtra("description", "Where2Help - " + NeedUtils.getCategoryPlural(need.getCategory()) + " für " +
                         TimeUtils.getDuration(need.getStart(), need.getEnd()) + ".")
                 .putExtra("eventLocation", need.getCity()+ " " + need.getLocation());
-        context.startActivity(intent);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        } else {
+            Toast.makeText(context, "No Calendar found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static void fireShareIntent(Context context, Need need) {
