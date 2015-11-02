@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
@@ -35,8 +36,13 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  */
 public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapLoadedCallback, View.OnClickListener {
 
+    private static final String TAG = "CustomMapView";
+
     private ColorDrawable foreground;
+    private ColorDrawable scrim;
     private Need need;
+
+    private int height;
 
     public CustomMapView(Context context) {
         super(context);
@@ -53,6 +59,8 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        scrim = new ColorDrawable(Color.BLACK);
+        scrim.setAlpha(0);
         int color = ContextCompat.getColor(getContext(), R.color.windowBackgroundDark);
         foreground = new ColorDrawable(color);
         setForeground(foreground);
@@ -81,6 +89,12 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
                 super.onAnimationStart(animation);
                 dropPin();
 
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                CustomMapView.this.setForeground(scrim);
             }
         });
         anim.start();
@@ -123,7 +137,7 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
     @Override
     public void onMapLoaded() {
         if (SDK_INT < LOLLIPOP) {
-            setForeground(null);
+            setForeground(scrim);
             addView(createPin());
         } else {
             playEnterAnimation();
@@ -137,5 +151,19 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
     @Override
     public void onClick(View v) {
         UiUtils.fireMapIntent(getContext(), need);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (h != oldh) {
+            height = h;
+        }
+    }
+
+    public void setOffset(int scrollY) {
+        float ratio = (float) scrollY / (float) height;
+        int alpha = (int) (ratio * 200);
+        scrim.setAlpha(alpha);
     }
 }

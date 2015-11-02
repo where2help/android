@@ -2,6 +2,7 @@ package app.iamin.iamin.ui;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,8 +13,8 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
-import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.R;
+import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.VolunteerHandler;
 import app.iamin.iamin.data.event.LocationEvent;
 import app.iamin.iamin.data.model.Need;
@@ -39,6 +40,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private TextView submitInfoTextView;
     private TextView webTextView;
 
+    private NestedScrollView container;
+
     private Need need;
     private NeedView needView;
 
@@ -56,7 +59,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
         isAttending = need.isAttending();
 
-        if (savedInstanceState != null || SDK_INT < LOLLIPOP) setupMap();
+        container = (NestedScrollView) findViewById(R.id.container);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(NeedUtils.getCategoryPlural(need.getCategory()) + " - " + need.getLocation());
@@ -78,6 +81,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         submitButton = (Button) findViewById(R.id.submit);
         submitButton.setOnClickListener(this);
 
+        if (savedInstanceState != null || SDK_INT < LOLLIPOP) setupMap();
+
         setUiMode(isAttending);
     }
 
@@ -87,10 +92,17 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         if (mapView == null) setupMap();
     }
 
-    private void setupMap(){
+    private void setupMap() {
         mapView = (CustomMapView) findViewById(R.id.map);
         mapView.setNeed(need);
         mapView.onCreate(null);
+
+        container.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                mapView.setOffset(scrollY);
+            }
+        });
     }
 
     private void setUiMode(boolean isAttending) {
