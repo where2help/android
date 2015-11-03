@@ -26,7 +26,7 @@ import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.UiUtils;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
@@ -72,10 +72,11 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         return false;
     }
 
-    @TargetApi(LOLLIPOP)
+    @TargetApi(ICE_CREAM_SANDWICH)
     private void playEnterAnimation() {
         ValueAnimator anim = ValueAnimator.ofInt(255, 0);
-        anim.setDuration(300);
+        anim.setDuration(300L);
+        anim.setStartDelay(350L);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -90,7 +91,6 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
                 dropPin();
 
             }
-
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
@@ -100,8 +100,8 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         anim.start();
     }
 
-    @TargetApi(LOLLIPOP)
-    private void dropPin(){
+    @TargetApi(ICE_CREAM_SANDWICH)
+    private void dropPin() {
         ImageView pin = createPin();
         pin.setAlpha(0f);
         pin.setScaleX(0);
@@ -112,11 +112,13 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
                 .alpha(1)
                 .rotationBy(45)
                 .scaleX(1).scaleY(1)
+                .translationY(0)
                 .setInterpolator(new FastOutLinearInInterpolator())
-                .translationY(0).setDuration(200).start();
+                .setDuration(200L)
+                .setStartDelay(0L).start();
     }
 
-    private ImageView createPin(){
+    private ImageView createPin() {
         ImageView pin = new ImageView(getContext());
         LayoutParams lp = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
@@ -136,7 +138,7 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
 
     @Override
     public void onMapLoaded() {
-        if (SDK_INT < LOLLIPOP) {
+        if (SDK_INT < ICE_CREAM_SANDWICH) {
             setForeground(scrim);
             addView(createPin());
         } else {

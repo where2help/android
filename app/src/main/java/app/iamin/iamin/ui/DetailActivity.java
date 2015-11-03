@@ -3,6 +3,7 @@ package app.iamin.iamin.ui;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.NestedScrollView.OnScrollChangeListener;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,9 +22,6 @@ import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
-
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
 /**
  * Created by Markus on 10.10.15.
@@ -49,6 +47,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private VolunteerHandler volunteerHandler;
 
+    private OnScrollChangeListener scrollChangeListener = new OnScrollChangeListener() {
+        @Override
+        public void onScrollChange(NestedScrollView v, int sX, int sY, int oldSX, int oldSY) {
+            if (mapView != null) mapView.setOffset(sY);
+        }
+    };
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -60,11 +65,16 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         isAttending = need.isAttending();
 
         container = (NestedScrollView) findViewById(R.id.container);
+        container.setOnScrollChangeListener(scrollChangeListener);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(NeedUtils.getCategoryPlural(need.getCategory()) + " - " + need.getLocation());
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(this);
+
+        mapView = (CustomMapView) findViewById(R.id.map);
+        mapView.setNeed(need);
+        mapView.onCreate(null);
 
         needView = (NeedView) findViewById(R.id.need_view);
         needView.setInDetail(true);
@@ -81,28 +91,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         submitButton = (Button) findViewById(R.id.submit);
         submitButton.setOnClickListener(this);
 
-        if (savedInstanceState != null || SDK_INT < LOLLIPOP) setupMap();
-
         setUiMode(isAttending);
-    }
-
-    @Override
-    public void onEnterAnimationComplete() {
-        super.onEnterAnimationComplete();
-        if (mapView == null) setupMap();
-    }
-
-    private void setupMap() {
-        mapView = (CustomMapView) findViewById(R.id.map);
-        mapView.setNeed(need);
-        mapView.onCreate(null);
-
-        container.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                mapView.setOffset(scrollY);
-            }
-        });
     }
 
     private void setUiMode(boolean isAttending) {
