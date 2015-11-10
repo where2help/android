@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView mFiltersList;
 
     private Realm realm;
-    private User user;
 
     private boolean hasUser = false;
 
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements
         realm = Realm.getInstance(this);
         realm.setAutoRefresh(false);
 
-        user = DataUtils.getUser(this);
+        User user = DataUtils.getUser(this);
         hasUser = user.getEmail() != null;
 
         if (savedInstanceState != null) {
@@ -238,9 +238,12 @@ public class MainActivity extends AppCompatActivity implements
         switch (requestCode) {
             case UiUtils.RC_LOGIN:
                 if (resultCode == RESULT_OK) {
-                    hasUser = true;
-                    DataService.requestNeeds(this);
-                    invalidateOptionsMenu();
+                    User user = DataUtils.getUser(this);
+                    if (!TextUtils.isEmpty(user.getEmail())) {
+                        hasUser = true;
+                        DataService.requestNeeds(this);
+                        invalidateOptionsMenu();
+                    }
                 }
                 break;
             case UiUtils.RC_DETAIL:
@@ -257,9 +260,12 @@ public class MainActivity extends AppCompatActivity implements
 
     private void handleSignIn(String error) {
         if (error == null) {
-            hasUser = true;
-            DataService.requestNeeds(this);
-            invalidateOptionsMenu();
+            User user = DataUtils.getUser(this);
+            if (!TextUtils.isEmpty(user.getEmail())) {
+                hasUser = true;
+                DataService.requestNeeds(this);
+                invalidateOptionsMenu();
+            }
         }
     }
 
@@ -298,7 +304,11 @@ public class MainActivity extends AppCompatActivity implements
             notifyDatasetChanged();
         } else if (error.equals("401")) {
             // Obtain a valid token by auto login user
-            DataService.signIn(MainActivity.this, user.getEmail(), user.getPassword());
+            User user = DataUtils.getUser(this);
+            if (!TextUtils.isEmpty(user.getEmail()) &&
+                    !TextUtils.isEmpty(user.getPassword())) {
+                DataService.signIn(MainActivity.this, user.getEmail(), user.getPassword());
+            }
         } else {
             // TODO: Handle errors in a better way
             Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
