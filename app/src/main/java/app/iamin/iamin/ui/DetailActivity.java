@@ -1,7 +1,13 @@
 package app.iamin.iamin.ui;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.NestedScrollView.OnScrollChangeListener;
 import android.support.v7.app.AlertDialog;
@@ -11,24 +17,32 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.squareup.otto.Subscribe;
+import android.widget.Toast;
 
 import app.iamin.iamin.R;
-import app.iamin.iamin.data.BusProvider;
-import app.iamin.iamin.data.VolunteerHandler;
-import app.iamin.iamin.data.event.LocationEvent;
 import app.iamin.iamin.data.model.Need;
+import app.iamin.iamin.data.model.User;
+import app.iamin.iamin.data.service.DataService;
+import app.iamin.iamin.ui.widget.CustomMapView;
+import app.iamin.iamin.ui.widget.NeedViewNew;
+import app.iamin.iamin.util.DataUtils;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
+
+import static app.iamin.iamin.data.service.DataService.ACTION_CANCEL_BOOKING;
+import static app.iamin.iamin.data.service.DataService.ACTION_CREATE_BOOKING;
+import static app.iamin.iamin.util.UiUtils.EXTRA_BOOKING_CHANGED;
+import static app.iamin.iamin.util.UiUtils.EXTRA_NEW_USER;
 
 /**
  * Created by Markus on 10.10.15.
  */
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private boolean isAttending = false; // TODO: set value based on registration !
+    private boolean isAttending = false;
+    private boolean hasChanged = false;
+    private boolean newUser = false;
 
     private LinearLayout btnBarLayout;
     private Button submitButton;
@@ -41,11 +55,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private NestedScrollView container;
 
     private Need need;
-    private NeedView needView;
+    private NeedViewNew needView;
+
+    private User user;
 
     private CustomMapView mapView;
-
-    private VolunteerHandler volunteerHandler;
 
     private OnScrollChangeListener scrollChangeListener = new OnScrollChangeListener() {
         @Override
@@ -58,9 +72,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        volunteerHandler = new VolunteerHandler(this);
+        if (savedInstanceState != null) {
+            hasChanged = savedInstanceState.getBoolean(EXTRA_BOOKING_CHANGED);
+            newUser = savedInstanceState.getBoolean(EXTRA_NEW_USER);
+        }
 
         need = NeedUtils.createNeedfromIntent(getIntent());
+
+        user = DataUtils.getUser(this);
 
         isAttending = need.isAttending();
 
@@ -76,7 +95,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         mapView.setNeed(need);
         mapView.onCreate(null);
 
-        needView = (NeedView) findViewById(R.id.need_view);
+        needView = (NeedViewNew) findViewById(R.id.need_view);
         needView.setInDetail(true);
         needView.setNeed(need);
 
@@ -96,8 +115,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private void setUiMode(boolean isAttending) {
         if (isAttending) {
-            needView.setCount((need.getCount() - 1));
-
+            submitButton.setText(R.string.action_share);
             submitButton.setEnabled(true);
 
             submitInfoTextView.setText(getString(R.string.thank_you_message, TimeUtils.formatTimeOfDay(need.getStart())));
@@ -110,52 +128,91 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             cancelButton.setOnClickListener(this);
 
             btnBarLayout.setVisibility(View.VISIBLE);
-            submitButton.setText(R.string.action_share);
         } else {
-            needView.setCount(need.getCount());
+            submitButton.setEnabled(true);
+            submitButton.setText(R.string.action_iamin);
+
             submitInfoTextView.setVisibility(View.GONE);
             btnBarLayout.setVisibility(View.GONE);
-            submitButton.setText(R.string.action_iamin);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
         // LocationService.requestLocation(this);
         // TODO: update need (data) when user comes back
+
+       LocalBroadcastManager.getInstance(this)
+                .registerReceiver(mDataReceiver, DataService.getDataResultIntentFilter());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReceiver);
     }
 
-    @Subscribe
-    public void onLocationUpdate(LocationEvent event) {
-/*        LatLng userLocation = event.getLocation();
+    private BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) return;
+            String action = intent.getAction();
+            String error = intent.getStringExtra(DataService.EXTRA_ERROR);
+            if (ACTION_CREATE_BOOKING.equals(action)) {
+                handleBookingCreation(error);
+            } else if (ACTION_CANCEL_BOOKING.equals(action)) {
+                handleBookingCancellation(error);
+            }
+        }
+    };
+
+    private void handleBookingCreation(String error) {
+        if (error == null) {
+            isAttending = true;
+            hasChanged = !hasChanged;
+            setUiMode(isAttending);
+            needView.setNeeded(need.getNeeded() - 1); //update needed
+        } else {
+            Toast.makeText(DetailActivity.this, "Error. Try again.", Toast.LENGTH_SHORT).show();
+            setUiMode(isAttending);
+        }
+    }
+
+    private void handleBookingCancellation(String error) {
+        if (error == null) {
+            hasChanged = !hasChanged;
+            isAttending = false;
+            setUiMode(isAttending);
+            needView.setNeeded(need.getNeeded() + 1); //update needed
+        } else {
+            Toast.makeText(DetailActivity.this, "Error. Try again.", Toast.LENGTH_SHORT).show();
+            setUiMode(isAttending);
+        }
+    }
+
+    /*   public void onLocationUpdate() {
+        LatLng userLocation = event.getLocation();
         if (userLocation != null) {
             String distance = LocationUtils.formatDistanceBetween(need.getLocation(), userLocation);
             needView.setDistance(distance);
-        }*/
-    }
-
-    public void onRegisterSuccess() {
-        isAttending = true;
-        setUiMode(isAttending);
-    }
+        }
+    }*/
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             default: // Back button hack
-                finish();
+                onBackPressed();
                 break;
             case R.id.submit:
-                if (submitInfoTextView.getVisibility() != View.VISIBLE) {
-                    onActionSubmit();
+                if (!isAttending) {
+                    if (user.getEmail() != null) {
+                        onActionSubmit();
+                    } else {
+                        Intent intent = new Intent(this, LoginActivity.class);
+                        startActivityForResult(intent, UiUtils.RC_LOGIN);
+                    }
                 } else {
                     UiUtils.fireShareIntent(DetailActivity.this, need);
                 }
@@ -167,8 +224,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 UiUtils.fireCalendarIntent(DetailActivity.this, need);
                 break;
             case R.id.web:
-                //UiUtils.fireWebIntent(DetailActivity.this, need);
-                volunteerHandler.delete(need.getId());
+                UiUtils.fireWebIntent(DetailActivity.this, need);
                 break;
         }
     }
@@ -176,8 +232,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     private void onActionSubmit() {
         submitButton.setText(R.string.register_status);
         submitButton.setEnabled(false);
-        volunteerHandler.create(need.getId());
-        onRegisterSuccess(); //TODO: Handle "i'm in"
+        //new CreateVolunteeringTask(need.getId()).execute(this);
+        DataService.createBooking(this, need.getId());
     }
 
     private void onActionCancel() {
@@ -190,11 +246,40 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         });
         builder.setNegativeButton(getString(R.string.cancel_negative), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                isAttending = false;
-                setUiMode(isAttending);
+                //new DeleteVolunteeringTask(need.getVolunteeringId()).execute(DetailActivity.this);
+                DataService.cancelBooking(DetailActivity.this, need.getVolunteeringId());
             }
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case UiUtils.RC_LOGIN:
+                if (resultCode == RESULT_OK) {
+                    newUser = true;
+                    user = DataUtils.getUser(this);
+                    onActionSubmit();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent result = new Intent();
+        result.putExtra(EXTRA_BOOKING_CHANGED, hasChanged);
+        result.putExtra(EXTRA_NEW_USER, newUser);
+        setResult(Activity.RESULT_OK, result);
+        finish();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putBoolean(EXTRA_BOOKING_CHANGED, hasChanged);
+        outState.putBoolean(EXTRA_NEW_USER, newUser);
     }
 }

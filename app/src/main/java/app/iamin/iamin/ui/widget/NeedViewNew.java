@@ -1,4 +1,4 @@
-package app.iamin.iamin.ui;
+package app.iamin.iamin.ui.widget;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -19,7 +19,7 @@ import app.iamin.iamin.util.NeedUtils;
  * NeedView will be used in MainActivity, DetailActivity and UserActivity.
  */
 
-public class NeedView extends FrameLayout {
+public class NeedViewNew extends FrameLayout {
 
     private boolean isAttached = false;
 
@@ -41,11 +41,11 @@ public class NeedView extends FrameLayout {
 
     private boolean inDetail = false;
 
-    public NeedView(Context context) {
+    public NeedViewNew(Context context) {
         this(context, null);
     }
 
-    public NeedView(Context context, AttributeSet attrs) {
+    public NeedViewNew(Context context, AttributeSet attrs) {
         super(context, attrs);
         Resources res = getResources();
         keyline = res.getDimensionPixelSize(R.dimen.keyline_1);
@@ -67,6 +67,8 @@ public class NeedView extends FrameLayout {
         if (!inDetail) {
             addressView.setMaxLines(1);
             dateTextView.setMaxLines(1);
+        } else {
+            checkView.setVisibility(View.GONE);
         }
 
         isAttached = true;
@@ -95,51 +97,49 @@ public class NeedView extends FrameLayout {
 
         // Set dimensions
         int width = MeasureSpec.getSize(widthSpec);
-        int height = 2 * padding + iconView.getMeasuredHeight() + addressView.getMeasuredHeight()
-                + dateTextView.getMeasuredHeight();
+        int height = 2 * padding + categoryView.getMeasuredHeight()
+                + 2 * addressView.getMeasuredHeight();
 
         setMeasuredDimension(width, height);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int baseline = padding + iconView.getMeasuredHeight();
-
         iconView.layout(
                 padding,
                 padding,
-                baseline,
-                baseline);
+                padding + iconView.getMeasuredHeight(),
+                padding + iconView.getMeasuredHeight());
 
         checkView.layout(
                 getMeasuredWidth() - padding - checkView.getMeasuredWidth(),
                 (getMeasuredHeight() - checkView.getMeasuredWidth()) / 2,
                 getMeasuredWidth() - padding,
-                (getMeasuredHeight() + checkView.getMeasuredWidth()) / 2);
-
-        countView.layout(
-                keyline,
-                baseline - countView.getMeasuredHeight() + (int) (2 * dp),
-                keyline + countView.getMeasuredWidth(),
-                baseline);
+                (getMeasuredHeight() + checkView.getMeasuredHeight()) / 2);
 
         categoryView.layout(
-                countView.getRight(),
-                baseline - categoryView.getMeasuredHeight(),
-                getMeasuredWidth() - padding,
-                baseline);
+                keyline,
+                padding,
+                keyline + categoryView.getMeasuredWidth(),
+                padding + categoryView.getMeasuredHeight());
+
+        countView.layout(
+                categoryView.getRight(),
+                padding,
+                categoryView.getRight() + countView.getMeasuredWidth(),
+                padding + countView.getMeasuredHeight());
 
         addressView.layout(
-                padding,
-                baseline,
-                categoryView.getRight(),
-                baseline + addressView.getMeasuredHeight());
+                keyline,
+                categoryView.getBottom(),
+                checkView.getLeft(),
+                categoryView.getBottom() + addressView.getMeasuredHeight());
 
         dateTextView.layout(
-                padding,
+                keyline,
                 addressView.getBottom(),
-                addressView.getRight(),
-                getMeasuredHeight() - padding);
+                checkView.getLeft(),
+                addressView.getBottom() + dateTextView.getMeasuredHeight());
     }
 
     private void fill() {
@@ -150,6 +150,7 @@ public class NeedView extends FrameLayout {
         addressView.setText(need.getCity() + " " + need.getLocation());
         dateTextView.setText(need.getDate());
         checkView.setVisibility(need.isAttending() ? View.VISIBLE : View.GONE);
+        if (inDetail) countView.setVisibility(need.isAttending() ? View.GONE : View.VISIBLE);
     }
 
     public void setNeed(Need need) {
@@ -157,9 +158,9 @@ public class NeedView extends FrameLayout {
         if (isAttached) fill();
     }
 
-    public void setCount(int count) {
-        this.need.setCount(count);
-        if (isAttached) countView.setText(String.valueOf(need.getCount()));
+    public void setNeeded(int needed) {
+        this.need.setNeeded(needed);
+        if (isAttached) countView.setText(String.valueOf(need.getNeeded()));
     }
 
 /*

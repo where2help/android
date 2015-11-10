@@ -1,4 +1,4 @@
-package app.iamin.iamin.ui;
+package app.iamin.iamin.ui.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

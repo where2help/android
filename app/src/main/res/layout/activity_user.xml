@@ -39,7 +39,7 @@
             android:textSize="@dimen/text_title" />
     </FrameLayout>
 
-    <app.iamin.iamin.ui.NeedsRecyclerView
+    <app.iamin.iamin.ui.widget.CustomRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

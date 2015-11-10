@@ -1,4 +1,4 @@
-package app.iamin.iamin.service;
+package app.iamin.iamin.data.service;
 
 import android.app.IntentService;
 import android.app.Notification;

@@ -13,6 +13,8 @@ public class Need extends RealmObject {
 
     private int id;
 
+    private int volunteeringId;
+
     private String selfLink;
 
     private int category;
@@ -167,5 +169,13 @@ public class Need extends RealmObject {
 
     public void setIsAttending(boolean isAttending) {
         this.isAttending = isAttending;
+    }
+
+    public int getVolunteeringId() {
+        return volunteeringId;
+    }
+
+    public void setVolunteeringId(int volunteeringId) {
+        this.volunteeringId = volunteeringId;
     }
 }

@@ -1,6 +1,6 @@
 package app.iamin.iamin.ui;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,31 +9,32 @@ import android.view.ViewGroup;
 
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.model.Need;
+import app.iamin.iamin.ui.widget.NeedViewNew;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.RealmResults;
 
 /**
  * Created by Paul on 10-10-2015.
  */
-public class NeedsAdapter extends RecyclerView.Adapter<NeedsAdapter.ViewHolder> {
+public class NeedFeedAdapter extends RecyclerView.Adapter<NeedFeedAdapter.ViewHolder> {
 
-    private Context mContext;
+    private Activity mContext;
     private RealmResults<Need> mNeeds;
 
-    public NeedsAdapter(Context context) {
+    public NeedFeedAdapter(Activity context) {
         mContext = context;
         setHasStableIds(true);
     }
 
     @Override
-    public NeedsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NeedFeedAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        NeedView view = (NeedView) inflater.inflate(R.layout.need_item, parent, false);
+        NeedViewNew view = (NeedViewNew) inflater.inflate(R.layout.need_item_new, parent, false);
         return new ViewHolder(view, clickListener);
     }
 
     @Override
-    public void onBindViewHolder(NeedsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(NeedFeedAdapter.ViewHolder holder, int position) {
         Need need = mNeeds.get(position);
         holder.mNeedView.setNeed(need);
     }
@@ -56,10 +57,10 @@ public class NeedsAdapter extends RecyclerView.Adapter<NeedsAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        NeedView mNeedView;
+        NeedViewNew mNeedView;
         ItemClickListener mClickListener;
 
-        public ViewHolder(NeedView needView, ItemClickListener clickListener) {
+        public ViewHolder(NeedViewNew needView, ItemClickListener clickListener) {
             super(needView);
             mNeedView = needView;
             mNeedView.setClickable(true);
@@ -73,6 +74,10 @@ public class NeedsAdapter extends RecyclerView.Adapter<NeedsAdapter.ViewHolder> 
         }
     }
 
+    public Need getItem(int position) {
+        return mNeeds.get(position);
+    }
+
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
@@ -80,8 +85,8 @@ public class NeedsAdapter extends RecyclerView.Adapter<NeedsAdapter.ViewHolder> 
     private final ItemClickListener clickListener = new ItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            Intent intent = UiUtils.getDetailIntent(mContext, mNeeds.get(position));
-            mContext.startActivity(intent);
+            Intent intent = UiUtils.getDetailIntent(mContext, getItem(position));
+            mContext.startActivityForResult(intent, UiUtils.RC_DETAIL);
         }
     };
 }

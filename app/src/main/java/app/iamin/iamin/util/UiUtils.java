@@ -8,9 +8,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import app.iamin.iamin.data.model.Need;
-import app.iamin.iamin.data.model.NeedOld;
 import app.iamin.iamin.ui.DetailActivity;
-import app.iamin.iamin.ui.LoginActivity;
 import app.iamin.iamin.ui.MainActivity;
 import app.iamin.iamin.ui.SettingsActivity;
 import app.iamin.iamin.ui.UserActivity;
@@ -20,15 +18,17 @@ import app.iamin.iamin.ui.UserActivity;
  */
 public class UiUtils {
 
+    public static final int RC_LOGIN = 0;
+
+    public static final int RC_DETAIL = 1;
+
+    public static final String EXTRA_NEW_USER = "newUser";
+
+    public static final String EXTRA_BOOKING_CHANGED = "volunteeringChanged";
+
     public static void fireMainIntent(Context context) {
         Intent intent = new Intent();
         intent.setClass(context, MainActivity.class);
-        context.startActivity(intent);
-    }
-
-    public static void fireLoginIntent(Context context) {
-        Intent intent = new Intent();
-        intent.setClass(context, LoginActivity.class);
         context.startActivity(intent);
     }
 
@@ -52,6 +52,7 @@ public class UiUtils {
         intent.putExtra("selfLink", need.getSelfLink());
 
         intent.putExtra("attending", need.isAttending());
+        intent.putExtra("volunteeringId", need.getVolunteeringId());
         return intent;
     }
 
@@ -60,7 +61,7 @@ public class UiUtils {
         Intent intent = new Intent();
         intent.setClass(context, DetailActivity.class);
         intent.putExtra("id", 0);
-        intent.putExtra("category", NeedOld.CATEGORY_VOLUNTEER);
+        intent.putExtra("category", NeedUtils.CATEGORY_VOLUNTEER);
 
         intent.putExtra("address", "Westbahnhof");
         intent.putExtra("latitude", 0);
@@ -118,7 +119,7 @@ public class UiUtils {
         }
     }
 
-    public static void fireWebIntent(Context context, NeedOld need) {
+    public static void fireWebIntent(Context context, Need need) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(need.getSelfLink()));
         if (intent.resolveActivity(context.getPackageManager()) != null) {

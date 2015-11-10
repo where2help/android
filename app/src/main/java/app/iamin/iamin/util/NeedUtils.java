@@ -108,6 +108,7 @@ public class NeedUtils {
         need.setSelfLink(bundle.getString("selfLink"));
 
         need.setIsAttending(bundle.getBoolean("attending"));
+        need.setVolunteeringId(bundle.getInt("volunteeringId"));
 
         return need;
     }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="endpoint">
-        <item>needs</item>
-        <item>registration</item>
-        <item>login</item>
-        <item>logout</item>
-        <item>volunteering</item>
+    <string-array name="filters">
+        <item>Alle Kategorien</item>
+        <item>Freiwillige</item>
+        <item>Rechtsberatung</item>
+        <item>Medizinische Unterstützung</item>
+        <item>Dolmetscher</item>
     </string-array>
 </resources>

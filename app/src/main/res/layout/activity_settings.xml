@@ -165,7 +165,23 @@
                 android:text="@string/action_fire_missile"
                 android:textColor="?colorPrimary"
                 android:textSize="@dimen/text_subhead" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/windowBackgroundDark" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:onClick="onDeleteToken"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Delete Token"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/text_subhead" />
         </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

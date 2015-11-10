@@ -1,7 +1,11 @@
 package app.iamin.iamin.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,16 +14,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.otto.Subscribe;
-
-import app.iamin.iamin.data.BusProvider;
-import app.iamin.iamin.data.LogoutTask;
 import app.iamin.iamin.R;
-import app.iamin.iamin.data.event.LogoutEvent;
 import app.iamin.iamin.data.model.User;
-import app.iamin.iamin.service.UtilityService;
-import app.iamin.iamin.util.EndpointUtils;
-import app.iamin.iamin.util.UiUtils;
+import app.iamin.iamin.data.service.DataService;
+import app.iamin.iamin.data.service.UtilityService;
+import app.iamin.iamin.util.DataUtils;
+
+import static app.iamin.iamin.data.service.DataService.ACTION_SIGN_OUT;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -33,7 +34,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        user = EndpointUtils.getUser(this);
+        user = DataUtils.getUser(this);
 
         usernameTextView = (TextView) findViewById(R.id.username);
         usernameTextView.setText(user.getFirstName() + " " + user.getLastName());
@@ -71,23 +72,18 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(mDataReceiver, DataService.getDataResultIntentFilter());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_right, R.anim.leave_left);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReceiver);
     }
 
     public void onEditEndpoint(View view) {
-        EndpointUtils.showEndpointInputPicker(SettingsActivity.this);
+        DataUtils.showEndpointInputPicker(SettingsActivity.this);
     }
 
     public void onFireMissile(View view) {
@@ -100,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
         builder.setMessage("Do you really want to sign out?");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                new LogoutTask().execute(SettingsActivity.this);
+                DataService.signOut(SettingsActivity.this);
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -112,15 +108,31 @@ public class SettingsActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    @Subscribe
-    public void onLogoutUpdate(LogoutEvent event) {
-        if (event.getErrors() == null) {
-            EndpointUtils.clearUser(this);
-            UiUtils.fireLoginIntent(this);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    private BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) return;
+            String action = intent.getAction();
+            String error = intent.getStringExtra(DataService.EXTRA_ERROR);
+            if (ACTION_SIGN_OUT.equals(action)) {
+                handleSignOut(error);
+            }
+        }
+    };
+
+    private void handleSignOut(String error) {
+        if (error == null) {
+            DataUtils.clearUser(this);
+            setUiMode(false);
+            Toast.makeText(this, "ByeBye!", Toast.LENGTH_SHORT).show();
         } else {
             // TODO: Handle errors
-            Toast.makeText(this, "Error! Try again!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void onDeleteToken(View view) {
+        DataUtils.clearToken(SettingsActivity.this);
+        Toast.makeText(this, "Token deleted!", Toast.LENGTH_SHORT).show();
     }
 }

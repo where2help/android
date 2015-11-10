@@ -35,6 +35,11 @@
         <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
 
+    <style name="Widget.Where2Help.HomeToolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:background">?android:colorPrimary</item>
+        <item name="elevation">@dimen/z_app_bar</item>
+    </style>
+
     <style name="Widget.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="windowActionModeOverlay">true</item>
     </style>
@@ -52,5 +57,7 @@
         <item name="android:dropDownHorizontalOffset">0dp</item>
     </style>
 
-    <color name="scrim">#5000</color>
+    <style name="Subhead" parent="@style/TextAppearance.AppCompat.Subhead">
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

@@ -1,5 +1,6 @@
 package app.iamin.iamin.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,27 +14,20 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.otto.Subscribe;
-
-import java.util.List;
-
 import app.iamin.iamin.R;
-import app.iamin.iamin.data.BusProvider;
-import app.iamin.iamin.data.PullAppointmentsTask;
-import app.iamin.iamin.data.PullVolunteeringsTask;
-import app.iamin.iamin.data.event.VolunteeringsEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.data.model.User;
-import app.iamin.iamin.util.EndpointUtils;
+import app.iamin.iamin.ui.widget.CustomRecyclerView;
+import app.iamin.iamin.util.DataUtils;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class UserActivity extends AppCompatActivity {
 
-    private NeedsRecyclerView mNeedsView;
+    private CustomRecyclerView mNeedsView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private NeedsAdapter mAdapter;
+    private NeedFeedAdapter mAdapter;
 
     private ImageButton mRetryButton;
     private ProgressBar mProgressBar;
@@ -46,7 +40,7 @@ public class UserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
-        User user = EndpointUtils.getUser(this);
+        User user = DataUtils.getUser(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,7 +51,7 @@ public class UserActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mAdapter = new NeedsAdapter(this);
+        mAdapter = new NeedFeedAdapter(this);
         mLayoutManager = new LinearLayoutManager(this);
 
         realm = Realm.getInstance(this);
@@ -67,7 +61,7 @@ public class UserActivity extends AppCompatActivity {
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
 
-        mNeedsView = (NeedsRecyclerView) findViewById(R.id.recycler_view);
+        mNeedsView = (CustomRecyclerView) findViewById(R.id.recycler_view);
         mNeedsView.setLayoutManager(mLayoutManager);
         mNeedsView.setEmptyView(findViewById(R.id.empty_view));
         mNeedsView.addItemDecoration(itemDecoration);
@@ -85,7 +79,6 @@ public class UserActivity extends AppCompatActivity {
         mRetryButton.setEnabled(false);
         mRetryButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
-        new PullAppointmentsTask(this).execute();
     }
 
     @Override
@@ -112,16 +105,24 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
-        new PullVolunteeringsTask(this).execute();
     }
 
-    @Subscribe
-    public void onVolunteeringsUpdate(VolunteeringsEvent event) {
-        List<String> errors = event.getErrors();
-        if (errors == null) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case UiUtils.RC_DETAIL:
+                if (resultCode == RESULT_OK) {
+                    if (data.getBooleanExtra(UiUtils.EXTRA_BOOKING_CHANGED, false))
+                        mAdapter.notifyDataSetChanged();
+                }
+                break;
+        }
+    }
+
+/*    public void onVolunteeringsUpdate(CreateVolunteeringEvent event) {
+        if (event.getErrors().size() == 0) {
             RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
-            if (needs.size() == 0) {
+            if (needs.isEmpty()) {
                 mProgressBar.setVisibility(View.GONE);
                 mEmptyTextView.setVisibility(View.VISIBLE);
             } else {
@@ -132,12 +133,11 @@ public class UserActivity extends AppCompatActivity {
             mRetryButton.setVisibility(View.VISIBLE);
             mRetryButton.setEnabled(true);
         }
-    }
+    }*/
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
     }
 
     @Override

@@ -13,12 +13,17 @@
     <dimen name="spacing_large">32dp</dimen>
     <dimen name="spacing_xlarge">48dp</dimen>
     <dimen name="spacing_huge">64dp</dimen>
-    <dimen name="keyline_1">60dp</dimen>
+    <dimen name="keyline_1">72dp</dimen>
 
     <dimen name="padding">16dp</dimen>
     <dimen name="padding_dialog">24dp</dimen>
 
     <dimen name="dialog_title_spacing">20dp</dimen>
+
+    <dimen name="drawer_width">304dp</dimen>
+
+
+    <dimen name="z_app_bar">4dp</dimen>
 
     <!-- FONT SIZES -->
     <dimen name="text_padding">8dp</dimen>

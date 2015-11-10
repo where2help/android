@@ -1,4 +1,4 @@
-package app.iamin.iamin.service;
+package app.iamin.iamin.data.service;
 
 import android.app.IntentService;
 import android.app.PendingIntent;
@@ -17,9 +17,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.concurrent.TimeUnit;
 
-import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.util.LocationUtils;
-import app.iamin.iamin.data.event.LocationEvent;
 
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
@@ -124,8 +122,7 @@ public class LocationService extends IntentService {
             // Store in a local preference as well
             LocationUtils.storeLocation(this, latLngLocation);
 
-            // Post updated location so if an Activity is open it can respond
-            BusProvider.getInstance().post(new LocationEvent(latLngLocation));
+            //TODO: Post updated location so if an Activity is open it can respond
         }
     }
 }

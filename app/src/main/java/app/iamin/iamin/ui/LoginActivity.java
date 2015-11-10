@@ -3,8 +3,12 @@ package app.iamin.iamin.ui;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Patterns;
@@ -13,18 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.squareup.otto.Subscribe;
-
-import java.util.List;
 import java.util.regex.Pattern;
 
 import app.iamin.iamin.R;
-import app.iamin.iamin.data.BusProvider;
-import app.iamin.iamin.data.LoginTask;
-import app.iamin.iamin.data.RegisterTask;
-import app.iamin.iamin.data.event.LoginEvent;
-import app.iamin.iamin.data.event.RegisterEvent;
-import app.iamin.iamin.util.UiUtils;
+import app.iamin.iamin.data.service.DataService;
+
+import static app.iamin.iamin.data.service.DataService.ACTION_SIGN_IN;
+import static app.iamin.iamin.data.service.DataService.ACTION_SIGN_UP;
+import static app.iamin.iamin.data.service.DataService.EXTRA_ERROR;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -58,11 +58,9 @@ public class LoginActivity extends AppCompatActivity {
 
         emailInput = (TextInputLayout) findViewById(R.id.input_email);
         emailEditText = (EditText) findViewById(R.id.email);
-        emailEditText.setText("android_user@example.com");
 
         passwordInput = (TextInputLayout) findViewById(R.id.input_password);
         passwordEditText = (EditText) findViewById(R.id.password);
-        //passwordEditText.setText("supersecret");
 
         passwordConfInput = (TextInputLayout) findViewById(R.id.input_password_conf);
         passwordConfEditText = (EditText) findViewById(R.id.password_conf);
@@ -121,14 +119,29 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(mDataReceiver, DataService.getDataResultIntentFilter());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReceiver);
     }
+
+    private BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) return;
+            String action = intent.getAction();
+            String error = intent.getStringExtra(EXTRA_ERROR);
+            if (ACTION_SIGN_UP.equals(action)) {
+                handleSignUp(error);
+            } else if (ACTION_SIGN_IN.equals(action)) {
+                handleSignIn(error);
+            }
+        }
+    };
 
     @Override
     public void onBackPressed() {
@@ -153,51 +166,38 @@ public class LoginActivity extends AppCompatActivity {
         if (currentUiMode == UI_MODE_SIGN_IN) {
             String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
-            new LoginTask(email, password).execute(this);
+            DataService.signIn(this, email, password);
         } else {
             String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             String passwordConf = passwordConfEditText.getText().toString();
-            new RegisterTask(email, password, passwordConf).execute(this);
+            DataService.signUp(this, email, password, passwordConf);
         }
         setUiMode(UI_MODE_PROGRESS);
     }
 
-    @Subscribe
-    public void onRegisterUpdate(RegisterEvent event) {
-        List<String> errors = event.errors;
-        if (errors == null) {
+    private void handleSignUp(String error) {
+        if (error == null) {
             String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
-            new LoginTask(email, password).execute(this);
+            DataService.signIn(this, email, password);
         } else {
-            showErrorMessage(errors);
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
             setUiMode(UI_MODE_SIGN_UP);
         }
     }
 
-    @Subscribe
-    public void onLoginUpdate(LoginEvent event) {
-        List<String> errors = event.errors;
-        if (errors == null) {
-            UiUtils.fireMainIntent(this);
+    private void handleSignIn(String error) {
+        if (error == null) {
+            setResult(Activity.RESULT_OK);
             finish();
         } else {
-            showErrorMessage(errors);
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
             setUiMode(UI_MODE_SIGN_IN);
         }
     }
 
-    private void showErrorMessage(List<String> errors) {
-        String message = "";
-        for (String error : errors) {
-            message += error + " ";
-        }
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public void dismiss(View view) {
-        setResult(Activity.RESULT_CANCELED);
+    private void dismiss(View view) {
         finish();
     }
 }

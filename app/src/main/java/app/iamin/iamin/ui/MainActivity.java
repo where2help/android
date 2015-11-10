@@ -1,145 +1,126 @@
 package app.iamin.iamin.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.squareup.otto.Subscribe;
-
-import app.iamin.iamin.data.BusProvider;
-import app.iamin.iamin.data.PullNeedsTask;
-import app.iamin.iamin.data.PullVolunteeringsTask;
 import app.iamin.iamin.R;
-import app.iamin.iamin.data.event.NeedsEvent;
-import app.iamin.iamin.data.event.VolunteeringsEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.data.model.User;
-import app.iamin.iamin.service.LocationService;
-import app.iamin.iamin.util.EndpointUtils;
-import app.iamin.iamin.util.NeedUtils;
+import app.iamin.iamin.data.service.DataService;
+import app.iamin.iamin.ui.widget.CustomRecyclerView;
+import app.iamin.iamin.util.DataUtils;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class MainActivity extends AppCompatActivity implements
-        ActivityCompat.OnRequestPermissionsResultCallback {
+import static app.iamin.iamin.data.service.DataService.ACTION_REQUEST_BOOKINGS;
+import static app.iamin.iamin.data.service.DataService.ACTION_REQUEST_NEEDS;
+import static app.iamin.iamin.data.service.DataService.ACTION_SIGN_IN;
 
-    private NeedsRecyclerView mNeedsView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private NeedsAdapter mAdapter;
+public class MainActivity extends AppCompatActivity implements
+        ActivityCompat.OnRequestPermissionsResultCallback,
+        FilterAdapter.FilterChangedListener {
+
+    private static final String TAG = "MainActivity";
+
+    private static final String STATE_UI = "uiState";
+    private static final String STATE_FILTER = "filterState";
+
+    private static final int UI_STATE_HOME = 0;
+    private static final int UI_STATE_BOOKINGS = 1;
+
+    private int mUiState = UI_STATE_HOME;
+    private int mFilterState = 0;
+
+    private CustomRecyclerView mNeedsList;
+    private NeedFeedAdapter mAdapter;
 
     private ImageButton mRetryButton;
     private ProgressBar mProgressBar;
+    private TextView mEmptyTextView;
+
+    private DrawerLayout mDrawer;
+    private RecyclerView mFiltersList;
 
     private Realm realm;
     private User user;
+
+    private boolean hasUser = false;
 
     // private static final int PERMISSION_REQ = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
         realm = Realm.getInstance(this);
-        user = EndpointUtils.getUser(this);
-        if (user.getEmail() == null) {
-            // If we don't have a user create one
-            UiUtils.fireLoginIntent(this);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        realm.setAutoRefresh(false);
+
+        user = DataUtils.getUser(this);
+        hasUser = user.getEmail() != null;
+
+        if (savedInstanceState != null) {
+            mUiState = savedInstanceState.getInt(STATE_UI);
+            mFilterState = savedInstanceState.getInt(STATE_FILTER);
         }
 
-        setContentView(R.layout.activity_main);
+        Log.e(TAG, STATE_FILTER + ": " + mFilterState);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.addView(LayoutInflater.from(this).inflate(R.layout.logo, toolbar, false));
-        setSupportActionBar(toolbar);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer);
 
-        new PullNeedsTask(this).execute();
-        // new PullNeedsTaskMock(this).execute();
+        mAdapter = new NeedFeedAdapter(this);
 
-        mAdapter = new NeedsAdapter(this);
-        mLayoutManager = new LinearLayoutManager(this);
+/*        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);*/
 
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
-
-        mNeedsView = (NeedsRecyclerView) findViewById(R.id.recycler_view);
-        mNeedsView.setLayoutManager(mLayoutManager);
-        mNeedsView.setEmptyView(findViewById(R.id.empty_view));
-        mNeedsView.addItemDecoration(itemDecoration);
-        mNeedsView.setAdapter(mAdapter);
+        mNeedsList = (CustomRecyclerView) findViewById(R.id.recycler_view);
+        mNeedsList.setEmptyView(findViewById(R.id.empty_view));
+        //mNeedsList.addItemDecoration(itemDecoration);
+        mNeedsList.setAdapter(mAdapter);
 
         mRetryButton = (ImageButton) findViewById(R.id.retry_button);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mEmptyTextView = (TextView) findViewById(R.id.empty_message);
 
+        mFiltersList = (RecyclerView) findViewById(R.id.filters);
+        mFiltersList.setAdapter(new FilterAdapter(this, mFilterState, this));
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        final PopupMenu popup = new PopupMenu(this, fab);
-        popup.inflate(R.menu.menu_filter);
-        popup.setGravity(GravityCompat.END);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.all_categories:
-                        RealmResults<Need> needs = realm.where(Need.class).findAll();
-                        mAdapter.setData(needs);
-                        break;
-                    case R.id.general:
-                        mAdapter.setData(realm.where(Need.class)
-                                .equalTo("category", NeedUtils.CATEGORY_VOLUNTEER).findAll());
-                        break;
-                    case R.id.legal:
-                        mAdapter.setData(realm.where(Need.class)
-                                .equalTo("category", NeedUtils.CATEGORY_LAWYER).findAll());
-                        break;
-                    case R.id.medical:
-                        mAdapter.setData(realm.where(Need.class)
-                                .equalTo("category", NeedUtils.CATEGORY_DOCTOR).findAll());
-                        break;
-                    case R.id.translation:
-                        mAdapter.setData(realm.where(Need.class)
-                                .equalTo("category", NeedUtils.CATEGORY_INTERPRETER).findAll());
-                        break;
+        setUiState(mUiState);
+
+       /* // Check fine location permission has been granted
+        if (!LocationUtils.checkFineLocationPermission(this)) {
+            // See if user has denied permission in the past
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show a simple snackbar explaining the request instead
+                showPermissionSnackbar();
+            } else {
+                // Otherwise request permission from user
+                if (savedInstanceState == null) {
+                    requestFineLocationPermission();
                 }
-                item.setChecked(true);
-                return true;
             }
-        });
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popup.show();
-            }
-        });
-        //more.setOnTouchListener(popup.getDragToOpenListener());
-
-           /* // Check fine location permission has been granted
-            if (!LocationUtils.checkFineLocationPermission(this)) {
-                // See if user has denied permission in the past
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    // Show a simple snackbar explaining the request instead
-                    showPermissionSnackbar();
-                } else {
-                    // Otherwise request permission from user
-                    if (savedInstanceState == null) {
-                        requestFineLocationPermission();
-                    }
-                }
-            }*/
+        }*/
     }
 
     @Override
@@ -149,13 +130,41 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        switch (mUiState) {
+            case UI_STATE_HOME:
+                menu.findItem(R.id.menu_filter).setVisible(true);
+                menu.findItem(R.id.menu_login).setVisible(!hasUser);
+                menu.findItem(R.id.menu_bookings).setVisible(hasUser);
+                menu.findItem(R.id.menu_settings).setVisible(true);
+                break;
+            case UI_STATE_BOOKINGS:
+                menu.findItem(R.id.menu_filter).setVisible(false);
+                menu.findItem(R.id.menu_login).setVisible(false);
+                menu.findItem(R.id.menu_bookings).setVisible(false);
+                menu.findItem(R.id.menu_settings).setVisible(false);
+                break;
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_user:
-                UiUtils.fireUserIntent(MainActivity.this);
-                overridePendingTransition(R.anim.enter_left, R.anim.leave_right);
+            case android.R.id.home:
+                setUiState(UI_STATE_HOME);
                 return true;
-            case R.id.action_settings:
+            case R.id.menu_filter:
+                mDrawer.openDrawer(GravityCompat.END);
+                return true;
+            case R.id.menu_bookings:
+                setUiState(UI_STATE_BOOKINGS);
+                return true;
+            case R.id.menu_login:
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivityForResult(intent, UiUtils.RC_LOGIN);
+                return true;
+            case R.id.menu_settings:
                 UiUtils.fireSettingsIntent(MainActivity.this);
                 return true;
             default:
@@ -163,31 +172,148 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Called when fetching new needs is done. If successful this starts a PullVolunteeringsTask.
-     */
-    @Subscribe
-    public void onNeedsUpdate(NeedsEvent event) {
-        if (event.getErrors().size() == 0) {
-            // All local needs are up to date
-            new PullVolunteeringsTask(this).execute();
+    public void setUiState(int state) {
+        ActionBar ab = getSupportActionBar();
+        switch (state) {
+            case UI_STATE_HOME:
+                if (ab != null) {
+                    ab.setCustomView(R.layout.logo);
+                    ab.setDisplayShowTitleEnabled(false);
+                    ab.setDisplayShowCustomEnabled(true);
+                    ab.setDisplayHomeAsUpEnabled(false);
+
+                    mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+                    if (mUiState == UI_STATE_BOOKINGS) {
+                        setCategoryFilter(mFilterState);
+                    }
+                }
+                break;
+            case UI_STATE_BOOKINGS:
+                if (ab != null) {
+                    ab.setTitle(getString(R.string.appointments));
+                    ab.setDisplayShowCustomEnabled(false);
+                    ab.setDisplayHomeAsUpEnabled(true);
+                    ab.setDisplayShowTitleEnabled(true);
+
+                    mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+                    setBookingsFilter();
+                }
+                break;
+        }
+        mUiState = state;
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onFilterChanged(View view, int position) {
+        setCategoryFilter(position);
+        mFiltersList.getAdapter().notifyDataSetChanged(); // update highlight
+        mDrawer.closeDrawer(GravityCompat.END);
+    }
+
+    private void setCategoryFilter(int position) {
+        if (position == 0) {
+            mAdapter.setData(realm.where(Need.class).findAll());
         } else {
+            mAdapter.setData(realm.where(Need.class)
+                    .equalTo("category", position - 1).findAll());
+        }
+        // save state
+        mFilterState = position;
+    }
+
+    private void setBookingsFilter() {
+        RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
+        if (needs.isEmpty()) {
+            mProgressBar.setVisibility(View.GONE);
+            mEmptyTextView.setVisibility(View.VISIBLE);
+        }
+        mAdapter.setData(needs);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case UiUtils.RC_LOGIN:
+                if (resultCode == RESULT_OK) {
+                    hasUser = true;
+                    DataService.requestNeeds(this);
+                    invalidateOptionsMenu();
+                }
+                break;
+            case UiUtils.RC_DETAIL:
+                if (resultCode == RESULT_OK) {
+                    if (data.getBooleanExtra(UiUtils.EXTRA_BOOKING_CHANGED, false))
+                        mAdapter.notifyDataSetChanged();
+                    if (data.getBooleanExtra(UiUtils.EXTRA_NEW_USER, false))
+                        hasUser = true;
+                    invalidateOptionsMenu();
+                }
+                break;
+        }
+    }
+
+    private void handleSignIn(String error) {
+        if (error == null) {
+            hasUser = true;
+            DataService.requestNeeds(this);
+            invalidateOptionsMenu();
+        }
+    }
+
+    private BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) return;
+            String action = intent.getAction();
+            String error = intent.getStringExtra(DataService.EXTRA_ERROR);
+            if (ACTION_REQUEST_NEEDS.equals(action)) {
+                handleNeedsResult(error);
+            } else if (ACTION_REQUEST_BOOKINGS.equals(action)) {
+                handleBookingsResult(error);
+            } else if (ACTION_SIGN_IN.equals(action)) {
+                handleSignIn(error);
+            }
+        }
+    };
+
+    private void handleNeedsResult(String error) {
+        if (hasUser && error == null) {
+            DataService.requestBookings(MainActivity.this);
+        } else if (error == null) {
+            notifyDatasetChanged();
+        } else {
+            // TODO: Handle errors in a better way
+            Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
             mProgressBar.setVisibility(View.GONE);
             mRetryButton.setVisibility(View.VISIBLE);
             mRetryButton.setEnabled(true);
         }
     }
 
-    @Subscribe
-    public void onVolunteeringsUpdate(VolunteeringsEvent event) {
-        if (event.getErrors().size() == 0) {
-            // All local needs have the correct isAttending status
-            RealmResults<Need> needs = realm.where(Need.class).findAll();
-            mAdapter.setData(needs);
+    private void handleBookingsResult(String error) {
+        if (error == null) {
+            notifyDatasetChanged();
+        } else if (error.equals("401")) {
+            // Obtain a valid token by auto login user
+            DataService.signIn(MainActivity.this, user.getEmail(), user.getPassword());
         } else {
+            // TODO: Handle errors in a better way
+            Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
             mProgressBar.setVisibility(View.GONE);
             mRetryButton.setVisibility(View.VISIBLE);
             mRetryButton.setEnabled(true);
+        }
+    }
+
+    private void notifyDatasetChanged() {
+        realm.refresh();
+        if (mUiState == UI_STATE_BOOKINGS) {
+            setBookingsFilter();
+        } else {
+            setCategoryFilter(mFilterState);
         }
     }
 
@@ -195,28 +321,46 @@ public class MainActivity extends AppCompatActivity implements
         mRetryButton.setEnabled(false);
         mRetryButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
-        new PullNeedsTask(this).execute();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        BusProvider.getInstance().register(this);
-        LocationService.requestLocation(this);
-        // TODO: update needs
-        // new PullNeedsTask(this).execute();
+        DataService.requestNeeds(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(mDataReceiver, DataService.getDataResultIntentFilter());
+        //LocationService.requestLocation(this);
+        DataService.requestNeeds(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(STATE_UI, mUiState);
+        savedInstanceState.putInt(STATE_FILTER, mFilterState);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawer.isDrawerOpen(GravityCompat.END)) {
+            mDrawer.closeDrawer(GravityCompat.END);
+        } else if (mUiState == UI_STATE_BOOKINGS) {
+            setUiState(UI_STATE_HOME);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /*    *//**

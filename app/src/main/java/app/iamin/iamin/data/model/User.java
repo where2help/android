@@ -15,6 +15,8 @@ public class User {
 
     private String email;
 
+    private String password;
+
     private String firstName;
 
     private String lastName;
@@ -37,10 +39,11 @@ public class User {
 
     public User() {}
 
-    public User fromJSON(JSONObject obj) throws JSONException, IOException, ParseException {
+    public User fromJSON(JSONObject obj, String password) throws JSONException, IOException, ParseException {
         User user = new User();
         user.setId(obj.getInt("id"));
         user.setEmail(obj.getString("email"));
+        user.setPassword(password);
         user.setFirstName(obj.getString("first_name"));
         user.setLastName(obj.getString("last_name"));
         user.setPhone(obj.getString("phone"));
@@ -149,5 +152,13 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -16,7 +16,7 @@ import app.iamin.iamin.data.model.User;
 /**
  * Created by Markus on 14.10.15.
  */
-public class EndpointUtils {
+public class DataUtils {
     /**
      * Default endpoint URL
      */
@@ -67,7 +67,17 @@ public class EndpointUtils {
     }
 
     /**
-     * Store the response headers in the app preferences.
+     * Deletes the Access-Token. (Developer Settings)
+     */
+    public static void clearToken(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("Access-Token", null);
+        editor.apply();
+    }
+
+    /**
+     * Store the headers in the app preferences.
      */
     public static void storeHeader(Context context, Headers headers) {
         SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -81,7 +91,7 @@ public class EndpointUtils {
     }
 
     /**
-     * Fetch the response headers from app preferences.
+     * Fetch the headers from app preferences.
      */
     public static Headers getHeaders(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -102,6 +112,7 @@ public class EndpointUtils {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("User_id", user.getId());
         editor.putString("User_email", user.getEmail());
+        editor.putString("User_password", user.getPassword());
         editor.putString("User_first_name", user.getFirstName());
         editor.putString("User_last_name", user.getLastName());
         editor.putString("User_phone", user.getPhone());
@@ -123,6 +134,7 @@ public class EndpointUtils {
         SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         user.setId(prefs.getInt("User_id", 0));
         user.setEmail(prefs.getString("User_email", null));
+        user.setPassword(prefs.getString("User_password", null));
         user.setFirstName(prefs.getString("User_first_name", null));
         user.setLastName(prefs.getString("User_last_name", null));
         user.setPhone(prefs.getString("User_phone", null));
@@ -154,4 +166,14 @@ public class EndpointUtils {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+/*    private static boolean isTokenValid(Headers headers) {
+        if (!TextUtils.isEmpty(headers.get("Access-Token")) ||
+                !TextUtils.isEmpty(headers.get("Expiry"))) {
+            if (System.currentTimeMillis() > (Long.parseLong(headers.get("Expiry")) * 1000L)) {
+                return true;
+            }
+        }
+        return false;
+    }*/
 }

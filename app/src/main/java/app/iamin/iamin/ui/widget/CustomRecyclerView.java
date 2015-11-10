@@ -1,4 +1,4 @@
-package app.iamin.iamin.ui;
+package app.iamin.iamin.ui.widget;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.View;
 /**
  * Created by Markus on 12.10.15.
  */
-public class NeedsRecyclerView extends RecyclerView {
+public class CustomRecyclerView extends RecyclerView {
 
     private View mEmptyView;
 
@@ -20,15 +20,15 @@ public class NeedsRecyclerView extends RecyclerView {
         }
     };
 
-    public NeedsRecyclerView(Context context) {
+    public CustomRecyclerView(Context context) {
         super(context);
     }
 
-    public NeedsRecyclerView(Context context, AttributeSet attrs) {
+    public CustomRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public NeedsRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+    public CustomRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
