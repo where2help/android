@@ -1,11 +1,5 @@
 package app.iamin.iamin.data.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.text.ParseException;
-
 /**
  * Created by Markus on 20.10.15.
  */
@@ -38,25 +32,6 @@ public class User {
     private String image;
 
     public User() {}
-
-    public User fromJSON(JSONObject obj, String password) throws JSONException, IOException, ParseException {
-        User user = new User();
-        user.setId(obj.getInt("id"));
-        user.setEmail(obj.getString("email"));
-        user.setPassword(password);
-        user.setFirstName(obj.getString("first_name"));
-        user.setLastName(obj.getString("last_name"));
-        user.setPhone(obj.getString("phone"));
-        // TODO: wait for fix
-        //user.setAdmin(obj.getBoolean("admin"));
-        //user.setNgoAdmin(obj.getBoolean("ngo_admin"));
-        user.setProvider(obj.getString("provider"));
-        user.setUid(obj.getString("uid"));
-        user.setName(obj.getString("name"));
-        user.setNickname(obj.getString("nickname"));
-        user.setImage(obj.getString("image"));
-        return user;
-    }
 
     public int getId() {
         return id;
