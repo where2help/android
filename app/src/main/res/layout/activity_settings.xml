@@ -83,7 +83,7 @@
                 android:text="@string/action_log_out"
                 android:textColor="?colorPrimary"
                 android:textSize="@dimen/text_subhead"
-                android:onClick="onActionLogout"/>
+                android:onClick="onActionSignOut"/>
 
             <View
                 android:id="@+id/divider2"

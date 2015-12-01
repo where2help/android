@@ -2,6 +2,7 @@ package app.iamin.iamin.data.api;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.WorkerThread;
 
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -32,6 +33,7 @@ import static app.iamin.iamin.util.DataUtils.storeHeader;
  */
 public class AuthService {
 
+    @WorkerThread
     public static String signUp(Context context, Intent intent) {
         String email = intent.getStringExtra(EXTRA_EMAIL);
         String password = intent.getStringExtra(EXTRA_PASSWORD);
@@ -47,6 +49,7 @@ public class AuthService {
                 .add("phone", "null")
                 .build();
         Request request = new Request.Builder().url(url).post(requestBody).build();
+
         try {
             Response response = new OkHttpClient().newCall(request).execute();
             if (response.isSuccessful()) {
@@ -64,7 +67,9 @@ public class AuthService {
         }
     }
 
+    @WorkerThread
     public static String signIn(Context context, Intent intent) {
+
         String email = intent.getStringExtra(EXTRA_EMAIL);
         String password = intent.getStringExtra(EXTRA_PASSWORD);
 
@@ -74,6 +79,7 @@ public class AuthService {
                 .add("password", password)
                 .build();
         Request request = new Request.Builder().url(url).post(requestBody).build();
+
         try {
             Response response = new OkHttpClient().newCall(request).execute();
             if (response.isSuccessful()) {
@@ -91,10 +97,12 @@ public class AuthService {
         }
     }
 
+    @WorkerThread
     public static String signOut(Context context) {
         String url = getEndpoint(context) + "auth/sign_out";
         Headers headers = getHeaders(context);
         Request request = new Request.Builder().url(url).headers(headers).delete().build();
+
         try {
             Response response = new OkHttpClient().newCall(request).execute();
             if (response.isSuccessful()) {
@@ -145,6 +153,7 @@ public class AuthService {
     private static String parseErrorSignIn(String responseBody) throws JSONException {
         String error = "";
         JSONArray messages = new JSONObject(responseBody).getJSONArray("errors");
+
         if (messages != null) {
             for (int i = 0; i < messages.length(); i++) {
                 String br = (i != messages.length() - 1) ? ".\n" : "";

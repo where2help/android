@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:onClick="dismiss"
-    tools:context=".ui.UserActivity">
+    tools:context=".ui.LoginActivity">
 
     <LinearLayout
         android:id="@+id/container"

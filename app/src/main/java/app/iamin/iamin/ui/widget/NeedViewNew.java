@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import app.iamin.iamin.R;
+import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.util.NeedUtils;
 
@@ -149,8 +150,7 @@ public class NeedViewNew extends FrameLayout {
         categoryView.setText(category == 1 ? NeedUtils.getCategorySingular(category) : NeedUtils.getCategoryPlural(category));
         addressView.setText(need.getCity() + " " + need.getLocation());
         dateTextView.setText(need.getDate());
-        checkView.setVisibility(need.isAttending() ? View.VISIBLE : View.GONE);
-        if (inDetail) countView.setVisibility(need.isAttending() ? View.GONE : View.VISIBLE);
+        checkView.setVisibility(need.isAttending() && DataManager.hasUser ? View.VISIBLE : View.GONE);
     }
 
     public void setNeed(Need need) {

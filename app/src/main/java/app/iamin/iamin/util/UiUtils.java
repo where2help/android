@@ -9,9 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.DetailActivity;
-import app.iamin.iamin.ui.MainActivity;
 import app.iamin.iamin.ui.SettingsActivity;
-import app.iamin.iamin.ui.UserActivity;
 
 /**
  * Created by Markus on 15.10.15.
@@ -25,12 +23,6 @@ public class UiUtils {
     public static final String EXTRA_NEW_USER = "newUser";
 
     public static final String EXTRA_BOOKING_CHANGED = "volunteeringChanged";
-
-    public static void fireMainIntent(Context context) {
-        Intent intent = new Intent();
-        intent.setClass(context, MainActivity.class);
-        context.startActivity(intent);
-    }
 
     public static Intent getDetailIntent(Context context, Need need) {
         Intent intent = new Intent();
@@ -73,12 +65,6 @@ public class UiUtils {
         intent.putExtra("count", 2);
         intent.putExtra("selfLink", "www.google.at");
         return intent;
-    }
-
-    public static void fireUserIntent(Context context) {
-        Intent intent = new Intent();
-        intent.setClass(context, UserActivity.class);
-        context.startActivity(intent);
     }
 
     public static void fireSettingsIntent(Context context) {

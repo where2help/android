@@ -3,12 +3,8 @@ package app.iamin.iamin.ui;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Patterns;
@@ -17,16 +13,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
 import java.util.regex.Pattern;
 
 import app.iamin.iamin.R;
-import app.iamin.iamin.data.service.DataService;
-
-import static app.iamin.iamin.data.service.DataService.ACTION_SIGN_IN;
-import static app.iamin.iamin.data.service.DataService.ACTION_SIGN_UP;
-import static app.iamin.iamin.data.service.DataService.EXTRA_ERROR;
+import app.iamin.iamin.data.BusProvider;
+import app.iamin.iamin.data.DataManager;
+import app.iamin.iamin.data.event.UserSignInEvent;
+import app.iamin.iamin.data.event.UserSignUpEvent;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private static final String TAG = "LoginActivity";
 
     private static final int UI_MODE_SIGN_IN = 0;
     private static final int UI_MODE_SIGN_UP = 1;
@@ -48,19 +47,27 @@ public class LoginActivity extends AppCompatActivity {
     private View buttonBar;
     private View loading;
 
+    private DataManager dataManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        BusProvider.getInstance().register(this);
+
+        dataManager = DataManager.getInstance();
 
         buttonBar = findViewById(R.id.btn_bar);
         loading = findViewById(R.id.loading);
 
         emailInput = (TextInputLayout) findViewById(R.id.input_email);
         emailEditText = (EditText) findViewById(R.id.email);
+        emailEditText.setText("android_user@example.com");
 
         passwordInput = (TextInputLayout) findViewById(R.id.input_password);
         passwordEditText = (EditText) findViewById(R.id.password);
+        passwordEditText.setText("supersecret");
 
         passwordConfInput = (TextInputLayout) findViewById(R.id.input_password_conf);
         passwordConfEditText = (EditText) findViewById(R.id.password_conf);
@@ -81,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                 break;
             }
         }
-        Log.d("onActionSubmit", email);
         return email;
     }
 
@@ -119,29 +125,20 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(mDataReceiver, DataService.getDataResultIntentFilter());
+        DataManager.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReceiver);
+        DataManager.getInstance().unregister(this);
     }
 
-    private BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent == null) return;
-            String action = intent.getAction();
-            String error = intent.getStringExtra(EXTRA_ERROR);
-            if (ACTION_SIGN_UP.equals(action)) {
-                handleSignUp(error);
-            } else if (ACTION_SIGN_IN.equals(action)) {
-                handleSignIn(error);
-            }
-        }
-    };
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
 
     @Override
     public void onBackPressed() {
@@ -150,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                 setUiMode(UI_MODE_SIGN_IN);
                 break;
             default:
-                super.onBackPressed();
+                finish();
         }
     }
 
@@ -166,38 +163,42 @@ public class LoginActivity extends AppCompatActivity {
         if (currentUiMode == UI_MODE_SIGN_IN) {
             String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
-            DataService.signIn(this, email, password);
+            dataManager.signIn(email, password);
         } else {
             String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             String passwordConf = passwordConfEditText.getText().toString();
-            DataService.signUp(this, email, password, passwordConf);
+            dataManager.signUp(email, password, passwordConf);
         }
         setUiMode(UI_MODE_PROGRESS);
     }
 
-    private void handleSignUp(String error) {
-        if (error == null) {
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            DataService.signIn(this, email, password);
-        } else {
-            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-            setUiMode(UI_MODE_SIGN_UP);
-        }
-    }
-
-    private void handleSignIn(String error) {
-        if (error == null) {
+    @Subscribe
+    public void onUserSignIn(UserSignInEvent event) {
+        Log.d(TAG, "onUserSignIn");
+        if (event.error == null) {
             setResult(Activity.RESULT_OK);
             finish();
         } else {
-            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
             setUiMode(UI_MODE_SIGN_IN);
         }
     }
 
-    private void dismiss(View view) {
+    @Subscribe
+    public void onUserSignUp(UserSignUpEvent event) {
+        Log.d(TAG, "onUserSignUp");
+        if (event.error == null) {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            dataManager.signIn(email, password);
+        } else {
+            Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
+            setUiMode(UI_MODE_SIGN_UP);
+        }
+    }
+
+    public void dismiss(View view) {
         finish();
     }
 }

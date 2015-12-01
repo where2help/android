@@ -41,10 +41,6 @@
             android:theme="@style/AppThemeLight" />
 
         <activity
-            android:name=".ui.UserActivity"
-            android:theme="@style/AppThemeDark"/>
-
-        <activity
             android:name=".ui.SettingsActivity"
             android:theme="@style/AppThemeLight" />
 

@@ -3,15 +3,17 @@ package app.iamin.iamin.data.model;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Markus on 30.10.15.
  */
 public class Need extends RealmObject {
 
-    // Event info
-
+    @PrimaryKey
     private int id;
+
+    // Event info
 
     private int volunteeringId;
 

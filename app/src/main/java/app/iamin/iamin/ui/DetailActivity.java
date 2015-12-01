@@ -1,37 +1,37 @@
 package app.iamin.iamin.ui;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.NestedScrollView.OnScrollChangeListener;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
 import app.iamin.iamin.R;
+import app.iamin.iamin.data.BusProvider;
+import app.iamin.iamin.data.DataManager;
+import app.iamin.iamin.data.event.BookingCanceledEvent;
+import app.iamin.iamin.data.event.BookingCreatedEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.data.model.User;
-import app.iamin.iamin.data.service.DataService;
 import app.iamin.iamin.ui.widget.CustomMapView;
 import app.iamin.iamin.ui.widget.NeedViewNew;
 import app.iamin.iamin.util.DataUtils;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
+import io.realm.Realm;
 
-import static app.iamin.iamin.data.service.DataService.ACTION_CANCEL_BOOKING;
-import static app.iamin.iamin.data.service.DataService.ACTION_CREATE_BOOKING;
 import static app.iamin.iamin.util.UiUtils.EXTRA_BOOKING_CHANGED;
 import static app.iamin.iamin.util.UiUtils.EXTRA_NEW_USER;
 
@@ -40,9 +40,12 @@ import static app.iamin.iamin.util.UiUtils.EXTRA_NEW_USER;
  */
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "DetailActivity";
+
     private boolean isAttending = false;
+    private boolean hasUser = false;
+    private boolean hasNewUser = false;
     private boolean hasChanged = false;
-    private boolean newUser = false;
 
     private LinearLayout btnBarLayout;
     private Button submitButton;
@@ -59,6 +62,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private User user;
 
+    private Realm realm;
+
     private CustomMapView mapView;
 
     private OnScrollChangeListener scrollChangeListener = new OnScrollChangeListener() {
@@ -72,16 +77,21 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        BusProvider.getInstance().register(this);
+
+        realm = Realm.getInstance(this);
+
         if (savedInstanceState != null) {
             hasChanged = savedInstanceState.getBoolean(EXTRA_BOOKING_CHANGED);
-            newUser = savedInstanceState.getBoolean(EXTRA_NEW_USER);
+            hasNewUser = savedInstanceState.getBoolean(EXTRA_NEW_USER);
         }
 
         need = NeedUtils.createNeedfromIntent(getIntent());
 
         user = DataUtils.getUser(this);
+        hasUser = user.getEmail() != null;
 
-        isAttending = need.isAttending();
+        isAttending = need.isAttending() && DataManager.hasUser;
 
         container = (NestedScrollView) findViewById(R.id.container);
         container.setOnScrollChangeListener(scrollChangeListener);
@@ -100,7 +110,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         needView.setNeed(need);
 
         webTextView = (TextView) findViewById(R.id.web);
-        webTextView.setText("www.google.at");
+        webTextView.setText("Delete Token");
         webTextView.setOnClickListener(this);
 
         submitInfoTextView = (TextView) findViewById(R.id.info);
@@ -125,6 +135,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             calendarButton.setOnClickListener(this);
 
             cancelButton = (Button) findViewById(R.id.cancel);
+            cancelButton.setText(R.string.action_iamout);
+            cancelButton.setEnabled(true);
             cancelButton.setOnClickListener(this);
 
             btnBarLayout.setVisibility(View.VISIBLE);
@@ -140,64 +152,25 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onResume() {
         super.onResume();
-        // LocationService.requestLocation(this);
+        DataManager.getInstance().register(this);
         // TODO: update need (data) when user comes back
-
-       LocalBroadcastManager.getInstance(this)
-                .registerReceiver(mDataReceiver, DataService.getDataResultIntentFilter());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReceiver);
+
+        DataManager.getInstance().unregister(this);
     }
 
-    private BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent == null) return;
-            String action = intent.getAction();
-            String error = intent.getStringExtra(DataService.EXTRA_ERROR);
-            if (ACTION_CREATE_BOOKING.equals(action)) {
-                handleBookingCreation(error);
-            } else if (ACTION_CANCEL_BOOKING.equals(action)) {
-                handleBookingCancellation(error);
-            }
-        }
-    };
-
-    private void handleBookingCreation(String error) {
-        if (error == null) {
-            isAttending = true;
-            hasChanged = !hasChanged;
-            setUiMode(isAttending);
-            needView.setNeeded(need.getNeeded() - 1); //update needed
+    private void handleBookingsRequest(String error) {
+        if (error == null && hasUser) {
+            onActionCreateBooking();
         } else {
-            Toast.makeText(DetailActivity.this, "Error. Try again.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DetailActivity.this, error, Toast.LENGTH_SHORT).show();
             setUiMode(isAttending);
         }
     }
-
-    private void handleBookingCancellation(String error) {
-        if (error == null) {
-            hasChanged = !hasChanged;
-            isAttending = false;
-            setUiMode(isAttending);
-            needView.setNeeded(need.getNeeded() + 1); //update needed
-        } else {
-            Toast.makeText(DetailActivity.this, "Error. Try again.", Toast.LENGTH_SHORT).show();
-            setUiMode(isAttending);
-        }
-    }
-
-    /*   public void onLocationUpdate() {
-        LatLng userLocation = event.getLocation();
-        if (userLocation != null) {
-            String distance = LocationUtils.formatDistanceBetween(need.getLocation(), userLocation);
-            needView.setDistance(distance);
-        }
-    }*/
 
     @Override
     public void onClick(View v) {
@@ -207,36 +180,32 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.submit:
                 if (!isAttending) {
-                    if (user.getEmail() != null) {
-                        onActionSubmit();
-                    } else {
-                        Intent intent = new Intent(this, LoginActivity.class);
-                        startActivityForResult(intent, UiUtils.RC_LOGIN);
-                    }
+                    onActionCreateBooking();
                 } else {
                     UiUtils.fireShareIntent(DetailActivity.this, need);
                 }
                 break;
             case R.id.cancel:
-                onActionCancel();
+                onActionCancelBooking();
                 break;
             case R.id.calendar:
                 UiUtils.fireCalendarIntent(DetailActivity.this, need);
                 break;
             case R.id.web:
-                UiUtils.fireWebIntent(DetailActivity.this, need);
+                //UiUtils.fireWebIntent(DetailActivity.this, need);
+                DataUtils.clearToken(this);
+                Toast.makeText(this, "Token deleted!", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
 
-    private void onActionSubmit() {
+    private void onActionCreateBooking() {
         submitButton.setText(R.string.register_status);
         submitButton.setEnabled(false);
-        //new CreateVolunteeringTask(need.getId()).execute(this);
-        DataService.createBooking(this, need.getId());
+        DataManager.getInstance().createBooking(need.getId());
     }
 
-    private void onActionCancel() {
+    private void onActionCancelBooking() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.cancel_message));
         builder.setPositiveButton(getString(R.string.cancel_positive), new DialogInterface.OnClickListener() {
@@ -247,7 +216,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         builder.setNegativeButton(getString(R.string.cancel_negative), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //new DeleteVolunteeringTask(need.getVolunteeringId()).execute(DetailActivity.this);
-                DataService.cancelBooking(DetailActivity.this, need.getVolunteeringId());
+                Log.wtf("onActionCancel", "volunteeringId = " + need.getVolunteeringId());
+                cancelButton.setText("Absagen...");
+                cancelButton.setEnabled(false);
+                DataManager.getInstance().cancelBooking(need.getVolunteeringId());
             }
         });
         AlertDialog dialog = builder.create();
@@ -255,24 +227,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case UiUtils.RC_LOGIN:
-                if (resultCode == RESULT_OK) {
-                    newUser = true;
-                    user = DataUtils.getUser(this);
-                    onActionSubmit();
-                }
-                break;
-        }
-    }
-
-    @Override
     public void onBackPressed() {
-        Intent result = new Intent();
-        result.putExtra(EXTRA_BOOKING_CHANGED, hasChanged);
-        result.putExtra(EXTRA_NEW_USER, newUser);
-        setResult(Activity.RESULT_OK, result);
         finish();
     }
 
@@ -280,6 +235,55 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putBoolean(EXTRA_BOOKING_CHANGED, hasChanged);
-        outState.putBoolean(EXTRA_NEW_USER, newUser);
+        outState.putBoolean(EXTRA_NEW_USER, hasNewUser);
+    }
+
+    @Override
+    protected void onDestroy() {
+        BusProvider.getInstance().unregister(this);
+        realm.close();
+        super.onDestroy();
+    }
+
+    public void onError(String message) {
+        Toast.makeText(DetailActivity.this, message, Toast.LENGTH_SHORT).show();
+        setUiMode(isAttending);
+    }
+
+    @Subscribe
+    public void onBookingCreated(BookingCreatedEvent event) {
+        if (need.getId() != event.id) return;
+        Log.d(TAG, "onBookingCreated");
+
+        if (event.error == null || event.error.equals("422")) {
+            isAttending = true;
+            hasChanged = !hasChanged;
+            realm.refresh();
+            need = realm.where(Need.class).equalTo("id", need.getId()).findFirst(); //update need
+            Log.wtf("handleBookingCreation", "volunteeringId = " + need.getVolunteeringId());
+            needView.setNeeded(need.getNeeded());
+            setUiMode(isAttending);
+        } else {
+            // error
+            onError(event.error);
+        }
+    }
+
+    @Subscribe
+    public void onBookingCanceled(BookingCanceledEvent event) {
+        if (need.getVolunteeringId() != event.id) return;
+        Log.d(TAG, "onBookingCanceled");
+
+        if (event.error == null) {
+            hasChanged = !hasChanged;
+            isAttending = false;
+            realm.refresh();
+            need = realm.where(Need.class).equalTo("id", need.getId()).findFirst(); //update need
+            needView.setNeeded(need.getNeeded());
+            setUiMode(isAttending);
+        } else {
+            // error
+            onError(event.error);
+        }
     }
 }

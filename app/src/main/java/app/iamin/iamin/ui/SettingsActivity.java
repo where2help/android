@@ -1,28 +1,30 @@
 package app.iamin.iamin.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
 import app.iamin.iamin.R;
+import app.iamin.iamin.data.BusProvider;
+import app.iamin.iamin.data.DataManager;
+import app.iamin.iamin.data.event.ErrorEvent;
+import app.iamin.iamin.data.event.UserSignOutEvent;
 import app.iamin.iamin.data.model.User;
-import app.iamin.iamin.data.service.DataService;
 import app.iamin.iamin.data.service.UtilityService;
 import app.iamin.iamin.util.DataUtils;
 
-import static app.iamin.iamin.data.service.DataService.ACTION_SIGN_OUT;
-
 public class SettingsActivity extends AppCompatActivity {
+
+    private static final String TAG = "SettingsActivity";
 
     private TextView usernameTextView;
     private TextView emailTextView;
@@ -34,6 +36,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        BusProvider.getInstance().register(this);
+
         user = DataUtils.getUser(this);
 
         usernameTextView = (TextView) findViewById(R.id.username);
@@ -42,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
         emailTextView = (TextView) findViewById(R.id.email);
         emailTextView.setText(user.getEmail());
 
-        setUiMode(user.getEmail() != null);
+        setUiMode(DataManager.hasUser);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.settings);
@@ -72,14 +76,25 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(mDataReceiver, DataService.getDataResultIntentFilter());
+        DataManager.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReceiver);
+        DataManager.getInstance().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     public void onEditEndpoint(View view) {
@@ -90,13 +105,18 @@ public class SettingsActivity extends AppCompatActivity {
         UtilityService.triggerNotification(SettingsActivity.this);
     }
 
-    public void onActionLogout(View view) {
+    public void onDeleteToken(View view) {
+        DataUtils.clearToken(SettingsActivity.this);
+        Toast.makeText(this, "Token deleted!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onActionSignOut(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirm");
         builder.setMessage("Do you really want to sign out?");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                DataService.signOut(SettingsActivity.this);
+                DataManager.getInstance().signOut();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -108,31 +128,18 @@ public class SettingsActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent == null) return;
-            String action = intent.getAction();
-            String error = intent.getStringExtra(DataService.EXTRA_ERROR);
-            if (ACTION_SIGN_OUT.equals(action)) {
-                handleSignOut(error);
-            }
-        }
-    };
+    @Subscribe
+    public void onUserSignOut(UserSignOutEvent event) {
+        Log.d(TAG, "onUserSignOut");
+        DataUtils.clearUser(this);
+        setUiMode(false);
+        Toast.makeText(this, "ByeBye!", Toast.LENGTH_SHORT).show();
 
-    private void handleSignOut(String error) {
-        if (error == null) {
-            DataUtils.clearUser(this);
-            setUiMode(false);
-            Toast.makeText(this, "ByeBye!", Toast.LENGTH_SHORT).show();
-        } else {
-            // TODO: Handle errors
-            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-        }
+        //TODO: Notify MainActivity!
     }
 
-    public void onDeleteToken(View view) {
-        DataUtils.clearToken(SettingsActivity.this);
-        Toast.makeText(this, "Token deleted!", Toast.LENGTH_SHORT).show();
+    @Subscribe
+    public void onError(ErrorEvent event) {
+        Toast.makeText(this, event.error, Toast.LENGTH_SHORT).show();
     }
 }

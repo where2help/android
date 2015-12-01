@@ -1,40 +1,40 @@
 package app.iamin.iamin.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
 import app.iamin.iamin.R;
+import app.iamin.iamin.data.BusProvider;
+import app.iamin.iamin.data.DataManager;
+import app.iamin.iamin.data.event.BookingsUpdatedEvent;
+import app.iamin.iamin.data.event.ConnectedEvent;
+import app.iamin.iamin.data.event.DisconnectedEvent;
+import app.iamin.iamin.data.event.NeedFeedUpdatedEvent;
+import app.iamin.iamin.data.event.NeedsUpdatedEvent;
+import app.iamin.iamin.data.event.UserSignInEvent;
+import app.iamin.iamin.data.event.UserSignOutEvent;
 import app.iamin.iamin.data.model.Need;
-import app.iamin.iamin.data.model.User;
-import app.iamin.iamin.data.service.DataService;
 import app.iamin.iamin.ui.widget.CustomRecyclerView;
-import app.iamin.iamin.util.DataUtils;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-
-import static app.iamin.iamin.data.service.DataService.ACTION_REQUEST_BOOKINGS;
-import static app.iamin.iamin.data.service.DataService.ACTION_REQUEST_NEEDS;
-import static app.iamin.iamin.data.service.DataService.ACTION_SIGN_IN;
 
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
@@ -51,10 +51,9 @@ public class MainActivity extends AppCompatActivity implements
     private int mUiState = UI_STATE_HOME;
     private int mFilterState = 0;
 
-    private CustomRecyclerView mNeedsList;
-    private NeedFeedAdapter mAdapter;
+    private CustomRecyclerView mNeedFeedRecyclerView;
+    private NeedFeedAdapter mNeedFeedAdapter;
 
-    private ImageButton mRetryButton;
     private ProgressBar mProgressBar;
     private TextView mEmptyTextView;
 
@@ -62,10 +61,7 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView mFiltersList;
 
     private Realm realm;
-
-    private boolean hasUser = false;
-
-    // private static final int PERMISSION_REQ = 0;
+    private RealmChangeListener realmChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +69,17 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        realm = Realm.getInstance(this);
-        realm.setAutoRefresh(false);
+        BusProvider.getInstance().register(this);
 
-        User user = DataUtils.getUser(this);
-        hasUser = user.getEmail() != null;
+        realm = Realm.getInstance(this);
+        realmChangeListener = new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                Log.d(TAG, "RealmChangeListener: onChange()");
+                notifyDataSetChanged();
+            }
+        };
+        realm.addChangeListener(realmChangeListener);
 
         if (savedInstanceState != null) {
             mUiState = savedInstanceState.getInt(STATE_UI);
@@ -88,17 +90,16 @@ public class MainActivity extends AppCompatActivity implements
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer);
 
-        mAdapter = new NeedFeedAdapter(this);
+        mNeedFeedAdapter = new NeedFeedAdapter(this);
 
 /*        RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);*/
 
-        mNeedsList = (CustomRecyclerView) findViewById(R.id.recycler_view);
-        mNeedsList.setEmptyView(findViewById(R.id.empty_view));
-        //mNeedsList.addItemDecoration(itemDecoration);
-        mNeedsList.setAdapter(mAdapter);
+        mNeedFeedRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
+        mNeedFeedRecyclerView.setEmptyView(findViewById(R.id.empty_view));
+        //mNeedFeedRecyclerView.addItemDecoration(itemDecoration);
+        mNeedFeedRecyclerView.setAdapter(mNeedFeedAdapter);
 
-        mRetryButton = (ImageButton) findViewById(R.id.retry_button);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mEmptyTextView = (TextView) findViewById(R.id.empty_message);
 
@@ -106,21 +107,6 @@ public class MainActivity extends AppCompatActivity implements
         mFiltersList.setAdapter(new FilterAdapter(this, mFilterState, this));
 
         setUiState(mUiState);
-
-       /* // Check fine location permission has been granted
-        if (!LocationUtils.checkFineLocationPermission(this)) {
-            // See if user has denied permission in the past
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show a simple snackbar explaining the request instead
-                showPermissionSnackbar();
-            } else {
-                // Otherwise request permission from user
-                if (savedInstanceState == null) {
-                    requestFineLocationPermission();
-                }
-            }
-        }*/
     }
 
     @Override
@@ -133,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onPrepareOptionsMenu(Menu menu) {
         switch (mUiState) {
             case UI_STATE_HOME:
+                boolean hasUser = DataManager.hasUser;
                 menu.findItem(R.id.menu_filter).setVisible(true);
                 menu.findItem(R.id.menu_login).setVisible(!hasUser);
                 menu.findItem(R.id.menu_bookings).setVisible(hasUser);
@@ -215,111 +202,18 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setCategoryFilter(int position) {
         if (position == 0) {
-            mAdapter.setData(realm.where(Need.class).findAll());
+            mNeedFeedAdapter.setData(realm.where(Need.class).findAll());
         } else {
-            mAdapter.setData(realm.where(Need.class)
+            mNeedFeedAdapter.setData(realm.where(Need.class)
                     .equalTo("category", position - 1).findAll());
         }
+        mProgressBar.setVisibility(View.VISIBLE);
+        mEmptyTextView.setVisibility(View.GONE);
         // save state
         mFilterState = position;
     }
 
-    private void setBookingsFilter() {
-        RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
-        if (needs.isEmpty()) {
-            mProgressBar.setVisibility(View.GONE);
-            mEmptyTextView.setVisibility(View.VISIBLE);
-        }
-        mAdapter.setData(needs);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case UiUtils.RC_LOGIN:
-                if (resultCode == RESULT_OK) {
-                    User user = DataUtils.getUser(this);
-                    if (!TextUtils.isEmpty(user.getEmail())) {
-                        hasUser = true;
-                        DataService.requestNeeds(this);
-                        invalidateOptionsMenu();
-                    }
-                }
-                break;
-            case UiUtils.RC_DETAIL:
-                if (resultCode == RESULT_OK) {
-                    if (data.getBooleanExtra(UiUtils.EXTRA_BOOKING_CHANGED, false))
-                        mAdapter.notifyDataSetChanged();
-                    if (data.getBooleanExtra(UiUtils.EXTRA_NEW_USER, false))
-                        hasUser = true;
-                    invalidateOptionsMenu();
-                }
-                break;
-        }
-    }
-
-    private void handleSignIn(String error) {
-        if (error == null) {
-            User user = DataUtils.getUser(this);
-            if (!TextUtils.isEmpty(user.getEmail())) {
-                hasUser = true;
-                DataService.requestNeeds(this);
-                invalidateOptionsMenu();
-            }
-        }
-    }
-
-    private BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent == null) return;
-            String action = intent.getAction();
-            String error = intent.getStringExtra(DataService.EXTRA_ERROR);
-            if (ACTION_REQUEST_NEEDS.equals(action)) {
-                handleNeedsResult(error);
-            } else if (ACTION_REQUEST_BOOKINGS.equals(action)) {
-                handleBookingsResult(error);
-            } else if (ACTION_SIGN_IN.equals(action)) {
-                handleSignIn(error);
-            }
-        }
-    };
-
-    private void handleNeedsResult(String error) {
-        if (hasUser && error == null) {
-            DataService.requestBookings(MainActivity.this);
-        } else if (error == null) {
-            notifyDatasetChanged();
-        } else {
-            // TODO: Handle errors in a better way
-            Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
-            mProgressBar.setVisibility(View.GONE);
-            mRetryButton.setVisibility(View.VISIBLE);
-            mRetryButton.setEnabled(true);
-        }
-    }
-
-    private void handleBookingsResult(String error) {
-        if (error == null) {
-            notifyDatasetChanged();
-        } else if (error.equals("401")) {
-            // Obtain a valid token by auto login user
-            User user = DataUtils.getUser(this);
-            if (!TextUtils.isEmpty(user.getEmail()) &&
-                    !TextUtils.isEmpty(user.getPassword())) {
-                DataService.signIn(MainActivity.this, user.getEmail(), user.getPassword());
-            }
-        } else {
-            // TODO: Handle errors in a better way
-            Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
-            mProgressBar.setVisibility(View.GONE);
-            mRetryButton.setVisibility(View.VISIBLE);
-            mRetryButton.setEnabled(true);
-        }
-    }
-
-    private void notifyDatasetChanged() {
-        realm.refresh();
+    private void notifyDataSetChanged() {
         if (mUiState == UI_STATE_BOOKINGS) {
             setBookingsFilter();
         } else {
@@ -327,31 +221,37 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void onRetry(View v) {
-        mRetryButton.setEnabled(false);
-        mRetryButton.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
-        DataService.requestNeeds(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDataReceiver);
+    private void setBookingsFilter() {
+        RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
+        if (needs.isEmpty() && DataManager.hasBookings) {
+            mEmptyTextView.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
+        } else if (needs.isEmpty()) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mEmptyTextView.setVisibility(View.GONE);
+        }
+        mNeedFeedAdapter.setData(needs);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(mDataReceiver, DataService.getDataResultIntentFilter());
-        //LocationService.requestLocation(this);
-        DataService.requestNeeds(this);
+        DataManager.getInstance().register(this);
+        // It is possible that the user signed out vie SettingsActivity
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    protected void onPause() {
+        DataManager.getInstance().unregister(this);
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+        realm.removeAllChangeListeners();
         realm.close();
     }
 
@@ -373,48 +273,67 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /*    *//**
-     * Permissions request errors callback
-     *//*
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQ:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    fineLocationPermissionGranted();
-                }
+    @Subscribe
+    public void onConnected(ConnectedEvent event) {
+        Log.d(TAG, "onConnected");
+    }
+
+    @Subscribe
+    public void onDisconnected(DisconnectedEvent event) {
+        Log.d(TAG, "onDisconnected");
+    }
+
+    @Subscribe
+    public void onUserSignIn(UserSignInEvent event) {
+        Log.d(TAG, "onUserSignIn");
+        if (event.error == null) {
+            invalidateOptionsMenu();
+        } else {
+            // error
         }
     }
 
-    *//**
-     * Request the fine location permission from the user
-     *//*
-    private void requestFineLocationPermission() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQ);
+    @Subscribe
+    public void onUserSignOut(UserSignOutEvent event) {
+        Log.d(TAG, "onUserSignOut");
+        if (event.error == null) {
+            invalidateOptionsMenu();
+        } else {
+            // error
+        }
     }
 
-    *//**
-     * Run when fine location permission has been granted
-     *//*
-    private void fineLocationPermissionGranted() {
-        LocationService.requestLocation(this);
+    @Subscribe
+    public void onNeedFeedUpdated(NeedFeedUpdatedEvent event) {
+        Log.d(TAG, "onNeedFeedUpdated");
+        if (event.error == null) {
+        } else {
+            mNeedFeedAdapter.setData(null);
+            onError(event.error);
+        }
     }
 
-    *//**
-     * Show a permission explanation snackbar
-     *//*
-    private void showPermissionSnackbar() {
-        // TODO: yell at user
-*//*        Snackbar.make(
-                findViewById(R.id.container), R.string.permission_explanation, Snackbar.LENGTH_LONG)
-                .setAction(R.string.permission_explanation_action, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        requestFineLocationPermission();
-                    }
-                })
-                .show();*//*
-    }*/
+    @Subscribe
+    public void onNeedsUpdated(NeedsUpdatedEvent event) {
+        Log.d(TAG, "onNeedsUpdated");
+        if (event.error == null) {
+        } else {
+            mNeedFeedAdapter.setData(null);
+            onError(event.error);
+        }
+    }
+
+    @Subscribe
+    public void onBookingsUpdated(BookingsUpdatedEvent event) {
+        Log.d(TAG, "onBookingsUpdated");
+        if (event.error == null) {
+        } else {
+            onError(event.error);
+        }
+    }
+
+    public void onError(String message) {
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
 }
