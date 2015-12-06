@@ -19,7 +19,8 @@
             android:layout_gravity="top"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark" />
+            app:theme="@style/ThemeOverlay.AppCompat.Dark"
+            app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar"/>
 
         <app.iamin.iamin.ui.widget.CustomRecyclerView
             android:id="@+id/recycler_view"
@@ -28,8 +29,6 @@
             android:layout_gravity="top"
             android:layout_marginTop="?actionBarSize"
             android:clipToPadding="false"
-            android:paddingBottom="@dimen/spacing_normal"
-            android:paddingTop="@dimen/spacing_normal"
             android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
