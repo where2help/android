@@ -22,7 +22,6 @@ public class DataService extends IntentService {
     public static final String ACTION_SIGN_UP = "where2help_sign_up";
     public static final String ACTION_SIGN_IN = "where2help_sign_in";
     public static final String ACTION_SIGN_OUT = "where2help_sign_out";
-    public static final String ACTION_REQUEST_NEED_FEED = "where2help_request_need_feed";
     public static final String ACTION_REQUEST_NEEDS = "where2help_request_needs";
     public static final String ACTION_REQUEST_BOOKINGS = "where2help_request_bookings";
     public static final String ACTION_CREATE_BOOKING = "where2help_create_booking";
@@ -31,7 +30,8 @@ public class DataService extends IntentService {
     public static final String EXTRA_EMAIL = "extra_email";
     public static final String EXTRA_PASSWORD = "extra_password";
     public static final String EXTRA_PASSWORD_CONF = "extra_password_conf";
-    public static final String EXTRA_ID = "extra_id";
+    public static final String EXTRA_NEED_ID = "extra_need_id";
+    public static final String EXTRA_VOLUNTEERING_ID = "extra_volunteering_id";
 
 
     public static void signUp(Context context, String email, String password, String passwordConf) {
@@ -72,14 +72,15 @@ public class DataService extends IntentService {
     public static void createBooking(Context context, int needId) {
         Intent intent = new Intent(context, DataService.class);
         intent.setAction(ACTION_CREATE_BOOKING);
-        intent.putExtra(EXTRA_ID, needId);
+        intent.putExtra(EXTRA_NEED_ID, needId);
         context.startService(intent);
     }
 
-    public static void cancelBooking(Context context, int volunteeringId) {
+    public static void cancelBooking(Context context, int needId, int volunteeringId) {
         Intent intent = new Intent(context, DataService.class);
         intent.setAction(ACTION_CANCEL_BOOKING);
-        intent.putExtra(EXTRA_ID, volunteeringId);
+        intent.putExtra(EXTRA_NEED_ID, needId);
+        intent.putExtra(EXTRA_VOLUNTEERING_ID, volunteeringId);
         context.startService(intent);
     }
 
@@ -109,7 +110,7 @@ public class DataService extends IntentService {
     }
 
     private void postResultFrom(Intent intent, String error) {
-        int id = intent.getIntExtra(EXTRA_ID, -1);
+        int id = intent.getIntExtra(EXTRA_NEED_ID, -1);
         DataManager.getInstance().onDataResult(new DataResultEvent(intent.getAction(), id, error));
     }
 

@@ -60,7 +60,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="14dp"
                 android:layout_marginRight="14dp"
-                android:textColor="@color/text_dark" />
+                android:textColor="@color/text_dark"
+                android:onClick="onActionSubmit"/>
 
             <LinearLayout
                 android:id="@+id/btnBar"
@@ -77,7 +78,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/action_iamout"
-                    android:textColor="@color/text_dark" />
+                    android:textColor="@color/text_dark"
+                    android:onClick="onActionCancel"/>
 
                 <Button
                     android:id="@+id/calendar"
@@ -85,7 +87,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/action_calendar"
-                    android:textColor="@color/text_dark" />
+                    android:textColor="@color/text_dark"
+                    android:onClick="onActionCalendar"/>
             </LinearLayout>
 
             <TextView
@@ -99,7 +102,7 @@
                 android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum." />
 
             <TextView
-                android:id="@+id/web"
+                android:id="@+id/link"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackground"
@@ -111,7 +114,8 @@
                 android:paddingTop="8dp"
                 android:text="Mehr Infos: www...."
                 android:textColor="@color/colorAccent"
-                android:textSize="@dimen/text_body" />
+                android:textSize="@dimen/text_body"
+                android:onClick="onActionLink"/>
 
             <TextView
                 android:id="@+id/organisation"

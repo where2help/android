@@ -5,9 +5,11 @@ package app.iamin.iamin.data.event;
  */
 public class UserSignInEvent {
 
+    public final int status;
     public final String error;
 
-    public UserSignInEvent(String error) {
+    public UserSignInEvent(int status, String error) {
+        this.status = status;
         this.error = error;
     }
 }

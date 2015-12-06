@@ -26,7 +26,8 @@ import app.iamin.iamin.util.LogUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-import static app.iamin.iamin.data.service.DataService.EXTRA_ID;
+import static app.iamin.iamin.data.service.DataService.EXTRA_NEED_ID;
+import static app.iamin.iamin.data.service.DataService.EXTRA_VOLUNTEERING_ID;
 import static app.iamin.iamin.util.DataUtils.getEndpoint;
 import static app.iamin.iamin.util.DataUtils.getHeaders;
 import static app.iamin.iamin.util.DataUtils.getUser;
@@ -64,7 +65,7 @@ public class BookingsService {
 
     @WorkerThread
     public static String createBooking(Context context, Intent intent) {
-        int needId = intent.getIntExtra(EXTRA_ID, 0);
+        int needId = intent.getIntExtra(EXTRA_NEED_ID, 0);
         User user = getUser(context);
 
         MediaType contentType = MediaType.parse("application/vnd.api+json; charset=utf-8");
@@ -101,7 +102,7 @@ public class BookingsService {
 
     @WorkerThread
     public static String cancelBooking(Context context, Intent intent) {
-        int volunteeringId = intent.getIntExtra(EXTRA_ID, 0);
+        int volunteeringId = intent.getIntExtra(EXTRA_VOLUNTEERING_ID, 0);
 
         Log.d(TAG, "volunteeringId = " + volunteeringId);
 

@@ -15,9 +15,9 @@ import app.iamin.iamin.util.NeedUtils;
 
 /**
  * Created by Markus on 16.10.15.
- * <p/>
- * A custom ViewGroup which solves the issue with different text heights in the same row.
- * NeedView will be used in MainActivity, DetailActivity and UserActivity.
+ *
+ * A custom FrameLayout which represents a Need (Event). Used as list item in MainActivity and
+ * as header in DetailActivity.
  */
 
 public class NeedViewNew extends FrameLayout {
@@ -38,8 +38,6 @@ public class NeedViewNew extends FrameLayout {
 
     private int padding;
 
-    private float dp;
-
     private boolean inDetail = false;
 
     public NeedViewNew(Context context) {
@@ -51,7 +49,6 @@ public class NeedViewNew extends FrameLayout {
         Resources res = getResources();
         keyline = res.getDimensionPixelSize(R.dimen.keyline_1);
         padding = res.getDimensionPixelSize(R.dimen.padding);
-        dp = res.getDisplayMetrics().density;
     }
 
     @Override
@@ -144,23 +141,24 @@ public class NeedViewNew extends FrameLayout {
     }
 
     private void fill() {
-        int category = need.getCategory();
-        iconView.setImageResource(NeedUtils.getCategoryIcon(category));
-        countView.setText(String.valueOf(need.getNeeded()));
-        categoryView.setText(category == 1 ? NeedUtils.getCategorySingular(category) : NeedUtils.getCategoryPlural(category));
-        addressView.setText(need.getCity() + " " + need.getLocation());
-        dateTextView.setText(need.getDate());
-        checkView.setVisibility(need.isAttending() && DataManager.hasUser ? View.VISIBLE : View.GONE);
+        if (need != null) {
+            int category = need.getCategory();
+            iconView.setImageResource(NeedUtils.getCategoryIcon(category));
+            countView.setText(String.valueOf(need.getNeeded()));
+            categoryView.setText(category == 1 ? NeedUtils.getCategorySingular(category) : NeedUtils.getCategoryPlural(category));
+            addressView.setText(need.getCity() + " " + need.getLocation());
+            dateTextView.setText(need.getDate());
+            checkView.setVisibility(need.isAttending() && DataManager.hasUser() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    public void setInDetail(boolean inDetail) {
+        this.inDetail = inDetail;
     }
 
     public void setNeed(Need need) {
         this.need = need;
         if (isAttached) fill();
-    }
-
-    public void setNeeded(int needed) {
-        this.need.setNeeded(needed);
-        if (isAttached) countView.setText(String.valueOf(need.getNeeded()));
     }
 
 /*
@@ -179,7 +177,4 @@ public class NeedViewNew extends FrameLayout {
         return span;
     }
 */
-    public void setInDetail(boolean inDetail) {
-        this.inDetail = inDetail;
-    }
 }

@@ -1,7 +1,6 @@
 package app.iamin.iamin.ui;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,8 +84,7 @@ public class NeedFeedAdapter extends RecyclerView.Adapter<NeedFeedAdapter.ViewHo
     private final ItemClickListener clickListener = new ItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            Intent intent = UiUtils.getDetailIntent(mContext, getItem(position));
-            mContext.startActivityForResult(intent, UiUtils.RC_DETAIL);
+            UiUtils.fireDetailIntent(mContext, getItem(position));
         }
     };
 }

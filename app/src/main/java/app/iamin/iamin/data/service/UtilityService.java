@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import app.iamin.iamin.R;
-import app.iamin.iamin.util.UiUtils;
+import app.iamin.iamin.ui.DetailActivity;
 
 /**
  * Created by Markus on 13.10.15.
@@ -62,9 +62,11 @@ public class UtilityService extends IntentService {
      * Show the notification.
      */
     private void showNotification(Intent intent) {
-        intent = UiUtils.getDummyDetailIntent(this);
+        Intent details = new Intent();
+        details.setClass(getApplicationContext(), DetailActivity.class);
+        details.putExtra("id", 0);
         // The intent to trigger when the notification is tapped
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, details,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Construct the main notification

@@ -1,7 +1,7 @@
 package app.iamin.iamin.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,11 +22,10 @@ import com.squareup.otto.Subscribe;
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.DataManager;
-import app.iamin.iamin.data.event.BookingsUpdatedEvent;
 import app.iamin.iamin.data.event.ConnectedEvent;
 import app.iamin.iamin.data.event.DisconnectedEvent;
-import app.iamin.iamin.data.event.NeedFeedUpdatedEvent;
-import app.iamin.iamin.data.event.NeedsUpdatedEvent;
+import app.iamin.iamin.data.event.RequestBookingsEvent;
+import app.iamin.iamin.data.event.RequestNeedsEvent;
 import app.iamin.iamin.data.event.UserSignInEvent;
 import app.iamin.iamin.data.event.UserSignOutEvent;
 import app.iamin.iamin.data.model.Need;
@@ -35,6 +34,11 @@ import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+
+import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
+import static app.iamin.iamin.data.DataManager.ERROR;
+import static app.iamin.iamin.data.DataManager.NEXT;
+import static app.iamin.iamin.data.DataManager.START;
 
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
@@ -51,7 +55,9 @@ public class MainActivity extends AppCompatActivity implements
     private int mUiState = UI_STATE_HOME;
     private int mFilterState = 0;
 
-    private CustomRecyclerView mNeedFeedRecyclerView;
+    private boolean hasUser;
+
+    private CustomRecyclerView recyclerView;
     private NeedFeedAdapter mNeedFeedAdapter;
 
     private ProgressBar mProgressBar;
@@ -63,13 +69,13 @@ public class MainActivity extends AppCompatActivity implements
     private Realm realm;
     private RealmChangeListener realmChangeListener;
 
+    private Snackbar snackbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-
-        BusProvider.getInstance().register(this);
 
         realm = Realm.getInstance(this);
         realmChangeListener = new RealmChangeListener() {
@@ -95,10 +101,10 @@ public class MainActivity extends AppCompatActivity implements
 /*        RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);*/
 
-        mNeedFeedRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
-        mNeedFeedRecyclerView.setEmptyView(findViewById(R.id.empty_view));
-        //mNeedFeedRecyclerView.addItemDecoration(itemDecoration);
-        mNeedFeedRecyclerView.setAdapter(mNeedFeedAdapter);
+        recyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setEmptyView(findViewById(R.id.empty_view));
+        //recyclerView.addItemDecoration(itemDecoration);
+        recyclerView.setAdapter(mNeedFeedAdapter);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mEmptyTextView = (TextView) findViewById(R.id.empty_message);
@@ -119,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onPrepareOptionsMenu(Menu menu) {
         switch (mUiState) {
             case UI_STATE_HOME:
-                boolean hasUser = DataManager.hasUser;
                 menu.findItem(R.id.menu_filter).setVisible(true);
                 menu.findItem(R.id.menu_login).setVisible(!hasUser);
                 menu.findItem(R.id.menu_bookings).setVisible(hasUser);
@@ -148,8 +153,7 @@ public class MainActivity extends AppCompatActivity implements
                 setUiState(UI_STATE_BOOKINGS);
                 return true;
             case R.id.menu_login:
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivityForResult(intent, UiUtils.RC_LOGIN);
+                UiUtils.fireLoginIntent(MainActivity.this);
                 return true;
             case R.id.menu_settings:
                 UiUtils.fireSettingsIntent(MainActivity.this);
@@ -193,6 +197,15 @@ public class MainActivity extends AppCompatActivity implements
         invalidateOptionsMenu();
     }
 
+    private void notifyDataSetChanged() {
+        Log.d(TAG, "notifyDataSetChanged() ");
+        if (mUiState == UI_STATE_BOOKINGS) {
+            setBookingsFilter();
+        } else {
+            setCategoryFilter(mFilterState);
+        }
+    }
+
     @Override
     public void onFilterChanged(View view, int position) {
         setCategoryFilter(position);
@@ -201,29 +214,30 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setCategoryFilter(int position) {
+        RealmResults<Need> needs;
+
         if (position == 0) {
-            mNeedFeedAdapter.setData(realm.where(Need.class).findAll());
+            needs = realm.where(Need.class).findAll();
         } else {
-            mNeedFeedAdapter.setData(realm.where(Need.class)
-                    .equalTo("category", position - 1).findAll());
+            Log.d(TAG, "setCategoryFilter()");
+            needs = realm.where(Need.class).equalTo("category", position - 1).findAll();
         }
-        mProgressBar.setVisibility(View.VISIBLE);
-        mEmptyTextView.setVisibility(View.GONE);
+
+        if (needs.isEmpty()) {
+            Log.d(TAG, "setCategoryFilter(): needs.isEmpty()");
+            mProgressBar.setVisibility(View.VISIBLE);
+            mEmptyTextView.setVisibility(View.GONE);
+        }
+
+        Log.d(TAG, "setCategoryFilter(): size = " + needs.size());
+        mNeedFeedAdapter.setData(needs);
         // save state
         mFilterState = position;
     }
 
-    private void notifyDataSetChanged() {
-        if (mUiState == UI_STATE_BOOKINGS) {
-            setBookingsFilter();
-        } else {
-            setCategoryFilter(mFilterState);
-        }
-    }
-
     private void setBookingsFilter() {
         RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
-        if (needs.isEmpty() && DataManager.hasBookings) {
+        if (needs.isEmpty() && DataManager.hasBookings()) {
             mEmptyTextView.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.GONE);
         } else if (needs.isEmpty()) {
@@ -233,33 +247,108 @@ public class MainActivity extends AppCompatActivity implements
         mNeedFeedAdapter.setData(needs);
     }
 
+    @Subscribe
+    public void onUserSignIn(UserSignInEvent event) {
+        Log.d(TAG, "onUserSignIn");
+
+        switch (event.status) {
+            case START:
+                break;
+            case NEXT:
+                hasUser = DataManager.hasUser();
+                invalidateOptionsMenu();
+                break;
+            case ERROR:
+                break;
+        }
+    }
+
+    @Subscribe
+    public void onUserSignOut(UserSignOutEvent event) {
+        Log.d(TAG, "onUserSignOut");
+
+        switch (event.status) {
+            case START:
+                break;
+            case NEXT:
+                hasUser = DataManager.hasUser();
+                invalidateOptionsMenu();
+                notifyDataSetChanged();
+                break;
+            case ERROR:
+                break;
+        }
+    }
+
+    @Subscribe
+    public void onRequestNeeds(RequestNeedsEvent event) {
+        Log.d(TAG, "onNeedsUpdated");
+
+        switch (event.status) {
+            case START:
+                break;
+            case NEXT:
+                break;
+            case ERROR:
+                mNeedFeedAdapter.setData(null);
+                onError(event.error);
+                break;
+        }
+    }
+
+    @Subscribe
+    public void onRequestBookings(RequestBookingsEvent event) {
+        Log.d(TAG, "onBookingsUpdated");
+
+        switch (event.status) {
+            case START:
+                break;
+            case NEXT:
+                break;
+            case ERROR:
+                onError(event.error);
+                break;
+        }
+    }
+
+    public void onError(String message) {
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Subscribe
+    public void onConnected(ConnectedEvent event) {
+        Log.d(TAG, "onConnected");
+        if (snackbar != null) {
+            snackbar.dismiss();
+        }
+    }
+
+    @Subscribe
+    public void onDisconnected(DisconnectedEvent event) {
+        Log.d(TAG, "onDisconnected");
+        snackbar = Snackbar.make(recyclerView, "Warte auf Verbindung ...", LENGTH_INDEFINITE);
+        snackbar.show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        BusProvider.getInstance().register(this);
         DataManager.getInstance().register(this);
-        // It is possible that the user signed out vie SettingsActivity
-        invalidateOptionsMenu();
+        // It is possible that the user signed out via SettingsActivity
+        if (hasUser != DataManager.hasUser()) {
+            invalidateOptionsMenu();
+            notifyDataSetChanged();
+            hasUser = DataManager.hasUser();
+        }
     }
 
     @Override
     protected void onPause() {
+        BusProvider.getInstance().unregister(this);
         DataManager.getInstance().unregister(this);
         super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BusProvider.getInstance().unregister(this);
-        realm.removeAllChangeListeners();
-        realm.close();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(STATE_UI, mUiState);
-        savedInstanceState.putInt(STATE_FILTER, mFilterState);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -273,67 +362,17 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @Subscribe
-    public void onConnected(ConnectedEvent event) {
-        Log.d(TAG, "onConnected");
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(STATE_UI, mUiState);
+        savedInstanceState.putInt(STATE_FILTER, mFilterState);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
-    @Subscribe
-    public void onDisconnected(DisconnectedEvent event) {
-        Log.d(TAG, "onDisconnected");
-    }
-
-    @Subscribe
-    public void onUserSignIn(UserSignInEvent event) {
-        Log.d(TAG, "onUserSignIn");
-        if (event.error == null) {
-            invalidateOptionsMenu();
-        } else {
-            // error
-        }
-    }
-
-    @Subscribe
-    public void onUserSignOut(UserSignOutEvent event) {
-        Log.d(TAG, "onUserSignOut");
-        if (event.error == null) {
-            invalidateOptionsMenu();
-        } else {
-            // error
-        }
-    }
-
-    @Subscribe
-    public void onNeedFeedUpdated(NeedFeedUpdatedEvent event) {
-        Log.d(TAG, "onNeedFeedUpdated");
-        if (event.error == null) {
-        } else {
-            mNeedFeedAdapter.setData(null);
-            onError(event.error);
-        }
-    }
-
-    @Subscribe
-    public void onNeedsUpdated(NeedsUpdatedEvent event) {
-        Log.d(TAG, "onNeedsUpdated");
-        if (event.error == null) {
-        } else {
-            mNeedFeedAdapter.setData(null);
-            onError(event.error);
-        }
-    }
-
-    @Subscribe
-    public void onBookingsUpdated(BookingsUpdatedEvent event) {
-        Log.d(TAG, "onBookingsUpdated");
-        if (event.error == null) {
-        } else {
-            onError(event.error);
-        }
-    }
-
-    public void onError(String message) {
-        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-        mProgressBar.setVisibility(View.VISIBLE);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.removeChangeListener(realmChangeListener);
+        realm.close();
     }
 }

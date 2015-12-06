@@ -33,6 +33,7 @@ public class NeedsService {
         Request request = new Request.Builder().url(url).build();
         try {
             Response response = new OkHttpClient().newCall(request).execute();
+
             if (response.isSuccessful()) {
                 storeNeeds(context, response.body().string());
                 return null;

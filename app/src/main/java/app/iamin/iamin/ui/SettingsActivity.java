@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
         emailTextView = (TextView) findViewById(R.id.email);
         emailTextView.setText(user.getEmail());
 
-        setUiMode(DataManager.hasUser);
+        setUiMode(DataManager.hasUser());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.settings);

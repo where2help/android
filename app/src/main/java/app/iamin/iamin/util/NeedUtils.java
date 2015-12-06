@@ -1,11 +1,7 @@
 package app.iamin.iamin.util;
 
-import android.content.Intent;
-import android.os.Bundle;
-
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,32 +80,5 @@ public class NeedUtils {
 
     public static LatLng getLocation(Need need) {
         return new LatLng(need.getLat(), need.getLng());
-    }
-
-
-    public static Need createNeedfromIntent(Intent intent) {
-        Need need = new Need();
-
-        Bundle bundle = intent.getExtras();
-        need.setId(bundle.getInt("id"));
-        need.setCategory(bundle.getInt("category"));
-
-        need.setLat(bundle.getDouble("latitude"));
-        need.setLng(bundle.getDouble("longitude"));
-        need.setCity(bundle.getString("city"));
-        need.setLocation(bundle.getString("location"));
-
-        need.setStart(new Date(bundle.getLong("start")));
-        need.setEnd(new Date(bundle.getLong("end")));
-        need.setDate(bundle.getString("date"));
-
-        need.setNeeded(bundle.getInt("needed"));
-        need.setCount(bundle.getInt("count"));
-        need.setSelfLink(bundle.getString("selfLink"));
-
-        need.setIsAttending(bundle.getBoolean("attending"));
-        need.setVolunteeringId(bundle.getInt("volunteeringId"));
-
-        return need;
     }
 }

@@ -80,6 +80,7 @@ public class DataUtils {
      * Store the headers in the app preferences.
      */
     public static void storeHeader(Context context, Headers headers) {
+        if (!isTokenValid(headers)) return;
         SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("Access-Token", headers.get("Access-Token"));
@@ -167,13 +168,8 @@ public class DataUtils {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-/*    private static boolean isTokenValid(Headers headers) {
-        if (!TextUtils.isEmpty(headers.get("Access-Token")) ||
-                !TextUtils.isEmpty(headers.get("Expiry"))) {
-            if (System.currentTimeMillis() > (Long.parseLong(headers.get("Expiry")) * 1000L)) {
-                return true;
-            }
-        }
-        return false;
-    }*/
+    private static boolean isTokenValid(Headers headers) {
+        String token = headers.get("Access-Token");
+        return token != null && !token.isEmpty();
+    }
 }

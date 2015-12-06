@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.DetailActivity;
+import app.iamin.iamin.ui.LoginActivity;
 import app.iamin.iamin.ui.SettingsActivity;
 
 /**
@@ -16,19 +17,11 @@ import app.iamin.iamin.ui.SettingsActivity;
  */
 public class UiUtils {
 
-    public static final int RC_LOGIN = 0;
-
-    public static final int RC_DETAIL = 1;
-
-    public static final String EXTRA_NEW_USER = "newUser";
-
-    public static final String EXTRA_BOOKING_CHANGED = "volunteeringChanged";
-
-    public static Intent getDetailIntent(Context context, Need need) {
+    public static void fireDetailIntent(Context context, Need need) {
         Intent intent = new Intent();
         intent.setClass(context, DetailActivity.class);
         intent.putExtra("id", need.getId());
-        intent.putExtra("category", need.getCategory());
+/*        intent.putExtra("category", need.getCategory());
 
         intent.putExtra("city", need.getCity());
         intent.putExtra("location", need.getLocation());
@@ -44,27 +37,14 @@ public class UiUtils {
         intent.putExtra("selfLink", need.getSelfLink());
 
         intent.putExtra("attending", need.isAttending());
-        intent.putExtra("volunteeringId", need.getVolunteeringId());
-        return intent;
+        intent.putExtra("volunteeringId", need.getVolunteeringId());*/
+        context.startActivity(intent);
     }
 
-    // TODO: remove some day
-    public static Intent getDummyDetailIntent(Context context) {
+    public static void fireLoginIntent(Context context) {
         Intent intent = new Intent();
-        intent.setClass(context, DetailActivity.class);
-        intent.putExtra("id", 0);
-        intent.putExtra("category", NeedUtils.CATEGORY_VOLUNTEER);
-
-        intent.putExtra("address", "Westbahnhof");
-        intent.putExtra("latitude", 0);
-        intent.putExtra("longitude", 0);
-
-        intent.putExtra("start", System.currentTimeMillis());
-        intent.putExtra("end", System.currentTimeMillis());
-
-        intent.putExtra("count", 2);
-        intent.putExtra("selfLink", "www.google.at");
-        return intent;
+        intent.setClass(context, LoginActivity.class);
+        context.startActivity(intent);
     }
 
     public static void fireSettingsIntent(Context context) {

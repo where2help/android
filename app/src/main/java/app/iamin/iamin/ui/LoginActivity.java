@@ -23,6 +23,9 @@ import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.event.UserSignInEvent;
 import app.iamin.iamin.data.event.UserSignUpEvent;
 
+import static app.iamin.iamin.data.DataManager.ERROR;
+import static app.iamin.iamin.data.DataManager.NEXT;
+
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
@@ -122,35 +125,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        DataManager.getInstance().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        DataManager.getInstance().unregister(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BusProvider.getInstance().unregister(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        switch (currentUiMode) {
-            case UI_MODE_SIGN_UP:
-                setUiMode(UI_MODE_SIGN_IN);
-                break;
-            default:
-                finish();
-        }
-    }
-
     public void onActionNegative(View view) {
         if (currentUiMode == UI_MODE_SIGN_IN){
             setUiMode(UI_MODE_SIGN_UP);
@@ -176,29 +150,67 @@ public class LoginActivity extends AppCompatActivity {
     @Subscribe
     public void onUserSignIn(UserSignInEvent event) {
         Log.d(TAG, "onUserSignIn");
-        if (event.error == null) {
-            setResult(Activity.RESULT_OK);
-            finish();
-        } else {
-            Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
-            setUiMode(UI_MODE_SIGN_IN);
+
+        switch (event.status) {
+            case NEXT:
+                setResult(Activity.RESULT_OK);
+                finish();
+                break;
+            case ERROR:
+                Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
+                setUiMode(UI_MODE_SIGN_IN);
+                break;
         }
     }
 
     @Subscribe
     public void onUserSignUp(UserSignUpEvent event) {
         Log.d(TAG, "onUserSignUp");
-        if (event.error == null) {
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            dataManager.signIn(email, password);
-        } else {
-            Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
-            setUiMode(UI_MODE_SIGN_UP);
+
+        switch (event.status) {
+            case NEXT:
+                String email = emailEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+                dataManager.signIn(email, password);
+                break;
+            case ERROR:
+                Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
+                setUiMode(UI_MODE_SIGN_UP);
+                break;
         }
     }
 
     public void dismiss(View view) {
+        setResult(RESULT_CANCELED);
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DataManager.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        DataManager.getInstance().unregister(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        switch (currentUiMode) {
+            case UI_MODE_SIGN_UP:
+                setUiMode(UI_MODE_SIGN_IN);
+                break;
+            default:
+                dismiss(null);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
     }
 }
