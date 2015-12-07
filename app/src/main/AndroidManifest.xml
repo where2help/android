@@ -44,6 +44,16 @@
             android:name=".ui.SettingsActivity"
             android:theme="@style/AppThemeLight" />
 
+        <activity
+            android:name=".ui.TermsActivity"
+            android:theme="@style/AppThemeLight">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="app.iamin.iamin.ui.terms" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".data.service.LocationService"
             android:exported="false" />

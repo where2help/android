@@ -101,7 +101,8 @@
                 android:paddingRight="16dp"
                 android:text="@string/action_terms_privacy"
                 android:textColor="?colorPrimary"
-                android:textSize="@dimen/text_subhead" />
+                android:textSize="@dimen/text_subhead"
+                android:onClick="onActionTerms"/>
 
             <TextView
                 android:id="@+id/communications"

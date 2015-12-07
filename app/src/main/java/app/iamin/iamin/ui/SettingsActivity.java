@@ -1,6 +1,7 @@
 package app.iamin.iamin.ui;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -117,6 +118,8 @@ public class SettingsActivity extends AppCompatActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 DataManager.getInstance().signOut();
+
+                //TODO: Show a spinner and wait for onUserSignOut()
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -134,12 +137,16 @@ public class SettingsActivity extends AppCompatActivity {
         DataUtils.clearUser(this);
         setUiMode(false);
         Toast.makeText(this, "ByeBye!", Toast.LENGTH_SHORT).show();
-
-        //TODO: Notify MainActivity!
     }
 
     @Subscribe
     public void onError(ErrorEvent event) {
         Toast.makeText(this, event.error, Toast.LENGTH_SHORT).show();
+    }
+
+    public void onActionTerms(View view) {
+        Intent intent = new Intent();
+        intent.setClass(this, TermsActivity.class);
+        startActivity(intent);
     }
 }
