@@ -334,15 +334,20 @@ public class DataManager {
     }
 
     private class PendingRequest {
-        private Need need;
+        private int needId;
+        private int volunteeringId;
         private String action;
 
         public Need getNeed() {
+            Need need = new Need();
+            need.setId(needId);
+            need.setVolunteeringId(volunteeringId);
             return need;
         }
 
         public void setNeed(Need need) {
-            this.need = need;
+            this.needId = need.getId();
+            this.volunteeringId = need.getVolunteeringId();
         }
 
         public String getAction() {
