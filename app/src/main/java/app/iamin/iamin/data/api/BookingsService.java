@@ -45,12 +45,20 @@ public class BookingsService {
         User user = getUser(context);
         String url = getEndpoint(context) + "users/" + user.getId() + "/volunteerings";
         Headers headers = getHeaders(context);
+
+        LogUtils.logLocalHeaders(TAG, headers);
+
         Request request = new Request.Builder().headers(headers).url(url).build();
         try {
             Response response = new OkHttpClient().newCall(request).execute();
+            String responseBody = response.body().string();
+
+            LogUtils.logHeaders(TAG, response);
+            Log.d(TAG, responseBody);
+
             if (response.isSuccessful()) {
                 storeHeader(context, response.headers());
-                storeBookings(context, response.body().string());
+                storeBookings(context, responseBody);
                 return null;
             }
             return response.message();
@@ -76,6 +84,8 @@ public class BookingsService {
 
         String url = getEndpoint(context) + "volunteerings";
         Headers headers = getHeaders(context);
+
+        LogUtils.logLocalHeaders(TAG, headers);
 
         Request request = new Request.Builder().headers(headers).url(url).post(requestBody).build();
         try {
@@ -108,6 +118,8 @@ public class BookingsService {
 
         String url = getEndpoint(context) + "volunteerings/" + volunteeringId;
         Headers headers = getHeaders(context);
+
+        LogUtils.logLocalHeaders(TAG, headers);
 
         Request request = new Request.Builder().headers(headers).url(url).delete().build();
         try {

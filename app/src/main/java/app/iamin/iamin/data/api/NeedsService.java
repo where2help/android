@@ -2,6 +2,7 @@ package app.iamin.iamin.data.api;
 
 import android.content.Context;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -16,6 +17,7 @@ import java.text.ParseException;
 
 import app.iamin.iamin.data.model.Booking;
 import app.iamin.iamin.data.model.Need;
+import app.iamin.iamin.util.LogUtils;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import io.realm.Realm;
@@ -27,15 +29,21 @@ import static app.iamin.iamin.util.DataUtils.getEndpoint;
  */
 public class NeedsService {
 
+    private static final String TAG = "NeedsService";
+
     @WorkerThread
     public static String requestNeeds(Context context) {
         String url = getEndpoint(context) + "needs";
         Request request = new Request.Builder().url(url).build();
         try {
             Response response = new OkHttpClient().newCall(request).execute();
+            String responseBody = response.body().string();
+
+            LogUtils.logHeaders(TAG, response);
+            Log.d(TAG, responseBody);
 
             if (response.isSuccessful()) {
-                storeNeeds(context, response.body().string());
+                storeNeeds(context, responseBody);
                 return null;
             }
             return response.message();

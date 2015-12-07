@@ -80,7 +80,10 @@ public class DataUtils {
      * Store the headers in the app preferences.
      */
     public static void storeHeader(Context context, Headers headers) {
-        if (!isTokenValid(headers)) return;
+        if (!isTokenValid(headers)) {
+            // TODO: remove
+            throw new NullPointerException("Token must not be null or empty");
+        }
         SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("Access-Token", headers.get("Access-Token"));
