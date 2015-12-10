@@ -94,6 +94,8 @@ public class NeedsService {
             need.setNeeded(attrs.getInt("volunteers-needed"));
             need.setCount(attrs.getInt("volunteers-count"));
 
+            need.setDescription(attrs.getString("description"));
+
             // Get booking info
             Booking booking = realm.where(Booking.class).equalTo("needId", need.getId()).findFirst();
             if (booking != null) {

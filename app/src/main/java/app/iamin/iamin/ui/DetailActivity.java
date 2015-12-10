@@ -56,6 +56,7 @@ public class DetailActivity extends AppCompatActivity {
     private Button cancelButton;
 
     private TextView submitInfoTextView;
+    private TextView descTextView;
     private TextView webTextView;
 
     private NestedScrollView container;
@@ -132,6 +133,9 @@ public class DetailActivity extends AppCompatActivity {
 
         webTextView = (TextView) findViewById(R.id.link);
         webTextView.setText("Delete Token");
+
+        descTextView = (TextView) findViewById(R.id.desc);
+        descTextView.setText(need.getDescription());
 
         submitInfoTextView = (TextView) findViewById(R.id.info);
 
