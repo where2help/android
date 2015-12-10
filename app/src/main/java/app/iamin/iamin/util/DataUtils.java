@@ -80,18 +80,16 @@ public class DataUtils {
      * Store the headers in the app preferences.
      */
     public static void storeHeader(Context context, Headers headers) {
-        if (!isTokenValid(headers)) {
-            // TODO: remove
-            throw new NullPointerException("Token must not be null or empty");
+        if (isTokenValid(headers)) {
+            SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("Access-Token", headers.get("Access-Token"));
+            editor.putString("Token-Type", headers.get("Token-Type"));
+            editor.putString("Client", headers.get("Client"));
+            editor.putString("Expiry", headers.get("Expiry"));
+            editor.putString("Uid", headers.get("Uid"));
+            editor.apply();
         }
-        SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("Access-Token", headers.get("Access-Token"));
-        editor.putString("Token-Type", headers.get("Token-Type"));
-        editor.putString("Client", headers.get("Client"));
-        editor.putString("Expiry", headers.get("Expiry"));
-        editor.putString("Uid", headers.get("Uid"));
-        editor.apply();
     }
 
     /**
