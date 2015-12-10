@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.model.Need;
-import app.iamin.iamin.ui.widget.NeedViewNew;
+import app.iamin.iamin.ui.widget.NeedView;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.RealmResults;
 
@@ -28,7 +28,7 @@ public class NeedFeedAdapter extends RecyclerView.Adapter<NeedFeedAdapter.ViewHo
     @Override
     public NeedFeedAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        NeedViewNew view = (NeedViewNew) inflater.inflate(R.layout.need_item_new, parent, false);
+        NeedView view = (NeedView) inflater.inflate(R.layout.need_item, parent, false);
         return new ViewHolder(view, clickListener);
     }
 
@@ -56,10 +56,10 @@ public class NeedFeedAdapter extends RecyclerView.Adapter<NeedFeedAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        NeedViewNew mNeedView;
+        NeedView mNeedView;
         ItemClickListener mClickListener;
 
-        public ViewHolder(NeedViewNew needView, ItemClickListener clickListener) {
+        public ViewHolder(NeedView needView, ItemClickListener clickListener) {
             super(needView);
             mNeedView = needView;
             mNeedView.setClickable(true);

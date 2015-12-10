@@ -28,7 +28,7 @@ import app.iamin.iamin.data.event.DisconnectedEvent;
 import app.iamin.iamin.data.event.PromptLoginEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.widget.CustomMapView;
-import app.iamin.iamin.ui.widget.NeedViewNew;
+import app.iamin.iamin.ui.widget.NeedView;
 import app.iamin.iamin.util.DataUtils;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
@@ -61,7 +61,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private Need need;
 
-    private NeedViewNew needView;
+    private NeedView needView;
 
     private Realm realm;
     private RealmChangeListener realmChangeListener;
@@ -117,7 +117,7 @@ public class DetailActivity extends AppCompatActivity {
         mapView.setNeed(need);
         mapView.onCreate(null);
 
-        needView = (NeedViewNew) findViewById(R.id.need_view);
+        needView = (NeedView) findViewById(R.id.need_view);
         needView.setNeed(need);
         needView.setInDetail(true);
 
@@ -286,11 +286,6 @@ public class DetailActivity extends AppCompatActivity {
         super.onPause();
         BusProvider.getInstance().unregister(this);
         DataManager.getInstance().unregister(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        finish();
     }
 
     @Override

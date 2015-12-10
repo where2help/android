@@ -31,13 +31,13 @@
     <dimen name="text_caption">12sp</dimen>
     <dimen name="text_body">14sp</dimen>
     <dimen name="text_subhead">16sp</dimen>
-    <dimen name="text_title">20sp</dimen>
-    <dimen name="text_headline">24sp</dimen>
-    <dimen name="text_count">28sp</dimen>
-    <dimen name="text_display_0">26sp</dimen>
-    <dimen name="text_display_1">34sp</dimen>
-    <dimen name="text_display_2">45sp</dimen>
-    <dimen name="text_display_3">56sp</dimen>
-    <dimen name="text_display_4">112sp</dimen>
-    <dimen name="text_display_5">286sp</dimen>
+    <dimen name="text_title">18sp</dimen>
+    <dimen name="text_headline">20sp</dimen>
+    <dimen name="text_count">26sp</dimen>
+    <dimen name="text_display_0">24sp</dimen>
+    <dimen name="text_display_1">32sp</dimen>
+    <dimen name="text_display_2">43sp</dimen>
+    <dimen name="text_display_3">54sp</dimen>
+    <dimen name="text_display_4">110sp</dimen>
+    <dimen name="text_display_5">284sp</dimen>
 </resources>

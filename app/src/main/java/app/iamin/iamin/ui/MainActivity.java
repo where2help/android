@@ -19,6 +19,11 @@ import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.DataManager;
@@ -33,6 +38,7 @@ import app.iamin.iamin.ui.widget.CustomRecyclerView;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
@@ -47,13 +53,15 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TAG = "MainActivity";
 
     private static final String STATE_UI = "uiState";
-    private static final String STATE_FILTER = "filterState";
+    private static final String STATE_CATEGORY = "categoryFilterState";
+    private static final String STATE_CITY = "cityFilterState";
 
     private static final int UI_STATE_HOME = 0;
     private static final int UI_STATE_BOOKINGS = 1;
 
     private int mUiState = UI_STATE_HOME;
-    private int mFilterState = 0;
+    private int mFilterCategory = 0;
+    private String mFilterCity;
 
     private boolean hasUser;
 
@@ -64,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mEmptyTextView;
 
     private DrawerLayout mDrawer;
+
+    private FilterAdapter mFilterAdapter;
     private RecyclerView mFiltersList;
 
     private Realm realm;
@@ -89,28 +99,31 @@ public class MainActivity extends AppCompatActivity implements
 
         if (savedInstanceState != null) {
             mUiState = savedInstanceState.getInt(STATE_UI);
-            mFilterState = savedInstanceState.getInt(STATE_FILTER);
+            mFilterCategory = savedInstanceState.getInt(STATE_CATEGORY);
+            mFilterCity = savedInstanceState.getString(STATE_CITY);
         }
 
-        Log.e(TAG, STATE_FILTER + ": " + mFilterState);
+        Log.e(TAG, STATE_CATEGORY + ": " + mFilterCategory);
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer);
 
         mNeedFeedAdapter = new NeedFeedAdapter(this);
 
-/*        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);*/
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
 
         recyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setEmptyView(findViewById(R.id.empty_view));
-        //recyclerView.addItemDecoration(itemDecoration);
+        recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setAdapter(mNeedFeedAdapter);
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mEmptyTextView = (TextView) findViewById(R.id.empty_message);
 
+        mFilterAdapter = new FilterAdapter(this, mFilterCategory, this);
+
         mFiltersList = (RecyclerView) findViewById(R.id.filters);
-        mFiltersList.setAdapter(new FilterAdapter(this, mFilterState, this));
+        mFiltersList.setAdapter(mFilterAdapter);
 
         setUiState(mUiState);
     }
@@ -175,9 +188,7 @@ public class MainActivity extends AppCompatActivity implements
 
                     mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-                    if (mUiState == UI_STATE_BOOKINGS) {
-                        setCategoryFilter(mFilterState);
-                    }
+                    setFilter();
                 }
                 break;
             case UI_STATE_BOOKINGS:
@@ -202,26 +213,37 @@ public class MainActivity extends AppCompatActivity implements
         if (mUiState == UI_STATE_BOOKINGS) {
             setBookingsFilter();
         } else {
-            setCategoryFilter(mFilterState);
+            setFilter();
         }
     }
 
     @Override
-    public void onFilterChanged(View view, int position) {
-        setCategoryFilter(position);
+    public void onFilterCategoryChanged(View view, int category) {
+        mFilterCategory = category;
+        setFilter();
         mFiltersList.getAdapter().notifyDataSetChanged(); // update highlight
         mDrawer.closeDrawer(GravityCompat.END);
     }
 
-    private void setCategoryFilter(int position) {
-        RealmResults<Need> needs;
+    @Override
+    public void onFilterCityChanged(View view, String city) {
+        mFilterCity = city;
+        setFilter();
+        mDrawer.closeDrawer(GravityCompat.END);
+    }
 
-        if (position == 0) {
-            needs = realm.where(Need.class).findAll();
-        } else {
-            Log.d(TAG, "setCategoryFilter()");
-            needs = realm.where(Need.class).equalTo("category", position - 1).findAll();
+    private void setFilter() {
+        RealmQuery<Need> query = realm.where(Need.class);
+
+        if (mFilterCategory != 0) {
+            query.equalTo("category", mFilterCategory - 1);
         }
+
+        if (mFilterCity != null && !mFilterCity.isEmpty()) {
+            query.equalTo("city", mFilterCity);
+        }
+
+        RealmResults<Need> needs = query.findAll();
 
         if (needs.isEmpty()) {
             Log.d(TAG, "setCategoryFilter(): needs.isEmpty()");
@@ -229,10 +251,22 @@ public class MainActivity extends AppCompatActivity implements
             mEmptyTextView.setVisibility(View.GONE);
         }
 
-        Log.d(TAG, "setCategoryFilter(): size = " + needs.size());
+        mFilterAdapter.setCityList(getCities(needs));
         mNeedFeedAdapter.setData(needs);
-        // save state
-        mFilterState = position;
+    }
+
+    private String[] getCities(RealmResults<Need> needs) {
+        List<String> cities = new ArrayList<>();
+
+        for (Need need : needs) {
+            cities.add(need.getCity());
+        }
+
+        Set<String> set = new HashSet<>(cities);
+        for (String city : set) {
+            Log.e(TAG, "city: " + city);
+        }
+        return set.toArray(new String[set.size()]);
     }
 
     private void setBookingsFilter() {
@@ -365,7 +399,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(STATE_UI, mUiState);
-        savedInstanceState.putInt(STATE_FILTER, mFilterState);
+        savedInstanceState.putInt(STATE_CATEGORY, mFilterCategory);
+        savedInstanceState.putString(STATE_CITY, mFilterCity);
         super.onSaveInstanceState(savedInstanceState);
     }
 

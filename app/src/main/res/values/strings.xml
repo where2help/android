@@ -26,7 +26,7 @@
     <string name="cancel_negative">Ja...</string>
     <string name="action_share">Weitersagen!</string>
     <string name="register_status">Registriere...</string>
-    <string name="user">User</string>
+    <string name="user">Meine Termine</string>
     <string name="action_log_out">Log out</string>
     <string name="action_terms_privacy"><![CDATA[Terms & Privacy]]></string>
     <string name="communication_settings">Communications</string>
@@ -41,6 +41,7 @@
     <string name="about">Über</string>
     <string name="appointments">Meine Termine</string>
     <string name="filter">Filter</string>
-    <string name="search">Suche</string>
+    <string> name="search">Suche</string>
+    <string name="city_filter_item_hint">Suche</string>
 
 </resources>
