@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:background="@drawable/bg_dialog"
             android:clickable="true"
-            android:elevation="8dp"
+            android:elevation="24dp"
             android:orientation="vertical"
             android:paddingBottom="@dimen/padding"
             android:paddingLeft="@dimen/padding"
