@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -23,6 +24,7 @@ import app.iamin.iamin.util.TimeUtils;
 import io.realm.Realm;
 
 import static app.iamin.iamin.util.DataUtils.getEndpoint;
+import static app.iamin.iamin.util.DataUtils.getHeaders;
 
 /**
  * Created by Markus on 08.11.15.
@@ -34,6 +36,10 @@ public class NeedsService {
     @WorkerThread
     public static String requestNeeds(Context context) {
         String url = getEndpoint(context) + "needs";
+        Headers headers = getHeaders(context);
+
+        LogUtils.logLocalHeaders(TAG, headers);
+
         Request request = new Request.Builder().url(url).build();
         try {
             Response response = new OkHttpClient().newCall(request).execute();
