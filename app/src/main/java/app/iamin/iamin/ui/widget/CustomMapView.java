@@ -75,8 +75,8 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
     @TargetApi(ICE_CREAM_SANDWICH)
     private void playEnterAnimation() {
         ValueAnimator anim = ValueAnimator.ofInt(255, 0);
-        anim.setDuration(300L);
-        anim.setStartDelay(350L);
+        anim.setDuration(350L);
+        anim.setStartDelay(150L);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -114,7 +114,7 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
                 .scaleX(1).scaleY(1)
                 .translationY(0)
                 .setInterpolator(new FastOutLinearInInterpolator())
-                .setDuration(200L)
+                .setDuration(250L)
                 .setStartDelay(0L).start();
     }
 

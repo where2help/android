@@ -3,6 +3,7 @@ package app.iamin.iamin.ui;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.NestedScrollView.OnScrollChangeListener;
@@ -114,8 +115,16 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         mapView = (CustomMapView) findViewById(R.id.map);
-        mapView.setNeed(need);
-        mapView.onCreate(null);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mapView != null) {
+                    mapView.setNeed(need);
+                    mapView.onCreate(null);
+                }
+            }
+        }, 250);
 
         needView = (NeedView) findViewById(R.id.need_view);
         needView.setNeed(need);
