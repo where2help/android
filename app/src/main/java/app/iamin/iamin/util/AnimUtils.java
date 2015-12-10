@@ -9,7 +9,7 @@ import android.view.animation.OvershootInterpolator;
  */
 public class AnimUtils {
 
-    public static void playPopAnim(View v, int startDelay, int duration) {
+    public static void playPopInAnim(View v, int startDelay, int duration) {
         if (v != null) {
             ViewCompat.setAlpha(v, 0f);
             ViewCompat.setScaleX(v, 0f);
@@ -19,6 +19,18 @@ public class AnimUtils {
                     .alpha(1f)
                     .scaleX(1f)
                     .scaleY(1f)
+                    .setStartDelay(startDelay)
+                    .setDuration(duration)
+                    .setInterpolator(new OvershootInterpolator());
+        }
+    }
+
+    public static void playPopOutAnim(View v, int startDelay, int duration) {
+        if (v != null) {
+            ViewCompat.animate(v)
+                    .alpha(0f)
+                    .scaleX(0f)
+                    .scaleY(0f)
                     .setStartDelay(startDelay)
                     .setDuration(duration)
                     .setInterpolator(new OvershootInterpolator());
