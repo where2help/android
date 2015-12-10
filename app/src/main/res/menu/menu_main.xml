@@ -12,7 +12,7 @@
     <item
         android:id="@+id/menu_bookings"
         android:title="@string/appointments"
-        android:icon="@drawable/ic_account_circle_white_24dp"
+        android:icon="@drawable/ic_bookmark_white_24dp"
         app:showAsAction="always" />
 
     <item
