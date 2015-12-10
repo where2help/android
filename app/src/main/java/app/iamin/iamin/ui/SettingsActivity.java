@@ -93,11 +93,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        finish();
-    }
-
     public void onEditEndpoint(View view) {
         DataUtils.showEndpointInputPicker(SettingsActivity.this);
     }
