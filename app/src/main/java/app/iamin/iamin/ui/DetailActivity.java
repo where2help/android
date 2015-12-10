@@ -124,7 +124,7 @@ public class DetailActivity extends AppCompatActivity {
                     mapView.onCreate(null);
                 }
             }
-        }, 250);
+        }, 300);
 
         needView = (NeedView) findViewById(R.id.need_view);
         needView.setNeed(need);

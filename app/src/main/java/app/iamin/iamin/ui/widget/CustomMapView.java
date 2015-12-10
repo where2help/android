@@ -76,7 +76,7 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
     private void playEnterAnimation() {
         ValueAnimator anim = ValueAnimator.ofInt(255, 0);
         anim.setDuration(350L);
-        anim.setStartDelay(150L);
+        anim.setStartDelay(100L);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
