@@ -8,13 +8,13 @@
 
     <string name="detail_address_format">"%1$s (%2$s)</string>
     <string name="detail_date_format">%1$s %2$s - %3$s Uhr (%4$s)</string>
-    <string name = "count">%1$s</string>
+    <string name="count">%1$s</string>
 
     <string name="sign_up">Registrieren</string>
     <string name="sign_in">Anmelden</string>
     <string name="password">Passwort</string>
     <string name="email">Email</string>
-    <string name="action_iamin">I\'m in!</string>
+    <string name="action_iamin">Helfen</string>
     <string name="thank_you_message">Danke! Bitte komm um %1$s!</string>
     <string name="action_iamout">Absagen</string>
     <string name="action_calendar">Kalender</string>
@@ -24,10 +24,10 @@
     <string name="cancel_message">Wir brauchen dich! Willst du wirklich absagen?</string>
     <string name="cancel_positive">Natürlich nicht!</string>
     <string name="cancel_negative">Ja...</string>
-    <string name="action_share">Weitersagen!</string>
+    <string name="action_share">Weitersagen</string>
     <string name="register_status">Registriere...</string>
     <string name="user">Meine Termine</string>
-    <string name="action_log_out">Log out</string>
+    <string name="action_log_out">Abmelden</string>
     <string name="action_terms_privacy"><![CDATA[Terms & Privacy]]></string>
     <string name="communication_settings">Communications</string>
     <string name="action_emails">Emails</string>
@@ -41,7 +41,7 @@
     <string name="about">Über</string>
     <string name="appointments">Meine Termine</string>
     <string name="filter">Filter</string>
-    <string> name="search">Suche</string>
+    <string name="search">Suche</string>
     <string name="city_filter_item_hint">Suche</string>
 
 </resources>
