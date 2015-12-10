@@ -114,9 +114,9 @@ public class NeedView extends FrameLayout {
 
         checkView.layout(
                 getMeasuredWidth() - padding - checkView.getMeasuredWidth(),
-                (getMeasuredHeight() - checkView.getMeasuredWidth()) / 2,
+                padding,
                 getMeasuredWidth() - padding,
-                (getMeasuredHeight() + checkView.getMeasuredWidth()) / 2);
+                padding + checkView.getMeasuredHeight());
 
         countView.layout(
                 baseline,
