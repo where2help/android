@@ -30,7 +30,6 @@ import app.iamin.iamin.data.event.PromptLoginEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.widget.CustomMapView;
 import app.iamin.iamin.ui.widget.NeedView;
-import app.iamin.iamin.util.DataUtils;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
@@ -132,7 +131,7 @@ public class DetailActivity extends AppCompatActivity {
         needView.setInDetail(true);
 
         webTextView = (TextView) findViewById(R.id.link);
-        webTextView.setText("Delete Token");
+        webTextView.setText("www.link.xyz");
 
         descTextView = (TextView) findViewById(R.id.desc);
         descTextView.setText(need.getDescription());
@@ -215,8 +214,8 @@ public class DetailActivity extends AppCompatActivity {
 
     public void onActionLink(View view) {
         //UiUtils.fireWebIntent(DetailActivity.this, need);
-        DataUtils.clearToken(this);
-        Toast.makeText(this, "Token deleted!", Toast.LENGTH_SHORT).show();
+        //DataUtils.clearToken(this);
+        //Toast.makeText(this, "Token deleted!", Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe
