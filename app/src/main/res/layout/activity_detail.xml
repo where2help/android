@@ -115,7 +115,8 @@
                 android:text="Mehr Infos: www...."
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/text_body"
-                android:onClick="onActionLink"/>
+                android:onClick="onActionLink"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/organization"
