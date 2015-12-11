@@ -56,6 +56,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private TextView submitInfoTextView;
     private TextView descTextView;
+    private TextView organizationTextView;
     private TextView webTextView;
 
     private NestedScrollView container;
@@ -135,6 +136,9 @@ public class DetailActivity extends AppCompatActivity {
 
         descTextView = (TextView) findViewById(R.id.desc);
         descTextView.setText(need.getDescription());
+
+        organizationTextView = (TextView) findViewById(R.id.organization);
+        organizationTextView.setText(getString(R.string.organization, need.getOrganization()));
 
         submitInfoTextView = (TextView) findViewById(R.id.info);
 

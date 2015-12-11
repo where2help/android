@@ -16,6 +16,7 @@
     <string name="email">Email</string>
     <string name="action_iamin">Helfen</string>
     <string name="thank_you_message">Danke! Bitte komm um %1$s!</string>
+    <string name="organization">Organisation: %1$s</string>
     <string name="action_iamout">Absagen</string>
     <string name="action_calendar">Kalender</string>
     <string name="welcome_message">Log in to where2help</string>

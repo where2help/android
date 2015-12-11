@@ -27,7 +27,7 @@ public class Need extends RealmObject {
 
     private String description;
 
-    private String organisation;
+    private String organization;
 
     // Date
 
@@ -101,12 +101,12 @@ public class Need extends RealmObject {
         this.description = description;
     }
 
-    public String getOrganisation() {
-        return organisation;
+    public String getOrganization() {
+        return organization;
     }
 
-    public void setOrganisation(String organisation) {
-        this.organisation = organisation;
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public Date getStart() {
