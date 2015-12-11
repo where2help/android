@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingBottom="12dp"
-                android:paddingLeft="64dp"
+                android:paddingLeft="62dp"
                 android:paddingRight="16dp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/text_subhead"
