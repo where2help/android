@@ -76,11 +76,11 @@ public class LoginActivity extends AppCompatActivity {
 
         emailInput = (TextInputLayout) findViewById(R.id.input_email);
         emailEditText = (EditText) findViewById(R.id.email);
-        emailEditText.setText("android_user@example.com");
+        //emailEditText.setText("android_user@example.com");
 
         passwordInput = (TextInputLayout) findViewById(R.id.input_password);
         passwordEditText = (EditText) findViewById(R.id.password);
-        passwordEditText.setText("supersecret");
+        //passwordEditText.setText("supersecret");
 
         passwordConfInput = (TextInputLayout) findViewById(R.id.input_password_conf);
         passwordConfEditText = (EditText) findViewById(R.id.password_conf);
