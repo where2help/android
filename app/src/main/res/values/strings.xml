@@ -42,6 +42,6 @@
     <string name="appointments">Meine Termine</string>
     <string name="filter">Filter</string>
     <string name="search">Suche</string>
-    <string name="city_filter_item_hint">Suche</string>
+    <string name="city_filter_item_hint">Suche Stadt</string>
 
 </resources>
