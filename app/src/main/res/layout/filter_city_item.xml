@@ -10,6 +10,7 @@
     android:inputType="textCapWords"
     android:paddingLeft="@dimen/padding"
     android:paddingRight="@dimen/padding"
+    android:drawableRight="@drawable/ic_search_white_24dp"
     android:textAppearance="@style/Subhead"
     android:textColor="@color/text_light_sec"
     android:textColorHint="@color/text_light_hint" />

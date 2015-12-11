@@ -2,6 +2,7 @@ package app.iamin.iamin.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -118,6 +119,10 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             adapter = new ArrayAdapter<>(mContext, simple_dropdown_item_1line, mCityList);
 
             filterItem = (AutoCompleteTextView) view;
+
+            Drawable icon = filterItem.getCompoundDrawables()[2];
+            if (icon != null) icon.setAlpha(90);
+
             filterItem.setAdapter(adapter);
             filterItem.setImeOptions(EditorInfo.IME_ACTION_DONE);
             filterItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
