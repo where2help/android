@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 import app.iamin.iamin.data.model.Booking;
 import app.iamin.iamin.data.model.Need;
@@ -22,6 +23,7 @@ import app.iamin.iamin.util.LogUtils;
 import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 import static app.iamin.iamin.util.DataUtils.getEndpoint;
 import static app.iamin.iamin.util.DataUtils.getHeaders;
@@ -68,15 +70,29 @@ public class NeedsService {
         Realm realm = Realm.getInstance(context);
         realm.beginTransaction();
 
+        ArrayList<Integer> ids = new ArrayList<>();
         for (int i = 0; i < data.length(); i++) {
             JSONObject obj = data.getJSONObject(i);
+            ids.add(obj.getInt("id"));
+        }
+
+        RealmResults<Need> localNeeds = realm.where(Need.class).findAll();
+        for (int i = 0; i < localNeeds.size(); i++) {
+            Need need = localNeeds.get(i);
+            if (!ids.contains(Integer.valueOf(need.getId()))) {
+                need.removeFromRealm();
+                // Maybe inform the user that a need got canceled
+            }
+        }
+
+        for (int i = 0; i < data.length(); i++) {
+            JSONObject obj = data.getJSONObject(i);
+            JSONObject attrs = obj.getJSONObject("attributes");
 
             Need need = new Need();
 
             need.setId(obj.getInt("id"));
             need.setSelfLink(obj.getJSONObject("links").getString("self"));
-
-            JSONObject attrs = obj.getJSONObject("attributes");
 
             need.setCategory(NeedUtils.getCategory(attrs.getString("category")));
 
@@ -104,18 +120,10 @@ public class NeedsService {
                 need.setVolunteeringId(booking.getId());
             }
 
-            // This will "update" a existing Need with the same id or create a new one instead
+            // This will update a existing Need with the same id or create a new one instead
             realm.copyToRealmOrUpdate(need);
         }
 
-        realm.commitTransaction();
-        realm.close();
-    }
-
-    public static void clearNeeds(Context context) {
-        Realm realm = Realm.getInstance(context);
-        realm.beginTransaction();
-        realm.where(Need.class).findAll().clear();
         realm.commitTransaction();
         realm.close();
     }
