@@ -7,13 +7,13 @@
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter_list_white_24dp"
         android:title="@string/filter"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_bookings"
-        android:title="@string/appointments"
         android:icon="@drawable/ic_bookmark_white_24dp"
-        app:showAsAction="always" />
+        android:title="@string/appointments"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_login"
