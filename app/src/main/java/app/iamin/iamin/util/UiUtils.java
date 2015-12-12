@@ -71,13 +71,16 @@ public class UiUtils {
     }
 
     public static void fireShareIntent(Context context, Need need) {
+        String host = DataUtils.getHost(context);
+        String url = host != null ? "http://" + host + "/needs/" + need.getId() : "";
+
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, "Where2Help braucht noch " + NeedUtils.getCategoryPlural(need.getCategory()) + " am " +
-                TimeUtils.formatHumanFriendlyShortDate(context, need.getStart()) + " " +
-                TimeUtils.formatTimeOfDay(need.getStart()) + " - " + TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr" + " für " + TimeUtils.getDuration(need.getStart(), need.getEnd()) + " am " +
-                need.getCity() + " " + need.getLocation() + ". (" + need.getSelfLink() + ")");
+        intent.putExtra(Intent.EXTRA_TEXT, need.getOrganization() + " sucht " + NeedUtils.getCategoryPlural(need.getCategory()) + " für den " +
+                TimeUtils.formatShortDate(need.getStart()) + " von " +
+                TimeUtils.formatTimeOfDay(need.getStart()) + " bis " + TimeUtils.formatTimeOfDay(need.getEnd()) + " Uhr in " +
+                need.getCity() + ", " + need.getLocation() + " (" + url + ")");
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(intent);
         } else {

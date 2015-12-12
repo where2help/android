@@ -11,6 +11,9 @@ import android.widget.EditText;
 
 import com.squareup.okhttp.Headers;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import app.iamin.iamin.data.model.User;
 
 /**
@@ -64,6 +67,17 @@ public class DataUtils {
     public static String getEndpoint(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString("URL_ENDPOINT", URL_ENDPOINT);
+    }
+
+    public static String getHost(Context context) {
+        String host = null;
+        try {
+            URI uri = new URI(getEndpoint(context));
+            host = uri.getHost();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return host;
     }
 
     /**
