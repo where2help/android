@@ -7,13 +7,15 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.NestedScrollView.OnScrollChangeListener;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +41,6 @@ import io.realm.RealmChangeListener;
 import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
 import static app.iamin.iamin.data.DataManager.ERROR;
 import static app.iamin.iamin.data.DataManager.NEXT;
-import static app.iamin.iamin.data.DataManager.START;
 
 /**
  * Created by Markus on 10.10.15.
@@ -48,25 +49,29 @@ public class DetailActivity extends AppCompatActivity {
 
     private static final String TAG = "DetailActivity";
 
-    private boolean isAttending = false;
+    private static final int UI_MODE_DEFAULT = 0;
+    private static final int UI_MODE_BOOKING = 1;
+    private static final int UI_MODE_ATTENDING = 2;
+    private static final int UI_MODE_EMPTY = 4;
 
-    private LinearLayout btnBarLayout;
-    private Button submitButton;
-    private Button cancelButton;
+    private int uiMode = 0;
 
-    private TextView submitInfoTextView;
-    private TextView descTextView;
-    private TextView organizationTextView;
-    private TextView webTextView;
+    private ActionBar actionBar;
 
     private NestedScrollView container;
 
-    private Need need;
-
     private NeedView needView;
+
+    private Button bookingButton;
+
+    private TextView infoTextView;
+    private TextView descTextView;
+    private TextView organizationTextView;
 
     private Realm realm;
     private RealmChangeListener realmChangeListener;
+
+    private Need need;
 
     private CustomMapView mapView;
 
@@ -83,6 +88,24 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        mapView = (CustomMapView) findViewById(R.id.map);
+        needView = (NeedView) findViewById(R.id.need_view);
+        infoTextView = (TextView) findViewById(R.id.info);
+
+        bookingButton = (Button) findViewById(R.id.submit);
+
+        descTextView = (TextView) findViewById(R.id.desc);
+        organizationTextView = (TextView) findViewById(R.id.organization);
+
+        container = (NestedScrollView) findViewById(R.id.container);
+        container.setOnScrollChangeListener(scrollChangeListener);
+
         int needId = getIntent().getExtras().getInt("id");
 
         realm = Realm.getInstance(this);
@@ -92,134 +115,162 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onChange() {
                 Log.d(TAG, "RealmChangeListener: onChange()");
-                if (needView != null) {
-                    needView.setNeed(need);
+                if (need == null || !need.isValid()) {
+                    setUiMode(UI_MODE_EMPTY);
                 }
-                // update map
+                setNeed();
             }
         };
         realm.addChangeListener(realmChangeListener);
 
-        isAttending = need.isAttending() && DataManager.hasUser();
+        setNeed();
 
-        container = (NestedScrollView) findViewById(R.id.container);
-        container.setOnScrollChangeListener(scrollChangeListener);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(NeedUtils.getCategoryPlural(need.getCategory()) + " - " + need.getLocation());
-        toolbar.setNavigationIcon(R.drawable.ic_action_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        mapView = (CustomMapView) findViewById(R.id.map);
+        findUiMode();
+        setUiMode(uiMode);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (mapView != null) {
-                    mapView.setNeed(need);
-                    mapView.onCreate(null);
+                    mapView.onCreate(null); // ●～*
                 }
             }
         }, 300);
+    }
 
-        needView = (NeedView) findViewById(R.id.need_view);
-        needView.setNeed(need);
+    private void setNeed() {
+        if (need == null || !need.isValid()) {
+            infoTextView.setText("Hoppla!\n\nDieser Termin wurde verlegt oder abgesagt.");
+            return;
+        }
+
+        if (actionBar != null) {
+            actionBar.setTitle(NeedUtils.getCategoryPlural(need.getCategory()));
+        }
+
+        mapView.setNeed(need);
+
         needView.setInDetail(true);
+        needView.setNeed(need);
 
-        webTextView = (TextView) findViewById(R.id.link);
-        webTextView.setText("www.link.xyz");
+        infoTextView.setText(getString(R.string.thank_you_message,
+                TimeUtils.formatTimeOfDay(need.getStart())));
 
-        descTextView = (TextView) findViewById(R.id.desc);
         descTextView.setText(need.getDescription());
 
-        organizationTextView = (TextView) findViewById(R.id.organization);
         organizationTextView.setText(getString(R.string.organization, need.getOrganization()));
+    }
 
-        submitInfoTextView = (TextView) findViewById(R.id.info);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        return true;
+    }
 
-        btnBarLayout = (LinearLayout) findViewById(R.id.btnBar);
-
-        submitButton = (Button) findViewById(R.id.submit);
-        cancelButton = (Button) findViewById(R.id.cancel);
-
-        setUiMode(isAttending);
-
-        if (DataManager.getInstance().isBooking(need)) {
-            if (isAttending) {
-                // canceling for this need is ongoing
-                cancelButton.setText("Absagen...");
-                cancelButton.setEnabled(false);
-            } else {
-                // booking for this need is ongoing
-                submitButton.setText(R.string.register_status);
-                submitButton.setEnabled(false);
-            }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.menu_share:
+                UiUtils.fireShareIntent(DetailActivity.this, need);
+                return true;
+            case R.id.menu_calendar:
+                UiUtils.fireCalendarIntent(DetailActivity.this, need);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
-    private void setUiMode(boolean isAttending) {
-        if (isAttending) {
-            submitButton.setText(R.string.action_share);
-            submitButton.setEnabled(true);
-
-            submitInfoTextView.setText(getString(R.string.thank_you_message, TimeUtils.formatTimeOfDay(need.getStart())));
-            submitInfoTextView.setVisibility(View.VISIBLE);
-
-            cancelButton.setText(R.string.action_iamout);
-            cancelButton.setEnabled(true);
-
-            btnBarLayout.setVisibility(View.VISIBLE);
+    private void findUiMode() {
+        if (need != null && need.isValid()) {
+            if (DataManager.getInstance().isBooking(need)) {
+                uiMode = UI_MODE_BOOKING;
+            } else if (need.isAttending() && DataManager.hasUser()) {
+                uiMode = UI_MODE_ATTENDING;
+            } else {
+                uiMode = UI_MODE_DEFAULT;
+            }
         } else {
-            submitButton.setEnabled(true);
-            submitButton.setText(R.string.action_iamin);
-
-            submitInfoTextView.setVisibility(View.GONE);
-            btnBarLayout.setVisibility(View.GONE);
+            uiMode = UI_MODE_EMPTY;
         }
+    }
+
+    private void setUiMode(int mode) {
+        switch (mode) {
+            case UI_MODE_DEFAULT:
+                mapView.setVisibility(View.VISIBLE);
+                needView.setVisibility(View.VISIBLE);
+                infoTextView.setVisibility(View.GONE);
+
+                bookingButton.setVisibility(View.VISIBLE);
+                bookingButton.setEnabled(true);
+                bookingButton.setText(R.string.action_iamin);
+
+                descTextView.setVisibility(View.VISIBLE);
+                organizationTextView.setVisibility(View.VISIBLE);
+                break;
+            case UI_MODE_BOOKING:
+                if (need.isAttending()) {
+                    // canceling for this need is ongoing
+                    bookingButton.setText("Absagen...");
+                    bookingButton.setEnabled(false);
+                } else {
+                    // booking for this need is ongoing
+                    bookingButton.setText("Helfen...");
+                    bookingButton.setEnabled(false);
+                }
+                break;
+            case UI_MODE_ATTENDING:
+                mapView.setVisibility(View.VISIBLE);
+                needView.setVisibility(View.VISIBLE);
+                infoTextView.setVisibility(View.VISIBLE);
+
+                bookingButton.setVisibility(View.VISIBLE);
+                bookingButton.setText("Absagen");
+                bookingButton.setEnabled(true);
+
+                descTextView.setVisibility(View.VISIBLE);
+                organizationTextView.setVisibility(View.VISIBLE);
+                break;
+            case UI_MODE_EMPTY:
+                mapView.setVisibility(View.GONE);
+                needView.setVisibility(View.GONE);
+                infoTextView.setVisibility(View.VISIBLE);
+                bookingButton.setVisibility(View.GONE);
+                descTextView.setVisibility(View.GONE);
+                organizationTextView.setVisibility(View.GONE);
+                break;
+        }
+
+        uiMode = mode;
     }
 
     public void onActionSubmit(View view) {
-        if (!isAttending) {
+        if (!need.isAttending()) {
+            setUiMode(UI_MODE_BOOKING);
             DataManager.getInstance().createBooking(need);
         } else {
-            UiUtils.fireShareIntent(DetailActivity.this, need);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getString(R.string.cancel_message));
+            builder.setPositiveButton(getString(R.string.cancel_positive), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // Do nothing
+                }
+            });
+            builder.setNegativeButton(getString(R.string.cancel_negative), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //new DeleteVolunteeringTask(need.getVolunteeringId()).execute(DetailActivity.this);
+                    Log.wtf("onActionCancel", "volunteeringId = " + need.getVolunteeringId());
+                    setUiMode(UI_MODE_BOOKING);
+                    DataManager.getInstance().cancelBooking(need);
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
-    }
-
-    public void onActionCancel(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.cancel_message));
-        builder.setPositiveButton(getString(R.string.cancel_positive), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // Do nothing
-            }
-        });
-        builder.setNegativeButton(getString(R.string.cancel_negative), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                //new DeleteVolunteeringTask(need.getVolunteeringId()).execute(DetailActivity.this);
-                Log.wtf("onActionCancel", "volunteeringId = " + need.getVolunteeringId());
-                cancelButton.setText("Absagen...");
-                cancelButton.setEnabled(false);
-                DataManager.getInstance().cancelBooking(need);
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    public void onActionCalendar(View view) {
-        UiUtils.fireCalendarIntent(DetailActivity.this, need);
-    }
-
-    public void onActionLink(View view) {
-        //UiUtils.fireWebIntent(DetailActivity.this, need);
-        //DataUtils.clearToken(this);
-        //Toast.makeText(this, "Token deleted!", Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe
@@ -228,17 +279,12 @@ public class DetailActivity extends AppCompatActivity {
         Log.d(TAG, "onCreateBooking");
 
         switch (event.status) {
-            case START:
-                submitButton.setText(R.string.register_status);
-                submitButton.setEnabled(false);
-                break;
             case NEXT:
-                isAttending = true;
-                setUiMode(true);
+                setUiMode(UI_MODE_ATTENDING);
                 break;
             case ERROR:
                 Toast.makeText(DetailActivity.this, event.error, Toast.LENGTH_SHORT).show();
-                setUiMode(isAttending);
+                setUiMode(UI_MODE_DEFAULT);
                 break;
         }
     }
@@ -250,12 +296,11 @@ public class DetailActivity extends AppCompatActivity {
 
         switch (event.status) {
             case NEXT:
-                isAttending = false;
-                setUiMode(false);
+                setUiMode(UI_MODE_DEFAULT);
                 break;
             case ERROR:
                 Toast.makeText(DetailActivity.this, event.error, Toast.LENGTH_SHORT).show();
-                setUiMode(isAttending);
+                setUiMode(UI_MODE_ATTENDING);
                 break;
         }
     }
@@ -273,7 +318,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0 && resultCode == RESULT_CANCELED) {
             // prompt login canceled
-            setUiMode(isAttending);
+            setUiMode(UI_MODE_DEFAULT);
         }
     }
 

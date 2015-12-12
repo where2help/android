@@ -11,7 +11,8 @@
         android:layout_height="56dp"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark" />
 
     <app.iamin.iamin.ui.widget.CustomMapView xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/map"
@@ -29,8 +30,8 @@
         android:layout_gravity="top"
         android:layout_marginTop="56dp"
         android:clipToPadding="false"
-        android:paddingTop="168dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:paddingTop="168dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -61,36 +62,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="14dp"
                 android:layout_marginRight="14dp"
-                android:textColor="@color/text_dark"
-                android:onClick="onActionSubmit"/>
-
-            <LinearLayout
-                android:id="@+id/btnBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:paddingLeft="14dp"
-                android:paddingRight="14dp"
-                android:visibility="gone">
-
-                <Button
-                    android:id="@+id/cancel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/action_iamout"
-                    android:textColor="@color/text_dark"
-                    android:onClick="onActionCancel"/>
-
-                <Button
-                    android:id="@+id/calendar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/action_calendar"
-                    android:textColor="@color/text_dark"
-                    android:onClick="onActionCalendar"/>
-            </LinearLayout>
+                android:onClick="onActionSubmit"
+                android:textColor="@color/text_dark" />
 
             <TextView
                 android:id="@+id/desc"
@@ -99,24 +72,7 @@
                 android:paddingBottom="16dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:paddingTop="8dp"/>
-
-            <TextView
-                android:id="@+id/link"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?selectableItemBackground"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp"
-                android:text="Mehr Infos: www...."
-                android:textColor="@color/colorAccent"
-                android:textSize="@dimen/text_body"
-                android:onClick="onActionLink"
-                android:visibility="gone"/>
+                android:paddingTop="8dp" />
 
             <TextView
                 android:id="@+id/organization"
