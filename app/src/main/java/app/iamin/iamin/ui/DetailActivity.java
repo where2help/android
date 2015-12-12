@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,7 @@ public class DetailActivity extends AppCompatActivity {
     private NeedView needView;
 
     private Button bookingButton;
+    private ProgressBar progressBar;
 
     private TextView infoTextView;
     private TextView descTextView;
@@ -98,7 +100,8 @@ public class DetailActivity extends AppCompatActivity {
         needView = (NeedView) findViewById(R.id.need_view);
         infoTextView = (TextView) findViewById(R.id.info);
 
-        bookingButton = (Button) findViewById(R.id.submit);
+        bookingButton = (Button) findViewById(R.id.booking_button);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         descTextView = (TextView) findViewById(R.id.desc);
         organizationTextView = (TextView) findViewById(R.id.organization);
@@ -205,6 +208,8 @@ public class DetailActivity extends AppCompatActivity {
                 needView.setVisibility(View.VISIBLE);
                 infoTextView.setVisibility(View.GONE);
 
+                progressBar.setVisibility(View.GONE);
+
                 bookingButton.setVisibility(View.VISIBLE);
                 bookingButton.setEnabled(true);
                 bookingButton.setText(R.string.action_iamin);
@@ -215,18 +220,22 @@ public class DetailActivity extends AppCompatActivity {
             case UI_MODE_BOOKING:
                 if (need.isAttending()) {
                     // canceling for this need is ongoing
-                    bookingButton.setText("Absagen...");
+                    bookingButton.setText("");
                     bookingButton.setEnabled(false);
+                    progressBar.setVisibility(View.VISIBLE);
                 } else {
                     // booking for this need is ongoing
-                    bookingButton.setText("Helfen...");
+                    bookingButton.setText("");
                     bookingButton.setEnabled(false);
+                    progressBar.setVisibility(View.VISIBLE);
                 }
                 break;
             case UI_MODE_ATTENDING:
                 mapView.setVisibility(View.VISIBLE);
                 needView.setVisibility(View.VISIBLE);
                 infoTextView.setVisibility(View.VISIBLE);
+
+                progressBar.setVisibility(View.GONE);
 
                 bookingButton.setVisibility(View.VISIBLE);
                 bookingButton.setText("Absagen");
@@ -240,6 +249,7 @@ public class DetailActivity extends AppCompatActivity {
                 needView.setVisibility(View.GONE);
                 infoTextView.setVisibility(View.VISIBLE);
                 bookingButton.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 descTextView.setVisibility(View.GONE);
                 organizationTextView.setVisibility(View.GONE);
                 break;
