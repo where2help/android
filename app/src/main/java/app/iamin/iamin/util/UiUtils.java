@@ -54,15 +54,17 @@ public class UiUtils {
     }
 
     public static void fireCalendarIntent(Context context, Need need) {
+        String host = DataUtils.getHost(context);
+        String url = host != null ? "http://" + host + "/needs/" + need.getId() : "Where2Help";
+
         Intent intent = new Intent(Intent.ACTION_EDIT)
                 .setType("vnd.android.cursor.item/event")
                 .putExtra("beginTime", need.getStart().getTime())
                 .putExtra("endTime", need.getEnd().getTime())
                 .putExtra("allDay", false)
-                .putExtra("title", "Where2Help - " + NeedUtils.getCategoryPlural(need.getCategory()))
-                .putExtra("description", "Where2Help - " + NeedUtils.getCategoryPlural(need.getCategory()) + " für " +
-                        TimeUtils.getDuration(need.getStart(), need.getEnd()) + ".")
-                .putExtra("eventLocation", need.getCity()+ " " + need.getLocation());
+                .putExtra("title", need.getOrganization() + " - " + NeedUtils.getCategoryPlural(need.getCategory()))
+                .putExtra("description", need.getDescription() + " (" + url + ")")
+                .putExtra("eventLocation", need.getCity()+ ", " + need.getLocation());
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(intent);
         } else {
@@ -72,7 +74,7 @@ public class UiUtils {
 
     public static void fireShareIntent(Context context, Need need) {
         String host = DataUtils.getHost(context);
-        String url = host != null ? "http://" + host + "/needs/" + need.getId() : "";
+        String url = host != null ? "http://" + host + "/needs/" + need.getId() : "Where2Help";
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
