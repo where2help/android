@@ -21,23 +21,6 @@ public class UiUtils {
         Intent intent = new Intent();
         intent.setClass(context, DetailActivity.class);
         intent.putExtra("id", need.getId());
-/*        intent.putExtra("category", need.getCategory());
-
-        intent.putExtra("city", need.getCity());
-        intent.putExtra("location", need.getLocation());
-        intent.putExtra("latitude", need.getLat());
-        intent.putExtra("longitude", need.getLng());
-
-        intent.putExtra("start", need.getStart().getTime());
-        intent.putExtra("end", need.getEnd().getTime());
-        intent.putExtra("date", need.getDate());
-
-        intent.putExtra("needed", need.getNeeded());
-        intent.putExtra("count", need.getCount());
-        intent.putExtra("selfLink", need.getSelfLink());
-
-        intent.putExtra("attending", need.isAttending());
-        intent.putExtra("volunteeringId", need.getVolunteeringId());*/
         context.startActivity(intent);
     }
 
