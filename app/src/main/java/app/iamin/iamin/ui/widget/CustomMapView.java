@@ -8,17 +8,16 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.model.Need;
@@ -27,7 +26,6 @@ import app.iamin.iamin.util.UiUtils;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * A com.google.android.gms.maps.MapView that shows a ColorDrawable while loading.
@@ -86,12 +84,6 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         });
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                dropPin();
-
-            }
-            @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 CustomMapView.this.setForeground(scrim);
@@ -100,47 +92,21 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         anim.start();
     }
 
-    @TargetApi(ICE_CREAM_SANDWICH)
-    private void dropPin() {
-        ImageView pin = createPin();
-        pin.setAlpha(0f);
-        pin.setScaleX(0);
-        pin.setScaleY(0);
-        pin.setTranslationY(-getMeasuredHeight() / 2);
-        addView(pin);
-        pin.animate()
-                .alpha(1)
-                .rotationBy(45)
-                .scaleX(1).scaleY(1)
-                .translationY(0)
-                .setInterpolator(new FastOutLinearInInterpolator())
-                .setDuration(250L)
-                .setStartDelay(0L).start();
-    }
-
-    private ImageView createPin() {
-        ImageView pin = new ImageView(getContext());
-        LayoutParams lp = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        lp.gravity = Gravity.CENTER;
-        pin.setLayoutParams(lp);
-        pin.setImageResource(R.drawable.ic_toolbar_logo);
-        pin.setClickable(true);
-        pin.setOnClickListener(this);
-        return pin;
-    }
-
     @Override
     public void onMapReady(GoogleMap map) {
-        map.getUiSettings().setMapToolbarEnabled(false);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(NeedUtils.getLocation(need), 13f));
-        map.setOnMapLoadedCallback(this);
+        if (need != null && need.isValid()) {
+            LatLng position = NeedUtils.getLocation(need);
+            map.getUiSettings().setMapToolbarEnabled(false);
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 13f));
+            map.addMarker(new MarkerOptions().position(position));
+            map.setOnMapLoadedCallback(this);
+        }
     }
 
     @Override
     public void onMapLoaded() {
         if (SDK_INT < ICE_CREAM_SANDWICH) {
             setForeground(scrim);
-            addView(createPin());
         } else {
             playEnterAnimation();
         }
