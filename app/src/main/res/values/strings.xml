@@ -46,9 +46,6 @@
     <string name="day_title_yesterday">Gestern</string>
     <string name="day_title_tomorrow">Morgen</string>
 
-    <string name="detail_address_format">"%1$s (%2$s)</string>
-    <string name="detail_date_format">%1$s %2$s - %3$s Uhr (%4$s)</string>
-
     <!-- misc -->
     <string name="count">%1$s</string>
 </resources>
