@@ -155,7 +155,7 @@ public class DetailActivity extends AppCompatActivity {
         needView.setInDetail(true);
         needView.setNeed(need);
 
-        infoTextView.setText(getString(R.string.thank_you_message,
+        infoTextView.setText(getString(R.string.message_thank_you,
                 TimeUtils.formatTimeOfDay(need.getStart())));
 
         descTextView.setText(need.getDescription());
@@ -211,7 +211,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 bookingButton.setVisibility(View.VISIBLE);
                 bookingButton.setEnabled(true);
-                bookingButton.setText(R.string.action_iamin);
+                bookingButton.setText(R.string.action_help);
 
                 descTextView.setVisibility(View.VISIBLE);
                 organizationTextView.setVisibility(View.VISIBLE);
@@ -237,7 +237,7 @@ public class DetailActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
 
                 bookingButton.setVisibility(View.VISIBLE);
-                bookingButton.setText(R.string.action_iamout);
+                bookingButton.setText(R.string.action_cancel);
                 bookingButton.setEnabled(true);
 
                 descTextView.setVisibility(View.VISIBLE);
@@ -263,13 +263,13 @@ public class DetailActivity extends AppCompatActivity {
             DataManager.getInstance().createBooking(need);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getString(R.string.cancel_message));
-            builder.setPositiveButton(getString(R.string.cancel_positive), new DialogInterface.OnClickListener() {
+            builder.setMessage(getString(R.string.cancel_dialog_message));
+            builder.setPositiveButton(getString(R.string.cancel_dialog_action_positive), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     // Do nothing
                 }
             });
-            builder.setNegativeButton(getString(R.string.cancel_negative), new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.cancel_dialog_action_negative), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     //new DeleteVolunteeringTask(need.getVolunteeringId()).execute(DetailActivity.this);
                     Log.wtf("onActionCancel", "volunteeringId = " + need.getVolunteeringId());

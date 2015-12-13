@@ -112,9 +112,9 @@ public class LoginActivity extends AppCompatActivity {
         currentUiMode = uiMode;
         switch (uiMode) {
             case UI_MODE_SIGN_IN:
-                title.setText(getString(R.string.sign_in));
-                posBtn.setText(getString(R.string.sign_in));
-                negBtn.setText(getString(R.string.sign_up));
+                title.setText(getString(R.string.action_sign_in));
+                posBtn.setText(getString(R.string.action_sign_in));
+                negBtn.setText(getString(R.string.action_sign_up));
                 emailInput.setVisibility(View.VISIBLE);
                 passwordInput.setVisibility(View.VISIBLE);
                 passwordConfInput.setVisibility(View.GONE);
@@ -123,9 +123,9 @@ public class LoginActivity extends AppCompatActivity {
                 loading.setVisibility(View.GONE);
                 break;
             case UI_MODE_SIGN_UP:
-                title.setText(getString(R.string.sign_up));
-                posBtn.setText(getString(R.string.sign_up));
-                negBtn.setText(getString(R.string.back));
+                title.setText(getString(R.string.action_sign_up));
+                posBtn.setText(getString(R.string.action_sign_up));
+                negBtn.setText(getString(R.string.action_back));
                 emailInput.setVisibility(View.VISIBLE);
                 passwordInput.setVisibility(View.VISIBLE);
                 passwordConfInput.setVisibility(View.VISIBLE);

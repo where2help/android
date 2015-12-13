@@ -6,7 +6,7 @@
     android:completionThreshold="1"
     android:drawableRight="@drawable/ic_search_white_24dp"
     android:gravity="center_vertical"
-    android:hint="@string/city_filter_item_hint"
+    android:hint="@string/hint_city_search"
     android:imeOptions="actionSearch"
     android:inputType="text"
     android:paddingLeft="@dimen/padding"
