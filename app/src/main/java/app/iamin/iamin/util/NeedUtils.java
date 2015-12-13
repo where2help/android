@@ -67,14 +67,14 @@ public class NeedUtils {
     public static int getCategoryIcon(int category) {
         switch (category) {
             case CATEGORY_DOCTOR:
-                return R.drawable.ic_medical;
+                return R.drawable.ic_category_medical;
             case CATEGORY_LAWYER:
-                return R.drawable.ic_legal;
+                return R.drawable.ic_category_legal;
             case CATEGORY_INTERPRETER:
-                return R.drawable.ic_interpretor;
+                return R.drawable.ic_category_interpreter;
             case CATEGORY_VOLUNTEER:
             default:
-                return R.drawable.ic_volunteer;
+                return R.drawable.ic_category_volunteer;
         }
     }
 

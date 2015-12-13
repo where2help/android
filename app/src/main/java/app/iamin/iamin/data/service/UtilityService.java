@@ -73,7 +73,7 @@ public class UtilityService extends IntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setContentTitle("2 Freiwillge benötigt!")
                 .setContentText("Von 7:30 - 9:45 am Westbahnhof.")
-                .setSmallIcon(R.drawable.ic_volunteer)
+                .setSmallIcon(R.drawable.ic_category_volunteer)
                 .setContentIntent(pendingIntent)
                 //.setDeleteIntent()
                 .setColor(getResources().getColor(R.color.colorPrimary))
