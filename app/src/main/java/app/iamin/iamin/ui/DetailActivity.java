@@ -238,7 +238,7 @@ public class DetailActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
 
                 bookingButton.setVisibility(View.VISIBLE);
-                bookingButton.setText("Absagen");
+                bookingButton.setText(R.string.action_iamout);
                 bookingButton.setEnabled(true);
 
                 descTextView.setVisibility(View.VISIBLE);
