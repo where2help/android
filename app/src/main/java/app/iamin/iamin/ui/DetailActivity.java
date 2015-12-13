@@ -33,7 +33,6 @@ import app.iamin.iamin.data.event.PromptLoginEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.widget.CustomMapView;
 import app.iamin.iamin.ui.widget.NeedView;
-import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;
@@ -148,7 +147,7 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         if (actionBar != null) {
-            actionBar.setTitle(NeedUtils.getCategoryPlural(need.getCategory()));
+            actionBar.setTitle(need.getOrganization());
         }
 
         mapView.setNeed(need);
