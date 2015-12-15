@@ -147,7 +147,7 @@ public class NeedView extends FrameLayout {
         if (need != null && need.isValid()) {
             int category = need.getCategory();
             iconView.setImageResource(NeedUtils.getCategoryIcon(category));
-            countView.setText(String.valueOf(need.getNeeded()));
+            countView.setText(String.valueOf(need.getNeeded() - need.getCount()));
             categoryView.setText(category == 1 ? NeedUtils.getCategorySingular(category) : NeedUtils.getCategoryPlural(category));
             addressView.setText(need.getCity() + " " + need.getLocation());
             dateTextView.setText(need.getDate());

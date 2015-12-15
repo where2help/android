@@ -56,8 +56,9 @@ public class BookingsService {
             LogUtils.logHeaders(TAG, response);
             Log.d(TAG, responseBody);
 
+            storeHeader(context, response.headers());
+
             if (response.isSuccessful()) {
-                storeHeader(context, response.headers());
                 storeBookings(context, responseBody);
                 return null;
             }
@@ -92,11 +93,13 @@ public class BookingsService {
             Response response = new OkHttpClient().newCall(request).execute();
             String responseBody = response.body().string();
 
+            //SystemClock.sleep(7000);
             LogUtils.logHeaders(TAG, response);
             Log.d(TAG, responseBody);
 
+            storeHeader(context, response.headers());
+
             if (response.isSuccessful()) {
-                storeHeader(context, response.headers());
                 storeBookingCreation(context, responseBody, needId);
                 return null;
             }
@@ -126,11 +129,13 @@ public class BookingsService {
             Response response = new OkHttpClient().newCall(request).execute();
             String responseBody = response.body().string();
 
+            //SystemClock.sleep(7000);
             LogUtils.logHeaders(TAG, response);
             Log.d(TAG, responseBody);
 
+            storeHeader(context, response.headers());
+
             if (response.isSuccessful()) {
-                storeHeader(context, response.headers());
                 storeBookingCancellation(context, volunteeringId);
                 return null;
             }
@@ -226,8 +231,8 @@ public class BookingsService {
         if (need != null) {
             need.setIsAttending(true);
             need.setVolunteeringId(volunteeringId);
-            int needed = need.getNeeded() - 1;
-            need.setNeeded(needed);
+            int count = need.getCount() + 1;
+            need.setCount(count);
         }
 
         realm.commitTransaction();
@@ -245,8 +250,8 @@ public class BookingsService {
         Need need = realm.where(Need.class).equalTo("volunteeringId", volunteeringId).findFirst();
         if (need != null) {
             need.setIsAttending(false);
-            int needed = need.getNeeded() + 1;
-            need.setNeeded(needed);
+            int count = need.getCount() - 1;
+            need.setCount(count);
         }
         realm.commitTransaction();
         realm.close();
