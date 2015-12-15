@@ -230,6 +230,7 @@ public class DataManager {
 
     private void handleSignOut(String error) {
         if (error == null) {
+            hasUser = false;
             BookingsService.clearBookings(mContext);
             mBus.post(new UserSignOutEvent(NEXT, null));
         } else {
@@ -243,7 +244,7 @@ public class DataManager {
         if (error == null && hasUser) {
             requestBookings();
         } else if (error == null) {
-            mBus.post(new RequestNeedsEvent(NEXT, error));
+            mBus.post(new RequestNeedsEvent(NEXT, null));
         } else {
             mBus.post(new RequestNeedsEvent(ERROR, error));
         }

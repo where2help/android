@@ -52,8 +52,10 @@ public class AuthService {
 
         try {
             Response response = new OkHttpClient().newCall(request).execute();
+
+            storeHeader(context, response.headers());
+
             if (response.isSuccessful()) {
-                storeHeader(context, response.headers());
                 storeUser(context, response.body().string(), password);
                 return null;
             }
@@ -82,8 +84,10 @@ public class AuthService {
 
         try {
             Response response = new OkHttpClient().newCall(request).execute();
+
+            storeHeader(context, response.headers());
+
             if (response.isSuccessful()) {
-                storeHeader(context, response.headers());
                 storeUser(context, response.body().string(), password);
                 return null;
             }
@@ -105,8 +109,11 @@ public class AuthService {
 
         try {
             Response response = new OkHttpClient().newCall(request).execute();
+
+            storeHeader(context, response.headers());
+
             if (response.isSuccessful()) {
-                storeHeader(context, response.headers());
+                DataUtils.clearUser(context);
                 return null;
             }
             return response.message();

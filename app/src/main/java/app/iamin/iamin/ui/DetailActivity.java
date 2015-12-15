@@ -258,7 +258,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void onActionSubmit(View view) {
-        if (!need.isAttending()) {
+        if (!need.isAttending() || !DataManager.hasUser()) {
             setUiMode(UI_MODE_BOOKING);
             DataManager.getInstance().createBooking(need);
         } else {
