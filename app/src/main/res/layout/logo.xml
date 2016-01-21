@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="12dp"
+        android:layout_marginLeft="16dp"
         android:scaleType="fitStart"
         android:src="@drawable/toolbar_logo_text" />
 </LinearLayout>

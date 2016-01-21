@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.EditText;
 
 import com.squareup.okhttp.Headers;
@@ -20,6 +21,9 @@ import app.iamin.iamin.data.model.User;
  * Created by Markus on 14.10.15.
  */
 public class DataUtils {
+
+    private static final String TAG = "DataUtils";
+
     /**
      * Default endpoint URL
      */
@@ -95,6 +99,7 @@ public class DataUtils {
      */
     public static void storeHeader(Context context, Headers headers) {
         if (isTokenValid(headers)) {
+            Log.e(TAG, "storeHeader");
             SharedPreferences prefs = context.getSharedPreferences("user", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("Access-Token", headers.get("Access-Token"));

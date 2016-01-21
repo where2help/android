@@ -1,7 +1,5 @@
 package app.iamin.iamin.ui;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -9,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -19,16 +16,14 @@ import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
-import java.util.regex.Pattern;
-
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.event.UserSignInEvent;
 import app.iamin.iamin.data.event.UserSignUpEvent;
 
-import static app.iamin.iamin.data.DataManager.ERROR;
-import static app.iamin.iamin.data.DataManager.NEXT;
+import static app.iamin.iamin.data.DataManager.ON_ERROR;
+import static app.iamin.iamin.data.DataManager.ON_NEXT;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -67,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
 
         BusProvider.getInstance().register(this);
 
-        dataManager = DataManager.getInstance();
+        dataManager = DataManager.getInstance(this);
 
         title = (TextView) findViewById(R.id.header_title);
 
@@ -76,14 +71,20 @@ public class LoginActivity extends AppCompatActivity {
 
         emailInput = (TextInputLayout) findViewById(R.id.input_email);
         emailEditText = (EditText) findViewById(R.id.email);
-        //emailEditText.setText("android_user@example.com");
+        emailEditText.setText("normal_user@example.com");
 
         passwordInput = (TextInputLayout) findViewById(R.id.input_password);
+        passwordInput.setTypeface(emailInput.getTypeface());
+
         passwordEditText = (EditText) findViewById(R.id.password);
-        //passwordEditText.setText("supersecret");
+        passwordEditText.setTypeface(emailEditText.getTypeface());
+        passwordEditText.setText("supersecret");
 
         passwordConfInput = (TextInputLayout) findViewById(R.id.input_password_conf);
+        passwordConfInput.setTypeface(emailInput.getTypeface());
+
         passwordConfEditText = (EditText) findViewById(R.id.password_conf);
+        passwordConfEditText.setTypeface(emailEditText.getTypeface());
 
         termsCheckbox = (CheckBox) findViewById(R.id.terms);
         termsCheckbox.setText(Html.fromHtml("Ich akzeptiere die <a href='app.iamin.iamin.ui.terms://'>Nutzungsbedingungen</a>"));
@@ -93,19 +94,6 @@ public class LoginActivity extends AppCompatActivity {
         negBtn = (Button) findViewById(R.id.btn_neg);
 
         setUiMode(UI_MODE_SIGN_IN);
-    }
-
-    private String getUserMail() {
-        String email = null;
-        Pattern emailPattern = Patterns.EMAIL_ADDRESS; // API level 8+
-        Account[] accounts = AccountManager.get(this).getAccounts();
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                email = account.name;
-                break;
-            }
-        }
-        return email;
     }
 
     private void setUiMode(int uiMode) {
@@ -176,11 +164,11 @@ public class LoginActivity extends AppCompatActivity {
             Log.d(TAG, "onUserSignIn");
 
             switch (event.status) {
-                case NEXT:
+                case ON_NEXT:
                     setResult(Activity.RESULT_OK);
                     finish();
                     break;
-                case ERROR:
+                case ON_ERROR:
                     Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
                     setUiMode(UI_MODE_SIGN_IN);
                     break;
@@ -192,12 +180,12 @@ public class LoginActivity extends AppCompatActivity {
             Log.d(TAG, "onUserSignUp");
 
             switch (event.status) {
-                case NEXT:
+                case ON_NEXT:
                     String email = emailEditText.getText().toString();
                     String password = passwordEditText.getText().toString();
                     dataManager.signIn(email, password);
                     break;
-                case ERROR:
+                case ON_ERROR:
                     Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
                     setUiMode(UI_MODE_SIGN_UP);
                     break;
@@ -207,18 +195,6 @@ public class LoginActivity extends AppCompatActivity {
     public void dismiss(View view) {
         setResult(RESULT_CANCELED);
         finish();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        DataManager.getInstance().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        DataManager.getInstance().unregister(this);
     }
 
     @Override

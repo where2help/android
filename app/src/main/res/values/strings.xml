@@ -16,17 +16,18 @@
     <string name="settings">Einstellungen</string>
 
     <!-- filter panel -->
-    <string name="hint_city_search">Suche Stadt</string>
+    <string name="hint_city_search">Stadt suchen</string>
 
     <!-- detail page -->
     <string name="action_share">Teilen</string>
     <string name="action_calendar">Kalendereintrag</string>
     <string name="action_help">Helfen</string>
     <string name="action_cancel">Absagen</string>
-    <string name="cancel_dialog_message">Wir brauchen dich! Willst du wirklich absagen?</string>
+    <string name="cancel_dialog_title">Wir brauchen dich!</string>
+    <string name="cancel_dialog_message">Willst du wirklich absagen?</string>
     <string name="cancel_dialog_action_positive">Natürlich nicht!</string>
     <string name="cancel_dialog_action_negative">Ja...</string>
-    <string name="message_thank_you">Danke! Bitte komm um %1$s!</string>
+    <string name="message_thank_you">Danke! Bitte komm um %1$s.</string>
     <string name="organization">Organisation: %1$s</string>
 
     <!-- settings -->
@@ -48,4 +49,9 @@
 
     <!-- misc -->
     <string name="count">%1$s</string>
+    <string name="menu_refresh">Aktualisieren</string>
+    <string name="confirm">Bestätigen</string>
+    <string name="sign_out_message">Willst du dich abmelden?</string>
+    <string name="action_yes">Ja</string>
+    <string name="action_no">Nein</string>
 </resources>

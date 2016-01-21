@@ -1,13 +1,14 @@
 package app.iamin.iamin.ui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import app.iamin.iamin.R;
 
 /*
  * Copyright (C) 2014 The Android Open Source Project
@@ -39,9 +40,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private int mOrientation;
 
     public DividerItemDecoration(Context context, int orientation) {
-        final TypedArray a = context.obtainStyledAttributes(ATTRS);
-        mDivider = a.getDrawable(0);
-        a.recycle();
+        mDivider = context.getResources().getDrawable(R.drawable.divider, null);
         setOrientation(orientation);
     }
 

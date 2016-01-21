@@ -1,124 +1,122 @@
 package app.iamin.iamin.data.service;
 
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.util.Log;
+
+import com.squareup.okhttp.OkHttpClient;
 
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.DataManager;
-import app.iamin.iamin.data.api.AuthService;
-import app.iamin.iamin.data.api.BookingsService;
-import app.iamin.iamin.data.api.NeedsService;
-import app.iamin.iamin.data.event.DataResultEvent;
+import app.iamin.iamin.data.api.AuthHandler;
+import app.iamin.iamin.data.api.BookingHandler;
+import app.iamin.iamin.data.api.NeedHandler;
+import app.iamin.iamin.util.LogUtils;
+
+import static app.iamin.iamin.data.DataManager.ACTION_CANCEL_BOOKING;
+import static app.iamin.iamin.data.DataManager.ACTION_CREATE_BOOKING;
+import static app.iamin.iamin.data.DataManager.ACTION_REQUEST_BOOKINGS;
+import static app.iamin.iamin.data.DataManager.ACTION_REQUEST_NEEDS;
+import static app.iamin.iamin.data.DataManager.ACTION_SIGN_IN;
+import static app.iamin.iamin.data.DataManager.ACTION_SIGN_OUT;
+import static app.iamin.iamin.data.DataManager.ACTION_SIGN_UP;
 
 /**
  * Created by Markus on 09.11.15.
  */
-public class DataService extends IntentService {
-    private static final String TAG = UtilityService.class.getSimpleName();
+public class DataService extends Service {
+    private static final String TAG = DataService.class.getSimpleName();
 
-    public static final String ACTION_SIGN_UP = "where2help_sign_up";
-    public static final String ACTION_SIGN_IN = "where2help_sign_in";
-    public static final String ACTION_SIGN_OUT = "where2help_sign_out";
-    public static final String ACTION_REQUEST_NEEDS = "where2help_request_needs";
-    public static final String ACTION_REQUEST_BOOKINGS = "where2help_request_bookings";
-    public static final String ACTION_CREATE_BOOKING = "where2help_create_booking";
-    public static final String ACTION_CANCEL_BOOKING = "where2help_cancel_booking";
+    private static final Handler MAIN_THREAD = new Handler(Looper.getMainLooper());
 
-    public static final String EXTRA_EMAIL = "extra_email";
-    public static final String EXTRA_PASSWORD = "extra_password";
-    public static final String EXTRA_PASSWORD_CONF = "extra_password_conf";
-    public static final String EXTRA_NEED_ID = "extra_need_id";
-    public static final String EXTRA_VOLUNTEERING_ID = "extra_volunteering_id";
+    private boolean running;
 
+    private DataManager dataManager;
 
-    public static void signUp(Context context, String email, String password, String passwordConf) {
-        Intent intent = new Intent(context, DataService.class);
-        intent.setAction(ACTION_SIGN_UP);
-        intent.putExtra(EXTRA_EMAIL, email);
-        intent.putExtra(EXTRA_PASSWORD, password);
-        intent.putExtra(EXTRA_PASSWORD_CONF, passwordConf);
-        context.startService(intent);
-    }
+    private OkHttpClient client;
 
-    public static void signIn(Context context, String email, String password) {
-        Intent intent = new Intent(context, DataService.class);
-        intent.setAction(ACTION_SIGN_IN);
-        intent.putExtra(EXTRA_EMAIL, email);
-        intent.putExtra(EXTRA_PASSWORD, password);
-        context.startService(intent);
-    }
-
-    public static void signOut(Context context) {
-        Intent intent = new Intent(context, DataService.class);
-        intent.setAction(ACTION_SIGN_OUT);
-        context.startService(intent);
-    }
-
-    public static void requestNeeds(Context context) {
-        Intent intent = new Intent(context, DataService.class);
-        intent.setAction(ACTION_REQUEST_NEEDS);
-        context.startService(intent);
-    }
-
-    public static void requestBookings(Context context) {
-        Intent intent = new Intent(context, DataService.class);
-        intent.setAction(ACTION_REQUEST_BOOKINGS);
-        context.startService(intent);
-    }
-
-    public static void createBooking(Context context, int needId) {
-        Intent intent = new Intent(context, DataService.class);
-        intent.setAction(ACTION_CREATE_BOOKING);
-        intent.putExtra(EXTRA_NEED_ID, needId);
-        context.startService(intent);
-    }
-
-    public static void cancelBooking(Context context, int needId, int volunteeringId) {
-        Intent intent = new Intent(context, DataService.class);
-        intent.setAction(ACTION_CANCEL_BOOKING);
-        intent.putExtra(EXTRA_NEED_ID, needId);
-        intent.putExtra(EXTRA_VOLUNTEERING_ID, volunteeringId);
-        context.startService(intent);
-    }
-
-    public DataService() {
-        super(TAG);
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        dataManager = DataManager.getInstance(this);
+        client = dataManager.getClient();
+        Log.i(TAG, "Service starting!");
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        if (!isOnline(intent)) return;
-        String action = intent != null ? intent.getAction() : null;
-        if (ACTION_SIGN_UP.equals(action)) {
-            postResultFrom(intent, AuthService.signUp(this, intent));
-        } else if (ACTION_SIGN_IN.equals(action)) {
-            postResultFrom(intent, AuthService.signIn(this, intent));
-        } else if (ACTION_SIGN_OUT.equals(action)) {
-            postResultFrom(intent, AuthService.signOut(this));
-        } else if (ACTION_REQUEST_NEEDS.equals(action)) {
-            postResultFrom(intent, NeedsService.requestNeeds(this));
-        } else if (ACTION_REQUEST_BOOKINGS.equals(action)) {
-            postResultFrom(intent, BookingsService.requestBookings(this));
-        } else if (ACTION_CREATE_BOOKING.equals(action)) {
-            postResultFrom(intent,BookingsService.createBooking(this, intent));
-        } else if (ACTION_CANCEL_BOOKING.equals(action)) {
-            postResultFrom(intent, BookingsService.cancelBooking(this, intent));
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        executeNext();
+        return START_STICKY;
+    }
+
+    private void executeNext() {
+        if (running) return; // Only one task at a time.
+
+        Intent intent = dataManager.getQueue().peek();
+        if (intent != null) {
+            running = true;
+            execute(intent);
+        } else {
+            Log.i(TAG, "Service stopping!");
+            stopSelf(); // No more tasks are present. Stop.
         }
     }
 
-    private void postResultFrom(Intent intent, String error) {
-        int id = intent.getIntExtra(EXTRA_NEED_ID, -1);
-        DataManager.getInstance().onDataResult(new DataResultEvent(intent.getAction(), id, error));
+    private void execute(final Intent intent) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!isOnline(intent)) return;
+                Context context = getApplicationContext();
+                String action = intent != null ? intent.getAction() : null;
+                if (ACTION_SIGN_UP.equals(action)) {
+                    post(intent, AuthHandler.signUp(context, client, intent));
+                } else if (ACTION_SIGN_IN.equals(action)) {
+                    post(intent, AuthHandler.signIn(context, client, intent));
+                } else if (ACTION_SIGN_OUT.equals(action)) {
+                    post(intent, AuthHandler.signOut(context, client));
+                } else if (ACTION_REQUEST_NEEDS.equals(action)) {
+                    post(intent, NeedHandler.requestNeeds(context, client));
+                } else if (ACTION_REQUEST_BOOKINGS.equals(action)) {
+                    post(intent, BookingHandler.requestBookings(context, client));
+                } else if (ACTION_CREATE_BOOKING.equals(action)) {
+                    post(intent, BookingHandler.createBooking(context, client, intent));
+                } else if (ACTION_CANCEL_BOOKING.equals(action)) {
+                    post(intent, BookingHandler.cancelBooking(context, client, intent));
+                }
+            }
+        }).start();
+    }
+
+    private void post(final Intent intent, final String error) {
+        MAIN_THREAD.post(new Runnable() {
+            @Override
+            public void run() {
+                running = false;
+                dataManager.getQueue().remove();
+                dataManager.onServiceResult(intent, error);
+                LogUtils.logQueue(TAG, dataManager.getQueue());
+                if (!dataManager.isPaused()) executeNext();
+            }
+        });
     }
 
     private boolean isOnline(Intent intent) {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting()) return true; // continue
-        postResultFrom(intent, getString(R.string.error_no_connection));
+        post(intent, getString(R.string.error_no_connection));
         return false;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }

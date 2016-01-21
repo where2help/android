@@ -26,8 +26,8 @@ import app.iamin.iamin.util.LogUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-import static app.iamin.iamin.data.service.DataService.EXTRA_NEED_ID;
-import static app.iamin.iamin.data.service.DataService.EXTRA_VOLUNTEERING_ID;
+import static app.iamin.iamin.data.DataManager.EXTRA_NEED_ID;
+import static app.iamin.iamin.data.DataManager.EXTRA_VOLUNTEERING_ID;
 import static app.iamin.iamin.util.DataUtils.getEndpoint;
 import static app.iamin.iamin.util.DataUtils.getHeaders;
 import static app.iamin.iamin.util.DataUtils.getUser;
@@ -36,12 +36,14 @@ import static app.iamin.iamin.util.DataUtils.storeHeader;
 /**
  * Created by Markus on 08.11.15.
  */
-public class BookingsService {
+public class BookingHandler {
 
     private static final String TAG = "BookingsService";
 
     @WorkerThread
-    public static String requestBookings(final Context context) {
+    public static String requestBookings(final Context context, OkHttpClient client) {
+        String error = null;
+
         User user = getUser(context);
         String url = getEndpoint(context) + "users/" + user.getId() + "/volunteerings";
         Headers headers = getHeaders(context);
@@ -50,30 +52,31 @@ public class BookingsService {
 
         Request request = new Request.Builder().headers(headers).url(url).build();
         try {
-            Response response = new OkHttpClient().newCall(request).execute();
+            Response response = client.newCall(request).execute();
             String responseBody = response.body().string();
 
             LogUtils.logHeaders(TAG, response);
             Log.d(TAG, responseBody);
+            Log.d(TAG, "response.code() = " + response.code());
 
             storeHeader(context, response.headers());
 
             if (response.isSuccessful()) {
                 storeBookings(context, responseBody);
-                return null;
+            } else {
+                error = String.valueOf(response.code());
             }
-            return response.message();
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (ParseException e) {
-            return e.getMessage();
-        } catch (JSONException e) {
-            return e.getMessage();
+        } catch (IOException | ParseException | JSONException e) {
+            error = e.getMessage();
         }
+
+        return error;
     }
 
     @WorkerThread
-    public static String createBooking(Context context, Intent intent) {
+    public static String createBooking(Context context, OkHttpClient client, Intent intent) {
+        String error = null;
+
         int needId = intent.getIntExtra(EXTRA_NEED_ID, 0);
         User user = getUser(context);
 
@@ -86,35 +89,35 @@ public class BookingsService {
         String url = getEndpoint(context) + "volunteerings";
         Headers headers = getHeaders(context);
 
-        LogUtils.logLocalHeaders(TAG, headers);
-
         Request request = new Request.Builder().headers(headers).url(url).post(requestBody).build();
+
+        LogUtils.logLocalHeaders(TAG, request.headers());
+
         try {
-            Response response = new OkHttpClient().newCall(request).execute();
+            Response response = client.newCall(request).execute();
             String responseBody = response.body().string();
 
-            //SystemClock.sleep(7000);
             LogUtils.logHeaders(TAG, response);
             Log.d(TAG, responseBody);
+            Log.d(TAG, "response.code() = " + response.code());
 
             storeHeader(context, response.headers());
 
             if (response.isSuccessful()) {
                 storeBookingCreation(context, responseBody, needId);
-                return null;
+            } else {
+                error = String.valueOf(response.code());
             }
-            return String.valueOf(response.code());
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (ParseException e) {
-            return e.getMessage();
-        } catch (JSONException e) {
-            return e.getMessage();
+        } catch (IOException | ParseException | JSONException e) {
+            error = e.getMessage();
         }
+
+        return error;
     }
 
     @WorkerThread
-    public static String cancelBooking(Context context, Intent intent) {
+    public static String cancelBooking(Context context, OkHttpClient client,  Intent intent) {
+        String error = null;
         int volunteeringId = intent.getIntExtra(EXTRA_VOLUNTEERING_ID, 0);
 
         Log.d(TAG, "volunteeringId = " + volunteeringId);
@@ -126,27 +129,25 @@ public class BookingsService {
 
         Request request = new Request.Builder().headers(headers).url(url).delete().build();
         try {
-            Response response = new OkHttpClient().newCall(request).execute();
+            Response response = client.newCall(request).execute();
             String responseBody = response.body().string();
 
-            //SystemClock.sleep(7000);
             LogUtils.logHeaders(TAG, response);
             Log.d(TAG, responseBody);
+            Log.d(TAG, "response.code() = " + response.code());
 
             storeHeader(context, response.headers());
 
             if (response.isSuccessful()) {
                 storeBookingCancellation(context, volunteeringId);
-                return null;
+            } else {
+                error = String.valueOf(response.code());
             }
-            return String.valueOf(response.code());
-        } catch (IOException e) {
-            return e.getMessage();
-        } catch (ParseException e) {
-            return e.getMessage();
-        } catch (JSONException e) {
-            return e.getMessage();
+        } catch (IOException | ParseException | JSONException e) {
+            error = e.getMessage();
         }
+
+        return error;
     }
 
     private static void storeBookings(Context context, String responseBody) throws JSONException, ParseException {
@@ -182,8 +183,6 @@ public class BookingsService {
             if (need != null) {
                 need.setIsAttending(true);
                 need.setVolunteeringId(volunteeringId);
-            } else {
-                Log.d(TAG, "Could not find need with id:" + needId);
             }
 
             realm.copyToRealmOrUpdate(booking);

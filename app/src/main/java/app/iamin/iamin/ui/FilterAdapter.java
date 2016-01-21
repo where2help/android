@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import app.iamin.iamin.R;
@@ -31,7 +34,7 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context mContext;
     private String[] mFilterList;
-    private String[] mCityList;
+    private String[] mCityList = new String[]{};
     private int mFilterState = 0;
     private String mFilterCity = null;
     private FilterChangedListener mFilterChangedListener;
@@ -111,6 +114,7 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         ArrayAdapter<String> adapter;
         AutoCompleteTextView filterItem;
+        ImageButton clearButton;
 
         @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         public CityViewHolder(View view) {
@@ -118,7 +122,8 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             adapter = new ArrayAdapter<>(mContext, simple_dropdown_item_1line, mCityList);
 
-            filterItem = (AutoCompleteTextView) view;
+            filterItem = (AutoCompleteTextView) view.findViewById(R.id.city);
+            clearButton = (ImageButton) view.findViewById(R.id.clear);
 
             Drawable icon = filterItem.getCompoundDrawables()[2];
             if (icon != null) icon.setAlpha(90);
@@ -147,9 +152,35 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         filterItem.setText(null);
                         mFilterCity = null;
-                        mFilterChangedListener.onFilterCityChanged(view, mFilterCity);
+                        mFilterChangedListener.onFilterCityChanged(filterItem, null);
                     }
                     return false;
+                }
+            });
+            filterItem.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    boolean visible = filterItem.getText().length() > 0;
+                    clearButton.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+                }
+            });
+
+            clearButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    filterItem.setText(null);
+                    mFilterCity = null;
+                    mFilterChangedListener.onFilterCityChanged(filterItem, null);
                 }
             });
         }

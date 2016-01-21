@@ -13,8 +13,8 @@
         android:layout_height="?actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -78,12 +78,12 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:gravity="center_vertical"
+                android:onClick="onActionSignOut"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="@string/action_log_out"
                 android:textColor="?colorPrimary"
-                android:textSize="@dimen/text_subhead"
-                android:onClick="onActionSignOut"/>
+                android:textSize="@dimen/text_subhead" />
 
             <View
                 android:id="@+id/divider2"
@@ -97,12 +97,12 @@
                 android:background="?selectableItemBackground"
                 android:clickable="true"
                 android:gravity="center_vertical"
+                android:onClick="onActionTerms"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="@string/action_terms"
                 android:textColor="?colorPrimary"
-                android:textSize="@dimen/text_subhead"
-                android:onClick="onActionTerms"/>
+                android:textSize="@dimen/text_subhead" />
 
             <TextView
                 android:id="@+id/communications"

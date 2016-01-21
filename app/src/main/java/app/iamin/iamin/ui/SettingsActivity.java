@@ -3,6 +3,7 @@ package app.iamin.iamin.ui;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,10 +18,8 @@ import com.squareup.otto.Subscribe;
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.DataManager;
-import app.iamin.iamin.data.event.ErrorEvent;
 import app.iamin.iamin.data.event.UserSignOutEvent;
 import app.iamin.iamin.data.model.User;
-import app.iamin.iamin.data.service.UtilityService;
 import app.iamin.iamin.util.DataUtils;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -47,12 +46,13 @@ public class SettingsActivity extends AppCompatActivity {
         emailTextView = (TextView) findViewById(R.id.email);
         emailTextView.setText(user.getEmail());
 
-        setUiMode(DataManager.hasUser());
+        setUiMode(DataManager.getInstance(this).hasUser());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.settings);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void setUiMode(boolean hasUser) {
@@ -77,13 +77,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        DataManager.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        DataManager.getInstance().unregister(this);
     }
 
     @Override
@@ -97,10 +95,6 @@ public class SettingsActivity extends AppCompatActivity {
         DataUtils.showEndpointInputPicker(SettingsActivity.this);
     }
 
-    public void onFireMissile(View view) {
-        UtilityService.triggerNotification(SettingsActivity.this);
-    }
-
     public void onDeleteToken(View view) {
         DataUtils.clearToken(SettingsActivity.this);
         Toast.makeText(this, "Token deleted!", Toast.LENGTH_SHORT).show();
@@ -108,16 +102,14 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void onActionSignOut(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Confirm");
-        builder.setMessage("Do you really want to sign out?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.confirm);
+        builder.setMessage(R.string.sign_out_message);
+        builder.setPositiveButton(R.string.action_yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                DataManager.getInstance().signOut();
-
-                //TODO: Show a spinner and wait for onUserSignOut()
+                DataManager.getInstance(SettingsActivity.this).signOut();
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.action_no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // Do nothing
             }
@@ -129,14 +121,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Subscribe
     public void onUserSignOut(UserSignOutEvent event) {
         Log.d(TAG, "onUserSignOut");
-        DataUtils.clearUser(this);
         setUiMode(false);
-        Toast.makeText(this, "ByeBye!", Toast.LENGTH_SHORT).show();
-    }
-
-    @Subscribe
-    public void onError(ErrorEvent event) {
-        Toast.makeText(this, event.error, Toast.LENGTH_SHORT).show();
     }
 
     public void onActionTerms(View view) {

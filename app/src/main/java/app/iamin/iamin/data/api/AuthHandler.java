@@ -3,6 +3,7 @@ package app.iamin.iamin.data.api;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Headers;
@@ -20,10 +21,11 @@ import java.text.ParseException;
 
 import app.iamin.iamin.data.model.User;
 import app.iamin.iamin.util.DataUtils;
+import app.iamin.iamin.util.LogUtils;
 
-import static app.iamin.iamin.data.service.DataService.EXTRA_EMAIL;
-import static app.iamin.iamin.data.service.DataService.EXTRA_PASSWORD;
-import static app.iamin.iamin.data.service.DataService.EXTRA_PASSWORD_CONF;
+import static app.iamin.iamin.data.DataManager.EXTRA_EMAIL;
+import static app.iamin.iamin.data.DataManager.EXTRA_PASSWORD;
+import static app.iamin.iamin.data.DataManager.EXTRA_PASSWORD_CONF;
 import static app.iamin.iamin.util.DataUtils.getEndpoint;
 import static app.iamin.iamin.util.DataUtils.getHeaders;
 import static app.iamin.iamin.util.DataUtils.storeHeader;
@@ -31,10 +33,12 @@ import static app.iamin.iamin.util.DataUtils.storeHeader;
 /**
  * Created by Markus on 08.11.15.
  */
-public class AuthService {
+public class AuthHandler {
+
+    private static final String TAG = "AuthService";
 
     @WorkerThread
-    public static String signUp(Context context, Intent intent) {
+    public static String signUp(Context context, OkHttpClient client, Intent intent) {
         String email = intent.getStringExtra(EXTRA_EMAIL);
         String password = intent.getStringExtra(EXTRA_PASSWORD);
         String passwordConf = intent.getStringExtra(EXTRA_PASSWORD_CONF);
@@ -51,7 +55,7 @@ public class AuthService {
         Request request = new Request.Builder().url(url).post(requestBody).build();
 
         try {
-            Response response = new OkHttpClient().newCall(request).execute();
+            Response response = client.newCall(request).execute();
 
             storeHeader(context, response.headers());
 
@@ -70,7 +74,7 @@ public class AuthService {
     }
 
     @WorkerThread
-    public static String signIn(Context context, Intent intent) {
+    public static String signIn(Context context, OkHttpClient client, Intent intent) {
 
         String email = intent.getStringExtra(EXTRA_EMAIL);
         String password = intent.getStringExtra(EXTRA_PASSWORD);
@@ -83,15 +87,19 @@ public class AuthService {
         Request request = new Request.Builder().url(url).post(requestBody).build();
 
         try {
-            Response response = new OkHttpClient().newCall(request).execute();
+            Response response = client.newCall(request).execute();
+            String responseBody = response.body().string();
 
             storeHeader(context, response.headers());
 
+            Log.d(TAG, responseBody);
+            Log.d(TAG, "response.code() = " + response.code());
+
             if (response.isSuccessful()) {
-                storeUser(context, response.body().string(), password);
+                storeUser(context, responseBody, password);
                 return null;
             }
-            return parseErrorSignIn(response.body().string());
+            return parseErrorSignIn(responseBody);
         } catch (IOException e) {
             return e.getMessage();
         } catch (ParseException e) {
@@ -102,20 +110,28 @@ public class AuthService {
     }
 
     @WorkerThread
-    public static String signOut(Context context) {
+    public static String signOut(Context context, OkHttpClient client) {
         String url = getEndpoint(context) + "auth/sign_out";
         Headers headers = getHeaders(context);
+
+        LogUtils.logLocalHeaders(TAG, headers);
+
         Request request = new Request.Builder().url(url).headers(headers).delete().build();
 
         try {
-            Response response = new OkHttpClient().newCall(request).execute();
+            Response response = client.newCall(request).execute();
 
+            String responseBody = response.body().string();
+
+            LogUtils.logHeaders(TAG, response);
+            Log.d(TAG, responseBody);
+            
             storeHeader(context, response.headers());
 
             if (response.isSuccessful()) {
-                DataUtils.clearUser(context);
                 return null;
             }
+
             return response.message();
         } catch (IOException e) {
             return e.getMessage();

@@ -31,12 +31,12 @@ import static app.iamin.iamin.util.DataUtils.getHeaders;
 /**
  * Created by Markus on 08.11.15.
  */
-public class NeedsService {
+public class NeedHandler {
 
     private static final String TAG = "NeedsService";
 
     @WorkerThread
-    public static String requestNeeds(Context context) {
+    public static String requestNeeds(Context context, OkHttpClient client) {
         String url = getEndpoint(context) + "needs";
         Headers headers = getHeaders(context);
 
@@ -44,7 +44,7 @@ public class NeedsService {
 
         Request request = new Request.Builder().url(url).build();
         try {
-            Response response = new OkHttpClient().newCall(request).execute();
+            Response response = client.newCall(request).execute();
             String responseBody = response.body().string();
 
             LogUtils.logHeaders(TAG, response);

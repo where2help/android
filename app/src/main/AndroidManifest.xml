@@ -3,11 +3,9 @@
     package="app.iamin.iamin">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
 
     <application
+        android:name=".Where2Help"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -43,6 +41,7 @@
 
         <activity
             android:name=".ui.SettingsActivity"
+            android:label="@string/settings"
             android:theme="@style/AppThemeLight" />
 
         <activity
@@ -55,15 +54,7 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".data.service.LocationService"
-            android:exported="false" />
-        <service
-            android:name=".data.service.UtilityService"
-            android:exported="false" />
-        <service
-            android:name=".data.service.DataService"
-            android:exported="false" />
+        <service android:name=".data.service.DataService" />
     </application>
 
 </manifest>

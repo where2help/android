@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -39,8 +40,8 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
 import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
-import static app.iamin.iamin.data.DataManager.ERROR;
-import static app.iamin.iamin.data.DataManager.NEXT;
+import static app.iamin.iamin.data.DataManager.ON_ERROR;
+import static app.iamin.iamin.data.DataManager.ON_NEXT;
 
 /**
  * Created by Markus on 10.10.15.
@@ -69,6 +70,8 @@ public class DetailActivity extends AppCompatActivity {
     private TextView descTextView;
     private TextView organizationTextView;
 
+    private DataManager dataManager;
+
     private Realm realm;
     private RealmChangeListener realmChangeListener;
 
@@ -96,6 +99,15 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         mapView = (CustomMapView) findViewById(R.id.map);
+
+        findViewById(R.id.dummy).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                mapView.dispatchTouchEvent(event);
+                return true;
+            }
+        });
+
         needView = (NeedView) findViewById(R.id.need_view);
         infoTextView = (TextView) findViewById(R.id.info);
 
@@ -109,6 +121,8 @@ public class DetailActivity extends AppCompatActivity {
         container.setOnScrollChangeListener(scrollChangeListener);
 
         int needId = getIntent().getExtras().getInt("id");
+
+        dataManager = DataManager.getInstance(this);
 
         realm = Realm.getInstance(this);
         need = realm.where(Need.class).equalTo("id", needId).findFirst();
@@ -134,7 +148,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (mapView != null) {
-                    mapView.onCreate(null); // ●～*
+                    mapView.create(); // ●～*
                 }
             }
         }, 300);
@@ -188,9 +202,9 @@ public class DetailActivity extends AppCompatActivity {
 
     private void findUiMode() {
         if (need != null && need.isValid()) {
-            if (DataManager.getInstance().isBooking(need)) {
+            if (dataManager.isBooking(need)) {
                 uiMode = UI_MODE_BOOKING;
-            } else if (need.isAttending() && DataManager.hasUser()) {
+            } else if (need.isAttending() && dataManager.hasUser()) {
                 uiMode = UI_MODE_ATTENDING;
             } else {
                 uiMode = UI_MODE_DEFAULT;
@@ -258,27 +272,29 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     public void onActionSubmit(View view) {
-        if (!need.isAttending() || !DataManager.hasUser()) {
-            setUiMode(UI_MODE_BOOKING);
-            DataManager.getInstance().createBooking(need);
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getString(R.string.cancel_dialog_message));
-            builder.setPositiveButton(getString(R.string.cancel_dialog_action_positive), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // Do nothing
-                }
-            });
-            builder.setNegativeButton(getString(R.string.cancel_dialog_action_negative), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    //new DeleteVolunteeringTask(need.getVolunteeringId()).execute(DetailActivity.this);
-                    Log.wtf("onActionCancel", "volunteeringId = " + need.getVolunteeringId());
-                    setUiMode(UI_MODE_BOOKING);
-                    DataManager.getInstance().cancelBooking(need);
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+        switch (uiMode) {
+            case UI_MODE_DEFAULT:
+                setUiMode(UI_MODE_BOOKING);
+                dataManager.createBooking(need);
+                break;
+            case UI_MODE_ATTENDING:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.cancel_dialog_title);
+                builder.setMessage(R.string.cancel_dialog_message);
+                builder.setNegativeButton(getString(R.string.action_no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Do nothing
+                    }
+                });
+                builder.setPositiveButton(getString(R.string.action_yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        setUiMode(UI_MODE_BOOKING);
+                        dataManager.cancelBooking(need);
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                break;
         }
     }
 
@@ -288,10 +304,10 @@ public class DetailActivity extends AppCompatActivity {
         Log.d(TAG, "onCreateBooking");
 
         switch (event.status) {
-            case NEXT:
+            case ON_NEXT:
                 setUiMode(UI_MODE_ATTENDING);
                 break;
-            case ERROR:
+            case ON_ERROR:
                 Toast.makeText(DetailActivity.this, event.error, Toast.LENGTH_SHORT).show();
                 setUiMode(UI_MODE_DEFAULT);
                 break;
@@ -304,10 +320,10 @@ public class DetailActivity extends AppCompatActivity {
         Log.d(TAG, "onCancelBooking");
 
         switch (event.status) {
-            case NEXT:
+            case ON_NEXT:
                 setUiMode(UI_MODE_DEFAULT);
                 break;
-            case ERROR:
+            case ON_ERROR:
                 Toast.makeText(DetailActivity.this, event.error, Toast.LENGTH_SHORT).show();
                 setUiMode(UI_MODE_ATTENDING);
                 break;
@@ -341,6 +357,7 @@ public class DetailActivity extends AppCompatActivity {
     @Subscribe
     public void onDisconnected(DisconnectedEvent event) {
         snackbar = Snackbar.make(container, "Warte auf Verbindung ...", LENGTH_INDEFINITE);
+        snackbar.getView().setBackgroundResource(R.color.colorPrimary);
         snackbar.show();
     }
 
@@ -348,20 +365,35 @@ public class DetailActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        DataManager.getInstance().register(this);
+        dataManager.register();
+        mapView.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         BusProvider.getInstance().unregister(this);
-        DataManager.getInstance().unregister(this);
+        dataManager.unregister();
+        mapView.pause();
     }
 
     @Override
     protected void onDestroy() {
+        mapView.destroy();
         realm.removeChangeListener(realmChangeListener);
         realm.close();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        mapView.saveInstanceState();
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.lowMemory();
     }
 }

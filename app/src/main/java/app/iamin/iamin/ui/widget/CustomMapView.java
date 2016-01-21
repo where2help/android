@@ -5,11 +5,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +17,7 @@ import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import app.iamin.iamin.R;
@@ -28,19 +29,25 @@ import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH;
 
 /**
- * A com.google.android.gms.maps.MapView that shows a ColorDrawable while loading.
+ * A com.google.android.gms.maps.MapView that shows a ColorDrawable while loading and
+ * fades in automatically when loading is done.
  *
  * @author Markus Rubey
  */
-public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapLoadedCallback, View.OnClickListener {
+public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapLoadedCallback {
 
     private static final String TAG = "CustomMapView";
 
     private ColorDrawable foreground;
     private ColorDrawable scrim;
+
+    private GoogleMap mMap;
     private Need need;
 
     private int height;
+    private float offsetY = 0;
+
+    private boolean isCreated = false;
 
     public CustomMapView(Context context) {
         super(context);
@@ -63,11 +70,6 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         foreground = new ColorDrawable(color);
         setForeground(foreground);
         getMapAsync(this);
-    }
-
-    @Override
-    public boolean isClickable() {
-        return false;
     }
 
     @TargetApi(ICE_CREAM_SANDWICH)
@@ -94,12 +96,30 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
 
     @Override
     public void onMapReady(GoogleMap map) {
-        if (need != null && need.isValid()) {
+        mMap = map;
+        setupMap(map);
+    }
+
+    private void setupMap(GoogleMap map) {
+        if (map != null && need != null && need.isValid()) {
             LatLng position = NeedUtils.getLocation(need);
             map.getUiSettings().setMapToolbarEnabled(false);
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 13f));
             map.addMarker(new MarkerOptions().position(position));
             map.setOnMapLoadedCallback(this);
+            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    UiUtils.fireMapIntent(getContext(), need);
+                    return true;
+                }
+            });
+            map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    UiUtils.fireMapIntent(getContext(), need);
+                }
+            });
         }
     }
 
@@ -114,11 +134,14 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
 
     public void setNeed(Need need) {
         this.need = need;
+        setupMap(mMap);
     }
 
-    @Override
-    public void onClick(View v) {
-        UiUtils.fireMapIntent(getContext(), need);
+    public void setOffset(int scrollY) {
+        offsetY = scrollY;
+        float ratio = (float) scrollY / (float) height;
+        int alpha = (int) (ratio * 200);
+        scrim.setAlpha(alpha);
     }
 
     @Override
@@ -129,9 +152,36 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
         }
     }
 
-    public void setOffset(int scrollY) {
-        float ratio = (float) scrollY / (float) height;
-        int alpha = (int) (ratio * 200);
-        scrim.setAlpha(alpha);
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (offsetY > 0) {
+            canvas.clipRect(0, 0, getWidth(), height - offsetY);
+        }
+        super.onDraw(canvas);
+    }
+
+    public void create() {
+        onCreate(null);
+        isCreated = true;
+    }
+
+    public void resume() {
+        if (isCreated) onResume();
+    }
+
+    public void pause() {
+        if (isCreated) onPause();
+    }
+
+    public void destroy() {
+        if (isCreated) onDestroy();
+    }
+
+    public void saveInstanceState() {
+        if (isCreated)  onSaveInstanceState();
+    }
+
+    public void lowMemory() {
+        if (isCreated) onLowMemory();
     }
 }

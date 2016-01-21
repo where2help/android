@@ -22,7 +22,6 @@
             android:clickable="true"
             android:elevation="24dp"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/padding"
             android:paddingLeft="@dimen/padding"
             android:paddingRight="@dimen/padding_dialog"
             android:paddingTop="@dimen/padding_dialog">
@@ -104,7 +103,9 @@
                 android:id="@+id/btn_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding">
+                android:paddingTop="@dimen/padding"
+                android:paddingBottom="@dimen/padding"
+                android:clipToPadding="false">
 
                 <Button
                     android:id="@+id/btn_neg"

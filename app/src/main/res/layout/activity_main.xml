@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    tools:context=".ui.HomeActivity">
+    android:fitsSystemWindows="true">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -19,19 +18,26 @@
             android:layout_gravity="top"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
             app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark" />
+            app:titleMarginStart="8dp" />
 
-        <app.iamin.iamin.ui.widget.CustomRecyclerView
-            android:id="@+id/recycler_view"
+        <app.iamin.iamin.ui.widget.CustomSwipeRefreshLayout
+            android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="top"
-            android:layout_marginTop="?actionBarSize"
-            android:clipToPadding="false"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+            android:layout_marginTop="?actionBarSize">
+
+            <app.iamin.iamin.ui.widget.CustomRecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbars="vertical"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        </app.iamin.iamin.ui.widget.CustomSwipeRefreshLayout>
 
         <LinearLayout
             android:id="@+id/empty_view"
@@ -41,12 +47,6 @@
             android:layout_marginTop="?actionBarSize"
             android:gravity="center"
             android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/empty_message"
@@ -76,7 +76,6 @@
         android:paddingTop="@dimen/spacing_normal"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        tools:listitem="@layout/filter_item" />
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -21,6 +21,7 @@ public class UiUtils {
         Intent intent = new Intent();
         intent.setClass(context, DetailActivity.class);
         intent.putExtra("id", need.getId());
+
         context.startActivity(intent);
     }
 

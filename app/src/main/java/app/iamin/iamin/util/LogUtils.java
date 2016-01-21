@@ -1,9 +1,12 @@
 package app.iamin.iamin.util;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Response;
+
+import java.util.LinkedList;
 
 import app.iamin.iamin.data.model.User;
 
@@ -41,5 +44,13 @@ public class LogUtils {
         Log.d(TAG, "User name = " + user.getName());
         Log.d(TAG, "User nickname = " + user.getNickname());
         Log.d(TAG, "User image = " + user.getImage());
+    }
+
+    public static void logQueue(String TAG, LinkedList<Intent> queue) {
+        Log.d(TAG, "Queue START");
+        for (Intent intent : queue) {
+            Log.d(TAG, "Action: " + intent.getAction());
+        }
+        Log.d(TAG, "Queue END");
     }
 }

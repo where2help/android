@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,26 +29,26 @@ import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.event.ConnectedEvent;
 import app.iamin.iamin.data.event.DisconnectedEvent;
+import app.iamin.iamin.data.event.RefreshEvent;
 import app.iamin.iamin.data.event.RequestBookingsEvent;
 import app.iamin.iamin.data.event.RequestNeedsEvent;
-import app.iamin.iamin.data.event.UserSignInEvent;
-import app.iamin.iamin.data.event.UserSignOutEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.widget.CustomRecyclerView;
+import app.iamin.iamin.ui.widget.CustomSwipeRefreshLayout;
 import app.iamin.iamin.util.UiUtils;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
-import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
-import static app.iamin.iamin.data.DataManager.ERROR;
-import static app.iamin.iamin.data.DataManager.NEXT;
-import static app.iamin.iamin.data.DataManager.START;
+import static app.iamin.iamin.data.DataManager.ON_ERROR;
+import static app.iamin.iamin.data.DataManager.ON_NEXT;
+import static app.iamin.iamin.data.DataManager.ON_START;
 
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
-        FilterAdapter.FilterChangedListener {
+        FilterAdapter.FilterChangedListener,
+        SwipeRefreshLayout.OnRefreshListener{
 
     private static final String TAG = "MainActivity";
 
@@ -65,21 +65,27 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean hasUser;
 
-    private CustomRecyclerView recyclerView;
+    private CustomRecyclerView mRecyclerView;
+
     private NeedFeedAdapter mNeedFeedAdapter;
 
-    private ProgressBar mProgressBar;
     private TextView mEmptyTextView;
 
     private DrawerLayout mDrawer;
 
     private FilterAdapter mFilterAdapter;
+
     private RecyclerView mFiltersList;
 
-    private Realm realm;
-    private RealmChangeListener realmChangeListener;
+    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
 
-    private Snackbar snackbar;
+    private DataManager mDataManager;
+
+    private Realm mRealm;
+
+    private RealmChangeListener mRealmChangeListener;
+
+    private Snackbar mSnackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,23 +93,23 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        realm = Realm.getInstance(this);
-        realmChangeListener = new RealmChangeListener() {
+        mDataManager = DataManager.getInstance(this);
+        hasUser = mDataManager.hasUser();
+
+        mRealm = Realm.getInstance(this);
+        mRealmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange() {
-                Log.d(TAG, "RealmChangeListener: onChange()");
                 notifyDataSetChanged();
             }
         };
-        realm.addChangeListener(realmChangeListener);
+        mRealm.addChangeListener(mRealmChangeListener);
 
         if (savedInstanceState != null) {
             mUiState = savedInstanceState.getInt(STATE_UI);
             mFilterCategory = savedInstanceState.getInt(STATE_CATEGORY);
             mFilterCity = savedInstanceState.getString(STATE_CITY);
         }
-
-        Log.e(TAG, STATE_CATEGORY + ": " + mFilterCategory);
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer);
 
@@ -112,12 +118,14 @@ public class MainActivity extends AppCompatActivity implements
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
 
-        recyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setEmptyView(findViewById(R.id.empty_view));
-        recyclerView.addItemDecoration(itemDecoration);
-        recyclerView.setAdapter(mNeedFeedAdapter);
+        mSwipeRefreshLayout = (CustomSwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
+        mRecyclerView.addItemDecoration(itemDecoration);
+        mRecyclerView.setAdapter(mNeedFeedAdapter);
+
         mEmptyTextView = (TextView) findViewById(R.id.empty_message);
 
         mFilterAdapter = new FilterAdapter(this, mFilterCategory, this);
@@ -168,7 +176,10 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.menu_login:
                 UiUtils.fireLoginIntent(MainActivity.this);
                 return true;
-            case R.id.menu_settings:
+            case R.id.menu_refresh:
+                onRefresh();
+                return true;
+        case R.id.menu_settings:
                 UiUtils.fireSettingsIntent(MainActivity.this);
                 return true;
             default:
@@ -233,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setFilter() {
-        RealmQuery<Need> query = realm.where(Need.class);
+        RealmQuery<Need> query = mRealm.where(Need.class);
 
         if (mFilterCategory != 0) {
             query.equalTo("category", mFilterCategory - 1);
@@ -247,7 +258,6 @@ public class MainActivity extends AppCompatActivity implements
 
         if (needs.isEmpty()) {
             Log.d(TAG, "setCategoryFilter(): needs.isEmpty()");
-            mProgressBar.setVisibility(View.VISIBLE);
             mEmptyTextView.setVisibility(View.GONE);
         }
 
@@ -263,55 +273,17 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Set<String> set = new HashSet<>(cities);
-        for (String city : set) {
-            Log.e(TAG, "city: " + city);
-        }
         return set.toArray(new String[set.size()]);
     }
 
     private void setBookingsFilter() {
-        RealmResults<Need> needs = realm.where(Need.class).equalTo("isAttending", true).findAll();
-        if (needs.isEmpty() && DataManager.hasBookings()) {
+        RealmResults<Need> needs = mRealm.where(Need.class).equalTo("isAttending", true).findAll();
+        if (needs.isEmpty() && mDataManager.hasBookings()) {
             mEmptyTextView.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.GONE);
         } else if (needs.isEmpty()) {
-            mProgressBar.setVisibility(View.VISIBLE);
             mEmptyTextView.setVisibility(View.GONE);
         }
         mNeedFeedAdapter.setData(needs);
-    }
-
-    @Subscribe
-    public void onUserSignIn(UserSignInEvent event) {
-        Log.d(TAG, "onUserSignIn");
-
-        switch (event.status) {
-            case START:
-                break;
-            case NEXT:
-                hasUser = DataManager.hasUser();
-                invalidateOptionsMenu();
-                break;
-            case ERROR:
-                break;
-        }
-    }
-
-    @Subscribe
-    public void onUserSignOut(UserSignOutEvent event) {
-        Log.d(TAG, "onUserSignOut");
-
-        switch (event.status) {
-            case START:
-                break;
-            case NEXT:
-                hasUser = DataManager.hasUser();
-                invalidateOptionsMenu();
-                notifyDataSetChanged();
-                break;
-            case ERROR:
-                break;
-        }
     }
 
     @Subscribe
@@ -319,12 +291,11 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(TAG, "onNeedsUpdated");
 
         switch (event.status) {
-            case START:
+            case ON_START:
                 break;
-            case NEXT:
+            case ON_NEXT:
                 break;
-            case ERROR:
-                mNeedFeedAdapter.setData(null);
+            case ON_ERROR:
                 onError(event.error);
                 break;
         }
@@ -335,54 +306,70 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(TAG, "onBookingsUpdated");
 
         switch (event.status) {
-            case START:
+            case ON_START:
                 break;
-            case NEXT:
+            case ON_NEXT:
                 break;
-            case ERROR:
+            case ON_ERROR:
                 onError(event.error);
                 break;
         }
     }
 
+    @Subscribe
+    public void onRefreshEvent(RefreshEvent event) {
+        mSwipeRefreshLayout.setRefreshing(event.refresh);
+    }
+
+    @Override
+    public void onRefresh() {
+        mDataManager.requestNeeds();
+    }
+
     public void onError(String message) {
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Subscribe
     public void onConnected(ConnectedEvent event) {
         Log.d(TAG, "onConnected");
-        if (snackbar != null) {
-            snackbar.dismiss();
+        if (mSnackbar != null) {
+            mSnackbar.dismiss();
         }
     }
 
     @Subscribe
     public void onDisconnected(DisconnectedEvent event) {
         Log.d(TAG, "onDisconnected");
-        snackbar = Snackbar.make(recyclerView, "Warte auf Verbindung ...", LENGTH_INDEFINITE);
-        snackbar.show();
+        mSnackbar = Snackbar.make(mRecyclerView, "Warte auf Verbindung...", Snackbar.LENGTH_INDEFINITE);
+        mSnackbar.getView().setBackgroundResource(R.color.colorPrimary);
+        mSnackbar.show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        DataManager.getInstance().register(this);
-        // It is possible that the user signed out via SettingsActivity
-        if (hasUser != DataManager.hasUser()) {
+        mDataManager.register();
+
+        // It's possible that the user signed in or out
+        if (hasUser != mDataManager.hasUser()) {
+            hasUser = mDataManager.hasUser();
             invalidateOptionsMenu();
             notifyDataSetChanged();
-            hasUser = DataManager.hasUser();
+        }
+
+        if (mDataManager.isRefreshing() && !mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(true);
         }
     }
 
     @Override
     protected void onPause() {
-        BusProvider.getInstance().unregister(this);
-        DataManager.getInstance().unregister(this);
         super.onPause();
+        BusProvider.getInstance().unregister(this);
+        mDataManager.unregister();
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -407,7 +394,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        realm.removeChangeListener(realmChangeListener);
-        realm.close();
+        mRealm.removeChangeListener(mRealmChangeListener);
+        mRealm.close();
     }
 }

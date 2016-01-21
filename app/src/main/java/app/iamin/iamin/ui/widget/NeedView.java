@@ -151,7 +151,8 @@ public class NeedView extends FrameLayout {
             categoryView.setText(category == 1 ? NeedUtils.getCategorySingular(category) : NeedUtils.getCategoryPlural(category));
             addressView.setText(need.getCity() + " " + need.getLocation());
             dateTextView.setText(need.getDate());
-            checkView.setVisibility(need.isAttending() && DataManager.hasUser() ? View.VISIBLE : View.GONE);
+            checkView.setVisibility(need.isAttending() &&
+                    DataManager.getInstance(getContext()).hasUser() ? View.VISIBLE : View.GONE);
         }
     }
 
