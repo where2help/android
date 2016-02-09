@@ -45,8 +45,7 @@ public class TimeUtils {
         } else if (dayOrd == nowOrd + 1) {
             return context.getString(R.string.day_title_tomorrow);
         } else {
-            //return formatShortDate(new Date(timestamp));
-            return context.getString(R.string.day_title_today);
+            return formatShortDate(new Date(timestamp));
         }
     }
 
