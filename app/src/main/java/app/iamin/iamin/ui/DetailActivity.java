@@ -379,16 +379,16 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         mapView.destroy();
         realm.removeChangeListener(realmChangeListener);
         realm.close();
-        super.onDestroy();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        mapView.saveInstanceState();
         super.onSaveInstanceState(outState);
+        mapView.saveInstanceState();
     }
 
     @Override

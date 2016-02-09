@@ -13,7 +13,5 @@ public class Where2Help extends Application {
     public void onCreate() {
         super.onCreate();
         LeakCanary.install(this);
-
-
     }
 }

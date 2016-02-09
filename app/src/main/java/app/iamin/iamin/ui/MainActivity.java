@@ -385,10 +385,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt(STATE_UI, mUiState);
         savedInstanceState.putInt(STATE_CATEGORY, mFilterCategory);
         savedInstanceState.putString(STATE_CITY, mFilterCity);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
