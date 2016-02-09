@@ -11,6 +11,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback;
@@ -167,6 +169,15 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
 
     public void resume() {
         if (isCreated) onResume();
+
+        // Since the foreground could hide error messages, show a notification instead
+        Integer resultCode = GoogleApiAvailability.getInstance()
+                .isGooglePlayServicesAvailable(getContext().getApplicationContext());
+
+        if (resultCode != ConnectionResult.SUCCESS) {
+            GoogleApiAvailability.getInstance()
+                    .showErrorNotification(getContext().getApplicationContext(), resultCode);
+        }
     }
 
     public void pause() {
@@ -178,7 +189,7 @@ public class CustomMapView extends MapView implements OnMapReadyCallback, OnMapL
     }
 
     public void saveInstanceState() {
-        if (isCreated)  onSaveInstanceState();
+        if (isCreated) onSaveInstanceState();
     }
 
     public void lowMemory() {
