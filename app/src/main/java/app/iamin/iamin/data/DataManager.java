@@ -9,8 +9,6 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.OkHttpClient;
 import com.squareup.otto.Bus;
 
 import java.util.LinkedList;
@@ -32,6 +30,9 @@ import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.data.model.User;
 import app.iamin.iamin.data.service.DataService;
 import app.iamin.iamin.util.DataUtils;
+
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;

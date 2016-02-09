@@ -10,14 +10,13 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.api.AuthHandler;
 import app.iamin.iamin.data.api.BookingHandler;
 import app.iamin.iamin.data.api.NeedHandler;
 import app.iamin.iamin.util.LogUtils;
+import okhttp3.OkHttpClient;
 
 import static app.iamin.iamin.data.DataManager.ACTION_CANCEL_BOOKING;
 import static app.iamin.iamin.data.DataManager.ACTION_CREATE_BOOKING;

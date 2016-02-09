@@ -28,7 +28,7 @@ public class CustomSwipeRefreshLayout extends SwipeRefreshLayout {
     private void init() {
         int distance = (int) (64 * 2 * getResources().getDisplayMetrics().density);
         setDistanceToTriggerSync(distance);
-        setColorSchemeResources(R.color.colorPrimary);
+        setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent);
     }
 
     @Override

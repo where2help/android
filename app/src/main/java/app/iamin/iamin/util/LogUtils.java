@@ -3,12 +3,12 @@ package app.iamin.iamin.util;
 import android.content.Intent;
 import android.util.Log;
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.Response;
-
 import java.util.LinkedList;
 
 import app.iamin.iamin.data.model.User;
+
+import okhttp3.Headers;
+import okhttp3.Response;
 
 /**
  * Created by Markus on 29.10.15.

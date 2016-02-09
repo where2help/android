@@ -4,11 +4,6 @@ import android.content.Context;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +19,11 @@ import app.iamin.iamin.util.NeedUtils;
 import app.iamin.iamin.util.TimeUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
+
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static app.iamin.iamin.util.DataUtils.getEndpoint;
 import static app.iamin.iamin.util.DataUtils.getHeaders;

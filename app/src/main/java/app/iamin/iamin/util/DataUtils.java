@@ -10,12 +10,12 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.squareup.okhttp.Headers;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import app.iamin.iamin.data.model.User;
+
+import okhttp3.Headers;
 
 /**
  * Created by Markus on 14.10.15.
