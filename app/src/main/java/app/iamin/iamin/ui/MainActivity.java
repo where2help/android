@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements
             query.equalTo("city", mFilterCity);
         }
 
-        RealmResults<Need> needs = query.findAll();
+        RealmResults<Need> needs = query.findAllSorted("start");
 
         if (needs.isEmpty()) {
             Log.d(TAG, "setCategoryFilter(): needs.isEmpty()");
@@ -277,7 +277,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setBookingsFilter() {
-        RealmResults<Need> needs = mRealm.where(Need.class).equalTo("isAttending", true).findAll();
+        RealmResults<Need> needs = mRealm.where(Need.class)
+                .equalTo("isAttending", true)
+                .findAllSorted("start");
         if (needs.isEmpty() && mDataManager.hasBookings()) {
             mEmptyTextView.setVisibility(View.VISIBLE);
         } else if (needs.isEmpty()) {
