@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
         mDataManager = DataManager.getInstance(this);
         hasUser = mDataManager.hasUser();
 
-        mRealm = Realm.getInstance(this);
+        mRealm = Realm.getDefaultInstance();
         mRealmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange() {

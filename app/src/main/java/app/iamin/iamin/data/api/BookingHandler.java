@@ -153,7 +153,7 @@ public class BookingHandler {
     private static void storeBookings(Context context, String responseBody) throws JSONException, ParseException {
         JSONArray data = new JSONObject(responseBody).getJSONArray("data");
 
-        Realm realm = Realm.getInstance(context);
+        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
 
         // reset booking table
@@ -218,7 +218,7 @@ public class BookingHandler {
         JSONObject data = new JSONObject(responseBody).getJSONObject("data");
         int volunteeringId = data.getInt("id");
 
-        Realm realm = Realm.getInstance(context);
+        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
 
         Booking booking = new Booking();
@@ -240,7 +240,7 @@ public class BookingHandler {
     }
 
     private static void storeBookingCancellation(Context context, int volunteeringId) throws JSONException, ParseException {
-        Realm realm = Realm.getInstance(context);
+        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
 
         Booking booking = realm.where(Booking.class).equalTo("id", volunteeringId).findFirst();
@@ -257,7 +257,7 @@ public class BookingHandler {
     }
 
     public static void clearBookings(Context context) {
-        Realm realm = Realm.getInstance(context);
+        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         // reset booking table
         realm.where(Booking.class).findAll().clear();

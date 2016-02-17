@@ -124,7 +124,7 @@ public class DetailActivity extends AppCompatActivity {
 
         dataManager = DataManager.getInstance(this);
 
-        realm = Realm.getInstance(this);
+        realm = Realm.getDefaultInstance();
         need = realm.where(Need.class).equalTo("id", needId).findFirst();
 
         realmChangeListener = new RealmChangeListener() {

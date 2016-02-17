@@ -67,7 +67,7 @@ public class NeedHandler {
     private static void storeNeeds(Context context, String responseBody) throws JSONException, ParseException {
         JSONArray data = new JSONObject(responseBody).getJSONArray("data");
 
-        Realm realm = Realm.getInstance(context);
+        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
 
         ArrayList<Integer> ids = new ArrayList<>();
