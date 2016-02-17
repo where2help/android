@@ -41,23 +41,35 @@ public class LoginActivity extends AppCompatActivity {
 
     private int currentUiMode = UI_MODE_SIGN_IN;
 
-    @Bind(R.id.header_title) TextView title;
+    @Bind(R.id.header_title)
+    TextView title;
 
-    @Bind(R.id.input_email) TextInputLayout emailInput;
-    @Bind(R.id.input_password) TextInputLayout passwordInput;
-    @Bind(R.id.input_password_conf) TextInputLayout passwordConfInput;
+    @Bind(R.id.input_email)
+    TextInputLayout emailInput;
+    @Bind(R.id.input_password)
+    TextInputLayout passwordInput;
+    @Bind(R.id.input_password_conf)
+    TextInputLayout passwordConfInput;
 
-    @Bind(R.id.email) EditText emailEditText;
-    @Bind(R.id.password) EditText passwordEditText;
-    @Bind(R.id.password_conf) EditText passwordConfEditText;
+    @Bind(R.id.email)
+    EditText emailEditText;
+    @Bind(R.id.password)
+    EditText passwordEditText;
+    @Bind(R.id.password_conf)
+    EditText passwordConfEditText;
 
-    @Bind(R.id.terms) CheckBox termsCheckbox;
+    @Bind(R.id.terms)
+    CheckBox termsCheckbox;
 
-    @Bind(R.id.btn_pos) Button posBtn;
-    @Bind(R.id.btn_neg) Button negBtn;
+    @Bind(R.id.btn_pos)
+    Button posBtn;
+    @Bind(R.id.btn_neg)
+    Button negBtn;
 
-    @Bind(R.id.btn_bar) View buttonBar;
-    @Bind(R.id.loading) View loading;
+    @Bind(R.id.btn_bar)
+    View buttonBar;
+    @Bind(R.id.loading)
+    View loading;
 
     private DataManager dataManager;
 
@@ -86,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setText("supersecret");
 
         passwordConfInput.setTypeface(emailInput.getTypeface());
-
         passwordConfEditText.setTypeface(emailEditText.getTypeface());
 
         termsCheckbox.setText(Html.fromHtml("Ich akzeptiere die <a href='app.iamin.iamin.ui.terms://'>Nutzungsbedingungen</a>"));
@@ -141,56 +152,76 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onActionPositive(View view) {
         if (currentUiMode == UI_MODE_SIGN_IN) {
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            dataManager.signIn(email, password);
-            setUiMode(UI_MODE_PROGRESS);
+            onActionLogin(emailEditText.getText().toString(),
+                    passwordEditText.getText().toString());
         } else {
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            String passwordConf = passwordConfEditText.getText().toString();
-            if (termsCheckbox.isChecked()) {
-                dataManager.signUp(email, password, passwordConf);
-                setUiMode(UI_MODE_PROGRESS);
-            } else {
-                Toast.makeText(this, "Nutzungsbedingungen müssen akzeptiert werden", Toast.LENGTH_SHORT).show();
-            }
+            onActionRegister(emailEditText.getText().toString(),
+                    passwordEditText.getText().toString(),
+                    passwordConfEditText.getText().toString());
         }
     }
 
-        @Subscribe
-        public void onUserSignIn (UserSignInEvent event){
-            Log.d(TAG, "onUserSignIn");
-
-            switch (event.status) {
-                case ON_NEXT:
-                    setResult(Activity.RESULT_OK);
-                    UiUtils.fireHomeIntent(this);
-                    finish();
-                    break;
-                case ON_ERROR:
-                    Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
-                    setUiMode(UI_MODE_SIGN_IN);
-                    break;
-            }
+    private void onActionLogin(String email, String password) {
+        if (email == null || email.isEmpty()) {
+            Toast.makeText(this, "Fill out email", Toast.LENGTH_SHORT).show();
+        } else if (password == null || password.isEmpty()) {
+            Toast.makeText(this, "Fill out password", Toast.LENGTH_SHORT).show();
+        } else {
+            dataManager.signIn(email, password);
+            setUiMode(UI_MODE_PROGRESS);
         }
+    }
 
-        @Subscribe
-        public void onUserSignUp (UserSignUpEvent event){
-            Log.d(TAG, "onUserSignUp");
-
-            switch (event.status) {
-                case ON_NEXT:
-                    String email = emailEditText.getText().toString();
-                    String password = passwordEditText.getText().toString();
-                    dataManager.signIn(email, password);
-                    break;
-                case ON_ERROR:
-                    Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
-                    setUiMode(UI_MODE_SIGN_UP);
-                    break;
-            }
+    private void onActionRegister(String email, String password, String passwordConf) {
+        if (email == null || email.isEmpty()) {
+            Toast.makeText(this, "Fill out email", Toast.LENGTH_SHORT).show();
+        } else if (password == null || password.isEmpty()) {
+            Toast.makeText(this, "Fill out password", Toast.LENGTH_SHORT).show();
+        } else if (passwordConf == null || passwordConf.isEmpty()) {
+            Toast.makeText(this, "Fill out password conformation", Toast.LENGTH_SHORT).show();
+        } else if (!password.equals(passwordConf)) {
+            Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show();
+        } else if (!termsCheckbox.isChecked()) {
+            Toast.makeText(this, "Need to agree to terms", Toast.LENGTH_SHORT).show();
+        } else {
+            dataManager.signUp(email, password, passwordConf);
+            setUiMode(UI_MODE_PROGRESS);
         }
+    }
+
+    @Subscribe
+    public void onUserSignIn(UserSignInEvent event) {
+        Log.d(TAG, "onUserSignIn");
+
+        switch (event.status) {
+            case ON_NEXT:
+                setResult(Activity.RESULT_OK);
+                UiUtils.fireHomeIntent(this);
+                finish();
+                break;
+            case ON_ERROR:
+                Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
+                setUiMode(UI_MODE_SIGN_IN);
+                break;
+        }
+    }
+
+    @Subscribe
+    public void onUserSignUp(UserSignUpEvent event) {
+        Log.d(TAG, "onUserSignUp");
+
+        switch (event.status) {
+            case ON_NEXT:
+                String email = emailEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+                dataManager.signIn(email, password);
+                break;
+            case ON_ERROR:
+                Toast.makeText(this, event.error, Toast.LENGTH_LONG).show();
+                setUiMode(UI_MODE_SIGN_UP);
+                break;
+        }
+    }
 
     @Override
     public void onBackPressed() {
