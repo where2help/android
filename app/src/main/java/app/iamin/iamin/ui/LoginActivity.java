@@ -1,6 +1,7 @@
 package app.iamin.iamin.ui;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,8 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -21,6 +24,7 @@ import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.event.UserSignInEvent;
 import app.iamin.iamin.data.event.UserSignUpEvent;
+import app.iamin.iamin.util.UiUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -62,6 +66,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
 
         BusProvider.getInstance().register(this);
 
@@ -154,6 +165,7 @@ public class LoginActivity extends AppCompatActivity {
             switch (event.status) {
                 case ON_NEXT:
                     setResult(Activity.RESULT_OK);
+                    UiUtils.fireHomeIntent(this);
                     finish();
                     break;
                 case ON_ERROR:
@@ -180,11 +192,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-    public void dismiss(View view) {
-        setResult(RESULT_CANCELED);
-        finish();
-    }
-
     @Override
     public void onBackPressed() {
         switch (currentUiMode) {
@@ -192,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
                 setUiMode(UI_MODE_SIGN_IN);
                 break;
             default:
-                dismiss(null);
+                super.onBackPressed();
         }
     }
 

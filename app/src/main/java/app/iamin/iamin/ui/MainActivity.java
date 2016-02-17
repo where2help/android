@@ -50,7 +50,7 @@ import static app.iamin.iamin.data.DataManager.ON_START;
 public class MainActivity extends AppCompatActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         FilterAdapter.FilterChangedListener,
-        SwipeRefreshLayout.OnRefreshListener{
+        SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "MainActivity";
 
@@ -65,14 +65,18 @@ public class MainActivity extends AppCompatActivity implements
     private int mFilterCategory = 0;
     private String mFilterCity;
 
-    private boolean hasUser;
-
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.drawer) DrawerLayout mDrawer;
-    @Bind(R.id.swiperefresh) CustomSwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.empty_message) TextView mEmptyTextView;
-    @Bind(R.id.recycler_view) CustomRecyclerView mRecyclerView;
-    @Bind(R.id.filters) RecyclerView mFiltersList;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.drawer)
+    DrawerLayout mDrawer;
+    @Bind(R.id.swiperefresh)
+    CustomSwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.empty_message)
+    TextView mEmptyTextView;
+    @Bind(R.id.recycler_view)
+    CustomRecyclerView mRecyclerView;
+    @Bind(R.id.filters)
+    RecyclerView mFiltersList;
 
     private NeedFeedAdapter mNeedFeedAdapter;
     private FilterAdapter mFilterAdapter;
@@ -88,13 +92,20 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mDataManager = DataManager.getInstance(this);
+
+        if (!mDataManager.hasUser()) {
+            UiUtils.fireLoginIntent(this);
+            overridePendingTransition(R.anim.login_enter, R.anim.login_exit);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-
-        mDataManager = DataManager.getInstance(this);
-        hasUser = mDataManager.hasUser();
 
         mRealm = Realm.getDefaultInstance();
         mRealmChangeListener = new RealmChangeListener() {
@@ -140,13 +151,11 @@ public class MainActivity extends AppCompatActivity implements
         switch (mUiState) {
             case UI_STATE_HOME:
                 menu.findItem(R.id.menu_filter).setVisible(true);
-                menu.findItem(R.id.menu_login).setVisible(!hasUser);
-                menu.findItem(R.id.menu_bookings).setVisible(hasUser);
+                menu.findItem(R.id.menu_bookings).setVisible(true);
                 menu.findItem(R.id.menu_settings).setVisible(true);
                 break;
             case UI_STATE_BOOKINGS:
                 menu.findItem(R.id.menu_filter).setVisible(false);
-                menu.findItem(R.id.menu_login).setVisible(false);
                 menu.findItem(R.id.menu_bookings).setVisible(false);
                 menu.findItem(R.id.menu_settings).setVisible(false);
                 break;
@@ -166,13 +175,10 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.menu_bookings:
                 setUiState(UI_STATE_BOOKINGS);
                 return true;
-            case R.id.menu_login:
-                UiUtils.fireLoginIntent(MainActivity.this);
-                return true;
             case R.id.menu_refresh:
                 onRefresh();
                 return true;
-        case R.id.menu_settings:
+            case R.id.menu_settings:
                 UiUtils.fireSettingsIntent(MainActivity.this);
                 return true;
             default:
@@ -347,13 +353,6 @@ public class MainActivity extends AppCompatActivity implements
         BusProvider.getInstance().register(this);
         mDataManager.register();
 
-        // It's possible that the user signed in or out
-        if (hasUser != mDataManager.hasUser()) {
-            hasUser = mDataManager.hasUser();
-            invalidateOptionsMenu();
-            notifyDataSetChanged();
-        }
-
         if (mDataManager.isRefreshing() && !mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(true);
         }
@@ -389,7 +388,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mRealm.removeChangeListener(mRealmChangeListener);
-        mRealm.close();
+        if (mRealm != null) {
+            mRealm.removeChangeListener(mRealmChangeListener);
+            mRealm.close();
+        }
     }
 }

@@ -21,11 +21,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_login"
-        android:title="@string/action_sign_in"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/menu_settings"
         android:title="@string/settings"
         app:showAsAction="never" />

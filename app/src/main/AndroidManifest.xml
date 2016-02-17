@@ -47,7 +47,7 @@
         <activity
             android:name=".ui.LoginActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppThemeLogin"
+            android:theme="@style/AppTheme.Login"
             android:windowSoftInputMode="adjustResize" />
 
         <activity

@@ -21,6 +21,7 @@ import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.event.UserSignOutEvent;
 import app.iamin.iamin.data.model.User;
 import app.iamin.iamin.util.DataUtils;
+import app.iamin.iamin.util.UiUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -31,8 +32,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Bind(R.id.username) TextView usernameTextView;
     @Bind(R.id.email) TextView emailTextView;
 
-    private User user;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,27 +40,16 @@ public class SettingsActivity extends AppCompatActivity {
 
         BusProvider.getInstance().register(this);
 
-        user = DataUtils.getUser(this);
+        User user = DataUtils.getUser(this);
 
         usernameTextView.setText(user.getFirstName() + " " + user.getLastName());
         emailTextView.setText(user.getEmail());
-
-        setUiMode(DataManager.getInstance(this).hasUser());
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-    private void setUiMode(boolean hasUser) {
-        findViewById(R.id.user).setVisibility(hasUser ? View.VISIBLE : View.GONE);
-        findViewById(R.id.logout).setVisibility(hasUser ? View.VISIBLE : View.GONE);
-        findViewById(R.id.communications).setVisibility(hasUser ? View.VISIBLE : View.GONE);
-        findViewById(R.id.email_switch).setVisibility(hasUser ? View.VISIBLE : View.GONE);
-        findViewById(R.id.divider1).setVisibility(hasUser ? View.VISIBLE : View.GONE);
-        findViewById(R.id.divider2).setVisibility(hasUser ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -121,7 +109,9 @@ public class SettingsActivity extends AppCompatActivity {
     @Subscribe
     public void onUserSignOut(UserSignOutEvent event) {
         Log.d(TAG, "onUserSignOut");
-        setUiMode(false);
+        UiUtils.fireLoginIntent(this);
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     public void onActionTerms(View view) {

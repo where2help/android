@@ -3,6 +3,7 @@ package app.iamin.iamin.util;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.IntentCompat;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -10,6 +11,7 @@ import com.google.android.gms.maps.model.LatLng;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.DetailActivity;
 import app.iamin.iamin.ui.LoginActivity;
+import app.iamin.iamin.ui.MainActivity;
 import app.iamin.iamin.ui.SettingsActivity;
 
 /**
@@ -17,17 +19,23 @@ import app.iamin.iamin.ui.SettingsActivity;
  */
 public class UiUtils {
 
+    public static void fireHomeIntent(Context context) {
+        Intent intent = new Intent();
+        intent.setClass(context, MainActivity.class);
+        context.startActivity(intent);
+    }
+
     public static void fireDetailIntent(Context context, Need need) {
         Intent intent = new Intent();
         intent.setClass(context, DetailActivity.class);
         intent.putExtra("id", need.getId());
-
         context.startActivity(intent);
     }
 
     public static void fireLoginIntent(Context context) {
         Intent intent = new Intent();
         intent.setClass(context, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
     }
 
