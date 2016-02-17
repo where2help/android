@@ -16,7 +16,7 @@
     <string name="settings">Einstellungen</string>
 
     <!-- filter panel -->
-    <string name="hint_city_search">Stadt suchen</string>
+    <string name="hint_location_search">Ort suchen</string>
 
     <!-- detail page -->
     <string name="action_share">Teilen</string>

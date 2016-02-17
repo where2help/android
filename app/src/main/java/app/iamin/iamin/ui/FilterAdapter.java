@@ -20,6 +20,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import app.iamin.iamin.R;
 
 import static android.R.layout.simple_dropdown_item_1line;
@@ -29,14 +32,14 @@ import static android.R.layout.simple_dropdown_item_1line;
  */
 public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int TYPE_CITY = 0;
+    private static final int TYPE_LOCATION = 0;
     private static final int TYPE_CATEGORY = 1;
 
     private Context mContext;
     private String[] mFilterList;
-    private String[] mCityList = new String[]{};
+    private List<String> mLocationList = new ArrayList<>();
     private int mFilterState = 0;
-    private String mFilterCity = null;
+    private String mFilterLocation = null;
     private FilterChangedListener mFilterChangedListener;
 
     public FilterAdapter(Context context, int filterState, FilterChangedListener listener) {
@@ -50,8 +53,8 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        if (viewType == TYPE_CITY) {
-            return new CityViewHolder(inflater.inflate(R.layout.filter_city_item, parent, false));
+        if (viewType == TYPE_LOCATION) {
+            return new CityViewHolder(inflater.inflate(R.layout.filter_location_item, parent, false));
         } else {
             return new CategoryViewHolder(inflater.inflate(R.layout.filter_item, parent, false));
         }
@@ -61,7 +64,7 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof CityViewHolder) {
             CityViewHolder holder = (CityViewHolder) viewHolder;
-            holder.filterItem.setText(mFilterCity);
+            holder.filterItem.setText(mFilterLocation);
         } else {
             int categoryPosition = position - 1;
             CategoryViewHolder holder = (CategoryViewHolder) viewHolder;
@@ -85,11 +88,11 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? TYPE_CITY : TYPE_CATEGORY;
+        return position == 0 ? TYPE_LOCATION : TYPE_CATEGORY;
     }
 
-    public void setCityList(String[] mCityList) {
-        this.mCityList = mCityList;
+    public void setLocations(List<String> mCityList) {
+        this.mLocationList = mCityList;
         notifyItemChanged(0);
     }
 
@@ -120,7 +123,7 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public CityViewHolder(View view) {
             super(view);
 
-            adapter = new ArrayAdapter<>(mContext, simple_dropdown_item_1line, mCityList);
+            adapter = new ArrayAdapter<>(mContext, simple_dropdown_item_1line, mLocationList);
 
             filterItem = (AutoCompleteTextView) view.findViewById(R.id.city);
             clearButton = (ImageButton) view.findViewById(R.id.clear);
@@ -133,8 +136,8 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             filterItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mFilterCity = adapter.getItem(position);
-                    mFilterChangedListener.onFilterCityChanged(view, mFilterCity);
+                    mFilterLocation = adapter.getItem(position);
+                    mFilterChangedListener.onFilterCityChanged(view, mFilterLocation);
                 }
             });
             filterItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -151,7 +154,7 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         filterItem.setText(null);
-                        mFilterCity = null;
+                        mFilterLocation = null;
                         mFilterChangedListener.onFilterCityChanged(filterItem, null);
                     }
                     return false;
@@ -179,7 +182,7 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 @Override
                 public void onClick(View v) {
                     filterItem.setText(null);
-                    mFilterCity = null;
+                    mFilterLocation = null;
                     mFilterChangedListener.onFilterCityChanged(filterItem, null);
                 }
             });

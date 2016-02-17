@@ -20,9 +20,9 @@ import android.widget.Toast;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import app.iamin.iamin.R;
 import app.iamin.iamin.data.BusProvider;
@@ -38,6 +38,7 @@ import app.iamin.iamin.ui.widget.CustomSwipeRefreshLayout;
 import app.iamin.iamin.util.UiUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmQuery;
@@ -56,14 +57,14 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String STATE_UI = "uiState";
     private static final String STATE_CATEGORY = "categoryFilterState";
-    private static final String STATE_CITY = "cityFilterState";
+    private static final String STATE_LOCATION = "locationFilterState";
 
     private static final int UI_STATE_HOME = 0;
     private static final int UI_STATE_BOOKINGS = 1;
 
     private int mUiState = UI_STATE_HOME;
     private int mFilterCategory = 0;
-    private String mFilterCity;
+    private String mFilterLocation;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements
         if (savedInstanceState != null) {
             mUiState = savedInstanceState.getInt(STATE_UI);
             mFilterCategory = savedInstanceState.getInt(STATE_CATEGORY);
-            mFilterCity = savedInstanceState.getString(STATE_CITY);
+            mFilterLocation = savedInstanceState.getString(STATE_LOCATION);
         }
 
         mNeedFeedAdapter = new NeedFeedAdapter(this);
@@ -237,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onFilterCityChanged(View view, String city) {
-        mFilterCity = city;
+        mFilterLocation = city;
         setFilter();
         mDrawer.closeDrawer(GravityCompat.END);
     }
@@ -249,8 +250,8 @@ public class MainActivity extends AppCompatActivity implements
             query.equalTo("category", mFilterCategory - 1);
         }
 
-        if (mFilterCity != null && !mFilterCity.isEmpty()) {
-            query.equalTo("city", mFilterCity);
+        if (mFilterLocation != null && !mFilterLocation.isEmpty()) {
+            query.equalTo("location", mFilterLocation, Case.INSENSITIVE);
         }
 
         RealmResults<Need> needs = query.findAllSorted("start");
@@ -260,19 +261,22 @@ public class MainActivity extends AppCompatActivity implements
             mEmptyTextView.setVisibility(View.GONE);
         }
 
-        mFilterAdapter.setCityList(getCities(needs));
+        mFilterAdapter.setLocations(getLocations(needs));
         mNeedFeedAdapter.setData(needs);
     }
 
-    private String[] getCities(RealmResults<Need> needs) {
+    private List<String> getLocations(RealmResults<Need> needs) {
         List<String> cities = new ArrayList<>();
-
         for (Need need : needs) {
-            cities.add(need.getCity());
+            cities.add(need.getLocation());
         }
-
-        Set<String> set = new HashSet<>(cities);
-        return set.toArray(new String[set.size()]);
+        // Filter duplicates
+        Set<String> set = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        set.addAll(cities);
+        // Return filtered list
+        cities.clear();
+        cities.addAll(set);
+        return cities;
     }
 
     private void setBookingsFilter() {
@@ -382,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt(STATE_UI, mUiState);
         savedInstanceState.putInt(STATE_CATEGORY, mFilterCategory);
-        savedInstanceState.putString(STATE_CITY, mFilterCity);
+        savedInstanceState.putString(STATE_LOCATION, mFilterLocation);
     }
 
     @Override

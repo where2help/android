@@ -10,7 +10,7 @@
         android:background="?selectableItemBackground"
         android:completionThreshold="1"
         android:gravity="center_vertical"
-        android:hint="@string/hint_city_search"
+        android:hint="@string/hint_location_search"
         android:imeOptions="actionSearch"
         android:longClickable="false"
         android:inputType="text"
