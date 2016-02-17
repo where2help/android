@@ -318,9 +318,6 @@ public class DataManager {
             if (retry(intent)) {
                 QUEUE.addFirst(intent);
                 connect(true);
-            } else {
-                BUS.post(new RequestBookingsEvent(ON_ERROR, error));
-                BUS.post(new RefreshEvent(false));
             }
         } else {
             BUS.post(new RequestBookingsEvent(ON_ERROR, error));
@@ -338,8 +335,6 @@ public class DataManager {
             if (retry(intent)) {
                 QUEUE.addFirst(intent);
                 connect(true);
-            } else {
-                BUS.post(new CreateBookingEvent(ON_ERROR, id, error));
             }
         } else {
             BUS.post(new CreateBookingEvent(ON_ERROR, id, error));
@@ -356,8 +351,6 @@ public class DataManager {
             if (retry(intent)) {
                 QUEUE.addFirst(intent);
                 connect(true);
-            } else {
-                BUS.post(new CancelBookingEvent(ON_ERROR, id, error));
             }
         } else {
             BUS.post(new CancelBookingEvent(ON_ERROR, id, error));
@@ -386,6 +379,9 @@ public class DataManager {
             intent.putExtra(EXTRA_RETRY_COUNT, count);
             return true;
         }
+
+        // call action again with error
+        onServiceResult(intent, "error_hit_retry_limit");
         return false;
     }
 
