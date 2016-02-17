@@ -21,6 +21,8 @@ import app.iamin.iamin.data.BusProvider;
 import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.event.UserSignInEvent;
 import app.iamin.iamin.data.event.UserSignUpEvent;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 import static app.iamin.iamin.data.DataManager.ON_ERROR;
 import static app.iamin.iamin.data.DataManager.ON_NEXT;
@@ -35,23 +37,23 @@ public class LoginActivity extends AppCompatActivity {
 
     private int currentUiMode = UI_MODE_SIGN_IN;
 
-    private TextView title;
+    @Bind(R.id.header_title) TextView title;
 
-    private TextInputLayout emailInput;
-    private TextInputLayout passwordInput;
-    private TextInputLayout passwordConfInput;
+    @Bind(R.id.input_email) TextInputLayout emailInput;
+    @Bind(R.id.input_password) TextInputLayout passwordInput;
+    @Bind(R.id.input_password_conf) TextInputLayout passwordConfInput;
 
-    private EditText emailEditText;
-    private EditText passwordEditText;
-    private EditText passwordConfEditText;
+    @Bind(R.id.email) EditText emailEditText;
+    @Bind(R.id.password) EditText passwordEditText;
+    @Bind(R.id.password_conf) EditText passwordConfEditText;
 
-    private CheckBox termsCheckbox;
+    @Bind(R.id.terms) CheckBox termsCheckbox;
 
-    private Button posBtn;
-    private Button negBtn;
+    @Bind(R.id.btn_pos) Button posBtn;
+    @Bind(R.id.btn_neg) Button negBtn;
 
-    private View buttonBar;
-    private View loading;
+    @Bind(R.id.btn_bar) View buttonBar;
+    @Bind(R.id.loading) View loading;
 
     private DataManager dataManager;
 
@@ -59,39 +61,25 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
 
         BusProvider.getInstance().register(this);
 
         dataManager = DataManager.getInstance(this);
 
-        title = (TextView) findViewById(R.id.header_title);
-
-        buttonBar = findViewById(R.id.btn_bar);
-        loading = findViewById(R.id.loading);
-
-        emailInput = (TextInputLayout) findViewById(R.id.input_email);
-        emailEditText = (EditText) findViewById(R.id.email);
         emailEditText.setText("normal_user@example.com");
 
-        passwordInput = (TextInputLayout) findViewById(R.id.input_password);
         passwordInput.setTypeface(emailInput.getTypeface());
 
-        passwordEditText = (EditText) findViewById(R.id.password);
         passwordEditText.setTypeface(emailEditText.getTypeface());
         passwordEditText.setText("supersecret");
 
-        passwordConfInput = (TextInputLayout) findViewById(R.id.input_password_conf);
         passwordConfInput.setTypeface(emailInput.getTypeface());
 
-        passwordConfEditText = (EditText) findViewById(R.id.password_conf);
         passwordConfEditText.setTypeface(emailEditText.getTypeface());
 
-        termsCheckbox = (CheckBox) findViewById(R.id.terms);
         termsCheckbox.setText(Html.fromHtml("Ich akzeptiere die <a href='app.iamin.iamin.ui.terms://'>Nutzungsbedingungen</a>"));
         termsCheckbox.setMovementMethod(LinkMovementMethod.getInstance());
-
-        posBtn = (Button) findViewById(R.id.btn_pos);
-        negBtn = (Button) findViewById(R.id.btn_neg);
 
         setUiMode(UI_MODE_SIGN_IN);
     }

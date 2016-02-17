@@ -36,6 +36,8 @@ import app.iamin.iamin.ui.widget.CustomMapView;
 import app.iamin.iamin.ui.widget.NeedView;
 import app.iamin.iamin.util.TimeUtils;
 import app.iamin.iamin.util.UiUtils;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
@@ -59,16 +61,16 @@ public class DetailActivity extends AppCompatActivity {
 
     private ActionBar actionBar;
 
-    private NestedScrollView container;
-
-    private NeedView needView;
-
-    private Button bookingButton;
-    private ProgressBar progressBar;
-
-    private TextView infoTextView;
-    private TextView descTextView;
-    private TextView organizationTextView;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.container) NestedScrollView scroller;
+    @Bind(R.id.dummy) View dummy;
+    @Bind(R.id.map) CustomMapView mapView;
+    @Bind(R.id.need_view) NeedView needView;
+    @Bind(R.id.booking_button) Button bookingButton;
+    @Bind(R.id.progress_bar) ProgressBar progressBar;
+    @Bind(R.id.info) TextView infoTextView;
+    @Bind(R.id.desc) TextView descTextView;
+    @Bind(R.id.organization) TextView organizationTextView;
 
     private DataManager dataManager;
 
@@ -76,8 +78,6 @@ public class DetailActivity extends AppCompatActivity {
     private RealmChangeListener realmChangeListener;
 
     private Need need;
-
-    private CustomMapView mapView;
 
     private OnScrollChangeListener scrollChangeListener = new OnScrollChangeListener() {
         @Override
@@ -91,16 +91,15 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mapView = (CustomMapView) findViewById(R.id.map);
-
-        findViewById(R.id.dummy).setOnTouchListener(new View.OnTouchListener() {
+        dummy.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 mapView.dispatchTouchEvent(event);
@@ -108,17 +107,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        needView = (NeedView) findViewById(R.id.need_view);
-        infoTextView = (TextView) findViewById(R.id.info);
-
-        bookingButton = (Button) findViewById(R.id.booking_button);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
-        descTextView = (TextView) findViewById(R.id.desc);
-        organizationTextView = (TextView) findViewById(R.id.organization);
-
-        container = (NestedScrollView) findViewById(R.id.container);
-        container.setOnScrollChangeListener(scrollChangeListener);
+        scroller.setOnScrollChangeListener(scrollChangeListener);
 
         int needId = getIntent().getExtras().getInt("id");
 
@@ -356,7 +345,7 @@ public class DetailActivity extends AppCompatActivity {
 
     @Subscribe
     public void onDisconnected(DisconnectedEvent event) {
-        snackbar = Snackbar.make(container, "Warte auf Verbindung ...", LENGTH_INDEFINITE);
+        snackbar = Snackbar.make(scroller, "Warte auf Verbindung ...", LENGTH_INDEFINITE);
         snackbar.getView().setBackgroundResource(R.color.colorPrimary);
         snackbar.show();
     }

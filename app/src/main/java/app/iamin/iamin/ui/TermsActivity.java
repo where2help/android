@@ -8,17 +8,20 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import app.iamin.iamin.R;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class TermsActivity extends AppCompatActivity {
 
-    private TextView content;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.content) TextView content;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_terms);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Nutzungsbedingungen");
         setSupportActionBar(toolbar);
 
@@ -27,7 +30,6 @@ public class TermsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        content = (TextView) findViewById(R.id.content);
         content.setText(" Da du, o Herr, dich einmal wieder nahst\n" +
                 "    Und fragst, wie alles sich bei uns befinde,\n" +
                 "    Und du mich sonst gewöhnlich gerne sahst,\n" +

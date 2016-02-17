@@ -21,13 +21,15 @@ import app.iamin.iamin.data.DataManager;
 import app.iamin.iamin.data.event.UserSignOutEvent;
 import app.iamin.iamin.data.model.User;
 import app.iamin.iamin.util.DataUtils;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "SettingsActivity";
 
-    private TextView usernameTextView;
-    private TextView emailTextView;
+    @Bind(R.id.username) TextView usernameTextView;
+    @Bind(R.id.email) TextView emailTextView;
 
     private User user;
 
@@ -35,15 +37,13 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        ButterKnife.bind(this);
 
         BusProvider.getInstance().register(this);
 
         user = DataUtils.getUser(this);
 
-        usernameTextView = (TextView) findViewById(R.id.username);
         usernameTextView.setText(user.getFirstName() + " " + user.getLastName());
-
-        emailTextView = (TextView) findViewById(R.id.email);
         emailTextView.setText(user.getEmail());
 
         setUiMode(DataManager.getInstance(this).hasUser());

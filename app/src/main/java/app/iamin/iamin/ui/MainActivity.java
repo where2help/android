@@ -36,6 +36,8 @@ import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.widget.CustomRecyclerView;
 import app.iamin.iamin.ui.widget.CustomSwipeRefreshLayout;
 import app.iamin.iamin.util.UiUtils;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmQuery;
@@ -65,19 +67,15 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean hasUser;
 
-    private CustomRecyclerView mRecyclerView;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.drawer) DrawerLayout mDrawer;
+    @Bind(R.id.swiperefresh) CustomSwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.empty_message) TextView mEmptyTextView;
+    @Bind(R.id.recycler_view) CustomRecyclerView mRecyclerView;
+    @Bind(R.id.filters) RecyclerView mFiltersList;
 
     private NeedFeedAdapter mNeedFeedAdapter;
-
-    private TextView mEmptyTextView;
-
-    private DrawerLayout mDrawer;
-
     private FilterAdapter mFilterAdapter;
-
-    private RecyclerView mFiltersList;
-
-    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
 
     private DataManager mDataManager;
 
@@ -91,7 +89,9 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
 
         mDataManager = DataManager.getInstance(this);
         hasUser = mDataManager.hasUser();
@@ -111,26 +111,19 @@ public class MainActivity extends AppCompatActivity implements
             mFilterCity = savedInstanceState.getString(STATE_CITY);
         }
 
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer);
-
         mNeedFeedAdapter = new NeedFeedAdapter(this);
 
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
 
-        mSwipeRefreshLayout = (CustomSwipeRefreshLayout) findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mRecyclerView = (CustomRecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setEmptyView(findViewById(R.id.empty_view));
         mRecyclerView.addItemDecoration(itemDecoration);
         mRecyclerView.setAdapter(mNeedFeedAdapter);
 
-        mEmptyTextView = (TextView) findViewById(R.id.empty_message);
-
         mFilterAdapter = new FilterAdapter(this, mFilterCategory, this);
 
-        mFiltersList = (RecyclerView) findViewById(R.id.filters);
         mFiltersList.setAdapter(mFilterAdapter);
 
         setUiState(mUiState);
