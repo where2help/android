@@ -1,4 +1,4 @@
-package app.iamin.iamin.ui;
+package app.iamin.iamin.ui.recyclerview;
 
 import android.content.Context;
 import android.graphics.Canvas;

@@ -35,6 +35,7 @@ import app.iamin.iamin.data.event.RequestNeedsEvent;
 import app.iamin.iamin.data.model.Need;
 import app.iamin.iamin.ui.adapters.FilterAdapter;
 import app.iamin.iamin.ui.adapters.NeedFeedAdapter;
+import app.iamin.iamin.ui.recyclerview.DividerItemDecoration;
 import app.iamin.iamin.ui.widget.CustomRecyclerView;
 import app.iamin.iamin.ui.widget.CustomSwipeRefreshLayout;
 import app.iamin.iamin.util.UiUtils;
