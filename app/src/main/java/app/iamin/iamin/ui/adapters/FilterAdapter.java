@@ -1,4 +1,4 @@
-package app.iamin.iamin.ui;
+package app.iamin.iamin.ui.adapters;
 
 import android.annotation.TargetApi;
 import android.content.Context;
