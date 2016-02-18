@@ -1,4 +1,4 @@
-package app.iamin.iamin.ui.adapters;
+package app.iamin.iamin.ui.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
