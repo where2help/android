@@ -5,14 +5,21 @@
     <string name="action_sign_up">Registrieren</string>
     <string name="action_sign_in">Anmelden</string>
     <string name="action_back">Zurück</string>
+    <string name="action_terms_agreement"><![CDATA[Ich akzeptiere die <a href="app.iamin.iamin.ui.terms://">Nutzungsbedingungen</a>]]></string>
     <string name="hint_password">Passwort</string>
     <string name="hint_password_conf">Passwort bestätigen</string>
     <string name="hint_email">Email</string>
 
+    <string name="hint_missing_email">Fill out email</string>
+    <string name="hint_missing_password">Fill out password</string>
+    <string name="hint_missing_password_conf">Fill out password conformation</string>
+    <string name="hint_passwords_no_match">Passwords don\'t match</string>
+    <string name="hint_missing_terms">Need to agree to terms</string>
+
     <!-- home page -->
     <string name="action_filter">Filter</string>
     <string name="appointments">Meine Termine</string>
-    <string name="appointments_empty_message">Du hast noch keinen Terminen zugesagt.\n\n\nヽ(。_°)ノ</string>
+    <string name="appointments_empty_message">Du hast noch keinen Terminen zugesagt.</string>
     <string name="settings">Einstellungen</string>
 
     <!-- filter panel -->

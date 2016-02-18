@@ -28,6 +28,7 @@ import app.iamin.iamin.util.UiUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static app.iamin.iamin.data.DataManager.ON_ERROR;
 import static app.iamin.iamin.data.DataManager.ON_NEXT;
 
@@ -100,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordConfInput.setTypeface(emailInput.getTypeface());
         passwordConfEditText.setTypeface(emailEditText.getTypeface());
 
-        termsCheckbox.setText(Html.fromHtml("Ich akzeptiere die <a href='app.iamin.iamin.ui.terms://'>Nutzungsbedingungen</a>"));
+        termsCheckbox.setText(Html.fromHtml(getString(R.string.action_terms_agreement)));
         termsCheckbox.setMovementMethod(LinkMovementMethod.getInstance());
 
         setUiMode(UI_MODE_SIGN_IN);
@@ -163,9 +164,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onActionLogin(String email, String password) {
         if (email == null || email.isEmpty()) {
-            Toast.makeText(this, "Fill out email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.hint_missing_email, LENGTH_SHORT).show();
         } else if (password == null || password.isEmpty()) {
-            Toast.makeText(this, "Fill out password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.hint_missing_password, LENGTH_SHORT).show();
         } else {
             dataManager.signIn(email, password);
             setUiMode(UI_MODE_PROGRESS);
@@ -174,15 +175,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onActionRegister(String email, String password, String passwordConf) {
         if (email == null || email.isEmpty()) {
-            Toast.makeText(this, "Fill out email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.hint_missing_email, LENGTH_SHORT).show();
         } else if (password == null || password.isEmpty()) {
-            Toast.makeText(this, "Fill out password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.hint_missing_password, LENGTH_SHORT).show();
         } else if (passwordConf == null || passwordConf.isEmpty()) {
-            Toast.makeText(this, "Fill out password conformation", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.hint_missing_password_conf, LENGTH_SHORT).show();
         } else if (!password.equals(passwordConf)) {
-            Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.hint_passwords_no_match, LENGTH_SHORT).show();
         } else if (!termsCheckbox.isChecked()) {
-            Toast.makeText(this, "Need to agree to terms", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.hint_missing_terms, LENGTH_SHORT).show();
         } else {
             dataManager.signUp(email, password, passwordConf);
             setUiMode(UI_MODE_PROGRESS);
