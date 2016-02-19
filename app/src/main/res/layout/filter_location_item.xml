@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <AutoCompleteTextView
+    <app.iamin.iamin.ui.widget.InstantAutoCompleteTextView
         android:id="@+id/city"
         android:layout_width="match_parent"
         android:layout_height="56dp"

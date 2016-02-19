@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -138,15 +137,6 @@ public class FilterAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     mFilterLocation = adapter.getItem(position);
                     mFilterChangedListener.onFilterCityChanged(view, mFilterLocation);
-                }
-            });
-            filterItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus) {
-                        InputMethodManager inm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inm.hideSoftInputFromWindow(filterItem.getWindowToken(), 0);
-                    }
                 }
             });
             filterItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {

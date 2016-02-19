@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
@@ -75,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements
     DrawerLayout mDrawer;
     @Bind(R.id.swiperefresh)
     CustomSwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.empty_message)
-    TextView mEmptyTextView;
     @Bind(R.id.recycler_view)
     CustomRecyclerView mRecyclerView;
     @Bind(R.id.filters)
@@ -201,8 +198,6 @@ public class MainActivity extends AppCompatActivity implements
                     ab.setDisplayHomeAsUpEnabled(false);
 
                     mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-
-                    setFilter();
                 }
                 break;
             case UI_STATE_BOOKINGS:
@@ -213,22 +208,17 @@ public class MainActivity extends AppCompatActivity implements
                     ab.setDisplayShowTitleEnabled(true);
 
                     mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
-                    setBookingsFilter();
                 }
                 break;
         }
         mUiState = state;
+        setFilter();
         invalidateOptionsMenu();
     }
 
     private void notifyDataSetChanged() {
         Log.d(TAG, "notifyDataSetChanged() ");
-        if (mUiState == UI_STATE_BOOKINGS) {
-            setBookingsFilter();
-        } else {
-            setFilter();
-        }
+        setFilter();
     }
 
     @Override
@@ -247,7 +237,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setFilter() {
+        RealmQuery<Need> query = buildFilterQuery();
+        RealmResults<Need> needs = query.findAllSorted("start");
+
+        mFilterAdapter.setLocations(getLocations(needs));
+        mNeedFeedAdapter.setData(needs);
+    }
+
+    private RealmQuery<Need> buildFilterQuery() {
         RealmQuery<Need> query = mRealm.where(Need.class);
+
+        if (mUiState == UI_STATE_BOOKINGS) {
+            query.equalTo("isAttending", true);
+            return query;
+        }
 
         if (mFilterCategory != 0) {
             query.equalTo("category", mFilterCategory - 1);
@@ -257,15 +260,7 @@ public class MainActivity extends AppCompatActivity implements
             query.equalTo("location", mFilterLocation, Case.INSENSITIVE);
         }
 
-        RealmResults<Need> needs = query.findAllSorted("start");
-
-        if (needs.isEmpty()) {
-            Log.d(TAG, "setCategoryFilter(): needs.isEmpty()");
-            mEmptyTextView.setVisibility(View.GONE);
-        }
-
-        mFilterAdapter.setLocations(getLocations(needs));
-        mNeedFeedAdapter.setData(needs);
+        return query;
     }
 
     private List<String> getLocations(RealmResults<Need> needs) {
@@ -280,18 +275,6 @@ public class MainActivity extends AppCompatActivity implements
         cities.clear();
         cities.addAll(set);
         return cities;
-    }
-
-    private void setBookingsFilter() {
-        RealmResults<Need> needs = mRealm.where(Need.class)
-                .equalTo("isAttending", true)
-                .findAllSorted("start");
-        if (needs.isEmpty() && mDataManager.hasBookings()) {
-            mEmptyTextView.setVisibility(View.VISIBLE);
-        } else if (needs.isEmpty()) {
-            mEmptyTextView.setVisibility(View.GONE);
-        }
-        mNeedFeedAdapter.setData(needs);
     }
 
     @Subscribe
