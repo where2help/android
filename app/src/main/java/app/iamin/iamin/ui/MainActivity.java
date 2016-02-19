@@ -226,14 +226,12 @@ public class MainActivity extends AppCompatActivity implements
         mFilterCategory = category;
         setFilter();
         mFiltersList.getAdapter().notifyDataSetChanged(); // update highlight
-        mDrawer.closeDrawer(GravityCompat.END);
     }
 
     @Override
     public void onFilterCityChanged(View view, String city) {
         mFilterLocation = city;
         setFilter();
-        mDrawer.closeDrawer(GravityCompat.END);
     }
 
     private void setFilter() {
